@@ -1,0 +1,25 @@
+{
+    "firstrun": 1,
+    "lanraragi_api_key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
+    "lanraragi_api": "https://bzlib.home.reiyy.com:2333",
+    "PROXY_URL": "https://picaapi.reiyy.com:2333",
+    "avatarfilepath": "/data/wwwroot/mypic/assets/img/avatar",
+    "db": {
+        "host": "192.168.7.205",
+        "user": "mypic",
+        "password": "IIvYmIwQ5q230A",
+        "name": "mypic"
+    },
+    "categories": {
+        "长篇": "SET_0000000000",
+        "短篇": "SET_0000000000",
+        "熟肉": "SET_1727680889",
+        "百合": "SET_1727681047",
+        "生肉": "SET_1728329300",
+        "无H": "SET_1728329318",
+        "同人": "SET_1728329330",
+        "无修正": "SET_1728329341",
+        "AI生成": "SET_1728329352",
+        "萝莉": "SET_1728329362"
+    }
+}
