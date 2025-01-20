@@ -56,7 +56,7 @@ def get_pages(comic_id, page):
             },
             "ep": {
                 "_id": comic_id,
-                "title": extract_data.get("title", "Unknown Title")  # 提取标题
+                "title": extract_data.get("title", "第一话")  # 提取标题
             }
         }
     }
