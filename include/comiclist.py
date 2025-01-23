@@ -33,32 +33,8 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
     # 如果有传入类型参数 c=文本，获取相应分类的漫画
     elif c and c in config["categories"]:
         print(f"第二种: {c}")
-        # 自动判断长篇和短篇分类
-        if c in ["长篇", "短篇"]:
-            start = -1
-            original_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&order=desc")
-            response_data = original_response.json().get("data", [])
-            
-            filtered_data = []
-            for item in response_data:
-                pagecount = item.get("pagecount", 0)
-                
-                if c == "长篇" and pagecount > 95:
-                    filtered_data.append(item)  # 大于95的项目保留
-                elif c == "短篇" and pagecount < 95:
-                    filtered_data.append(item)  # 小于95的项目保留
-                
-            print(f"过滤后的数据: {filtered_data}")
-            
-            lanraragi_response = {
-                "data": filtered_data,
-                "recordsFiltered": len(filtered_data),  # 过滤后的记录数
-                "recordsTotal": len(filtered_data)      # 原始总记录数
-            }
-
-        else:
-            category_id = config["categories"][c]
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&order=desc")
+        category_id = config["categories"][c]
+        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&order=desc")
 
     # 有传入类型参数 t=文本，返回相应标签漫画
     elif t is not None:
