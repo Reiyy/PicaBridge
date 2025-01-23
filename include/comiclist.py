@@ -90,11 +90,24 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
         thumbnail_path = f"thumbnail/{comic_id}"
         comic_data = db.get_comic_info(comic_id) or {}
 
+        # 提取作者信息
+        # 优先从数据库获取
+        author = comic_data.get("author")
+        # 否则从元数据提取
+        if not author:
+            tags = comic.get("tags", "")
+            for tag in tags.split(","):
+                if tag.startswith("artist:"):
+                    author = tag.split(":", 1)[1]
+                    break
+                elif tag.startswith("艺术家:"):
+                    author = tag.split(":", 1)[1]
+
         comic_info = {
             "_id": comic_id,
             #"title": comic_data.get("title", comic.get("title")),
             "title": comic_data.get("title") or comic.get("title"),
-            "author": comic_data.get("author", "未知作者"),
+            "author": author or "",
             "totalViews": comic_data.get("viewsCount", 0),
             "totalLikes": comic_data.get("likesCount"),
             "pagesCount": comic.get("pagecount"),
