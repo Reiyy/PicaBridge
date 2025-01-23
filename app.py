@@ -86,7 +86,7 @@ def handle_thumbnail_route(arcid):
 @app.route('/comics', methods=['GET'])
 def handle_comics_route():
     page = request.args.get('page', default=1, type=int)
-    s = request.args.get('s', default=None, type=str)  # 获取全部
+    s = request.args.get('s', default=None, type=str)  # 排序标记
     c = request.args.get('c', default=None, type=str)  # 获取分类
     t = request.args.get('t', default=None, type=str)  # 获取标签
     a = request.args.get('a', default=None, type=str)  # 获取作者

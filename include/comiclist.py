@@ -25,16 +25,35 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
     config = load_config()  # 加载配置文件
     start = (page - 1) * 20
 
+    # 排序方式
+    # 新到旧
+    if s == "dd":
+        sortby = "date_added"
+        order = "desc"
+    # 旧到新
+    elif s == "da":
+        sortby = "date_added"
+        order = "asc"
+    else:
+        sortby = None
+        order = None
+
     # 如果没有传入类型参数 (只有page和s)，获取全部漫画
     if not c and not t and not a:
         print(f"第一种")
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&order=desc")
+        if sortby:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&sortby={sortby}&order={order}")
+        else:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}")
     
     # 如果有传入类型参数 c=文本，获取相应分类的漫画
     elif c and c in config["categories"]:
         print(f"第二种: {c}")
         category_id = config["categories"][c]
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&order=desc")
+        if sortby:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}")
+        else:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}")
 
     # 有传入类型参数 t=文本，返回相应标签漫画
     elif t is not None:
@@ -44,14 +63,20 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
             t = t.replace("女:", "女性:")
         elif t.startswith("男:"):
             t = t.replace("男:", "男性:")
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={t}$&order=desc")
+        if sortby:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={t}$&sortby={sortby}&order={order}")
+        else:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={t}$")
 
     # 有传入类型参数 a=文本，返回相应作者漫画
     elif a is not None:
         print(f"第四种: {a}")
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={a}$&order=desc")
+        if sortby:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={a}$&sortby={sortby}&order={order}")
+        else:
+            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={a}$")
     else:
-        print(f"未命中:")
+        print(f"未知传入参数")
 
     if isinstance(lanraragi_response, dict):
         lanraragi_data = lanraragi_response
