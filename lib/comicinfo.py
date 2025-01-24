@@ -37,12 +37,25 @@ def get_comic_info(comic_id, user_id):
             return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
         return "1970-01-01T00:00:00Z"
 
-    categories = json.loads(comic_data.get("categories", '[]')) if isinstance(comic_data.get("categories"), str) else comic_data.get("categories", ["未知分类"])
-    tags = json.loads(comic_data.get("tags", '[]')) if isinstance(comic_data.get("tags"), str) else comic_data.get("tags", ["未知标签"])
+    categories = json.loads(comic_data.get("categories", '[]')) if isinstance(comic_data.get("categories"), str) else comic_data.get("categories", ["无分类"])
+    tags = json.loads(comic_data.get("tags", '[]')) if isinstance(comic_data.get("tags"), str) else comic_data.get("tags", ["无标签"])
     isLiked = db.is_like_comic(user_id, comic_id)  # 调用函数获取是否点赞
     isFavourite = db.is_favourite_comic(user_id, comic_id)  # 调用函数获取是否收藏
     characters = json.loads(user_info.get("characters", '[]')) if isinstance(user_info.get("characters"), str) else user_info.get("characters", [])
 
+    # 提取作者信息
+    # 优先从数据库获取
+    metadata = get_archive_metadata(comic_id)
+    author = comic_data.get("author")
+    # 否则从元数据提取
+    if not author:
+        tags = metadata.get("tags", "")
+        for tag in tags.split(","):
+            if tag.startswith("artist:"):
+                author = tag.split(":", 1)[1]
+                break
+            elif tag.startswith("艺术家:"):
+                author = tag.split(":", 1)[1]
 
     # 组装返回数据
     response_data = OrderedDict([
@@ -63,19 +76,18 @@ def get_comic_info(comic_id, user_id):
                     ("title", user_info.get("title")),
                     ("avatar", avatar_data),
                 ])),
-                #("title", comic_data.get("title", get_archive_metadata(comic_id)["title"])),
-                ("title", comic_data.get("title") or get_archive_metadata(comic_id)["title"]),
-                ("description", comic_data.get("description", "PicBridge - 哔咔桥")),
+                ("title", comic_data.get("title") or metadata.get("title")),
+                ("description", comic_data.get("description") or metadata.get("summary")),
                 ("thumb", OrderedDict([
                     ("fileServer", PROXY_URL),
                     ("path", thumbnail_path),
                     ("originalName", f"{comic_id}.jpg"),
                 ])),
-                ("author", comic_data.get("author", "未知")),
-                ("chineseTeam", comic_data.get("chineseTeam", "未知")),
+                ("author", author or "",),
+                ("chineseTeam", comic_data.get("chineseTeam", "")),
                 ("categories", categories),
                 ("tags", tags),
-                ("pagesCount", get_archive_metadata(comic_id)["pagecount"]),
+                ("pagesCount", metadata.get("pagecount")),
                 ("epsCount", comic_data.get("epsCount", 1)),
                 ("finished", bool(comic_data.get("finished", True))),
                 ("updated_at", format_timestamp(comic_data.get("updated_at", 0))),
