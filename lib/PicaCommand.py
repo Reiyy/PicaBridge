@@ -52,7 +52,7 @@ def run(comic_id, user_id, contentdata):
     else:
         response_text = f"{content}\n失败：{data}"
 
-    response_payload = json.dumps({"content": response_text})
+    response_payload = {"content": response_text}
 
     # 将返回文本作为评论发布
     return comment.post_comment(comic_id, user_id, response_payload)
