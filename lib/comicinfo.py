@@ -49,7 +49,7 @@ def get_comic_info(comic_id, user_id):
     author = comic_data.get("author")
     # 否则从元数据提取
     if not author:
-        tags = metadata.get("tags", "")
+        metadatatags = metadata.get("tags", "")
         for tag in tags.split(","):
             if tag.startswith("artist:"):
                 author = tag.split(":", 1)[1]
