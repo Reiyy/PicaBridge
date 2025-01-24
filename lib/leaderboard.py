@@ -1,7 +1,7 @@
 import requests, json, time
 from flask import jsonify
-import include.db as db
-import include.api as api
+import lib.db as db
+import lib.api as api
 
 
 def load_config():

@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from include.db import get_comic_info, get_user_info
-from include.api import get_archive_metadata  # 假设你有一个获取元数据的函数
+from lib.db import get_comic_info, get_user_info
+from lib.api import get_archive_metadata  # 假设你有一个获取元数据的函数
 from datetime import datetime, timezone
 
 def format_timestamp(ts):

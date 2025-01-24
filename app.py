@@ -1,6 +1,6 @@
 import json
 from flask import Flask, jsonify, request, redirect, make_response
-from include import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand
+from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand
 
 app = Flask(__name__)
 

@@ -1,5 +1,5 @@
 import pymysql
-from include.db import get_db_connection
+from lib.db import get_db_connection
 
 def initialize_database():
     # 获取数据库连接

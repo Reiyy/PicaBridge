@@ -1,7 +1,7 @@
 import requests, math, json, time
 from flask import jsonify, redirect
-import include.db as db
-import include.api as api
+import lib.db as db
+import lib.api as api
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

@@ -1,7 +1,7 @@
 import json, os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from datetime import datetime
-from include import api, db
+from lib import api, db
 
 # 加载匹配规则文件
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))

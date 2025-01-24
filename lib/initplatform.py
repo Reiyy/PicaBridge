@@ -1,6 +1,6 @@
 from flask import jsonify
 from datetime import datetime
-import include.db as db
+import lib.db as db
 
 # 打开app请求平台信息，广告信息和新版本信息
 def init(platform, user_id):

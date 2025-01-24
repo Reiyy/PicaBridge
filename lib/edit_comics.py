@@ -2,7 +2,7 @@ import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import json
 import pymysql
-from include import db
+from lib import db
 import requests
 import base64
 

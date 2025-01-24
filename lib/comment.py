@@ -1,6 +1,6 @@
 from flask import jsonify
 import pymysql
-import include.db as db
+import lib.db as db
 import json
 import math
 import string

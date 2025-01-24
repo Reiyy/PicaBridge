@@ -1,8 +1,8 @@
 import math, json, os, base64, random, string
 from flask import jsonify
 from datetime import datetime
-import include.api as api
-import include.db as db
+import lib.api as api
+import lib.db as db
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

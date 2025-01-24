@@ -1,7 +1,7 @@
 import json, random, string
 from flask import jsonify
 from datetime import datetime
-import include.db as db
+import lib.db as db
 
 
 # 生成24位随机用户id

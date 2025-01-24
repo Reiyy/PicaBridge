@@ -1,7 +1,7 @@
 import json
 import requests
 import pymysql
-from include import comment, db
+from lib import comment, db
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

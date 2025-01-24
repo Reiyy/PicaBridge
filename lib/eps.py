@@ -1,6 +1,6 @@
 from flask import jsonify
 from datetime import datetime, timezone
-from include.db import get_comic_info
+from lib.db import get_comic_info
 import json
 
 def format_timestamp(ts):

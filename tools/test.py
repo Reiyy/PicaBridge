@@ -1,6 +1,6 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from include import api, edit_comics
+from lib import api, edit_comics
 
 # def main():
     # name = "测试合集"
