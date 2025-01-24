@@ -1,6 +1,6 @@
 import json
 from flask import Flask, jsonify, request, redirect, make_response
-from include import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment
+from include import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand
 
 app = Flask(__name__)
 
@@ -228,7 +228,14 @@ def keywords_route():
 def new_comment(comic_id):
     user_id = request.headers.get('authorization')
     contentdata = request.get_json()
-    return comment.post_comment(comic_id, user_id, contentdata) 
+    content = contentdata["content"]
+    # 检查是否是命令
+    if content.startswith("PBCMD"):
+        # 调用命令处理函数
+        print(f"命令评论")
+        return PicaCommand.run(comic_id, user_id, contentdata)
+    # 普通评论处理
+    return comment.post_comment(comic_id, user_id, contentdata)
 
 # 监听获取主评论列表
 @app.route('/comics/<comic_id>/comments', methods=['GET'])

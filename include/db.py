@@ -459,3 +459,60 @@ def like_comment(is_like, user_id, comment_id):
 
     finally:
         connection.close()
+
+def initcomic(comic_id):
+    # 获取数据库连接
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            # 检查是否已经存在对应的 comic_id
+            cursor.execute("SELECT 1 FROM comic_info WHERE id = %s", (comic_id,))
+            exists = cursor.fetchone()
+
+            if exists:  # 如果记录已经存在
+                return False
+
+            # 插入默认值
+            default_values = {
+                "id": comic_id,
+                "creator": "7v5za3f62102s6t81wue5uyo",
+                "title": "未知",
+                "description": "PicBridge - 哔咔桥",
+                "author": "未知",
+                "chineseTeam": "未知",
+                "categories": "[]",
+                "tags": "[]",
+                "pagesCount": 1,
+                "epsCount": 1,
+                "finished": 1,
+                "updated_at": int(time.time()),
+                "created_at": int(time.time()),
+                "allowDownload": 0,
+                "allowComment": 1,
+                "viewsCount": 0,
+                "likesCount": 0,
+                "commentsCount": 0,
+                "viewed_at": "[]"
+            }
+
+            # 插入新记录
+            cursor.execute("""
+                INSERT INTO comic_info (id, creator, title, description, author, chineseTeam, 
+                categories, tags, pagesCount, epsCount, finished, updated_at, created_at, 
+                allowDownload, allowComment, viewsCount, likesCount, commentsCount, viewed_at)
+                VALUES (%(comic_id)s, %(creator)s, %(title)s, %(description)s, %(author)s, %(chineseTeam)s, 
+                %(categories)s, %(tags)s, %(pagesCount)s, %(epsCount)s, %(finished)s, %(updated_at)s, 
+                %(created_at)s, %(allowDownload)s, %(allowComment)s, %(viewsCount)s, %(likesCount)s, 
+                %(commentsCount)s, %(viewed_at)s)
+            """, default_values)
+
+            connection.commit()
+
+        return True
+
+    except pymysql.MySQLError as e:
+        print(f"数据库操作失败: {str(e)}")
+        return False
+
+    finally:
+        connection.close()
