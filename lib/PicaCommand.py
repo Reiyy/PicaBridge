@@ -28,6 +28,7 @@ def run(comic_id, user_id, contentdata):
     # 主命令别名映射
     alias_map = {
         "分类": "Category",
+        "初始化漫画": "initComic",
     }
 
     # 获取实际的主命令名称

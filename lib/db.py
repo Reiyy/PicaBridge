@@ -476,10 +476,10 @@ def initcomic(comic_id):
             default_values = {
                 "id": comic_id,
                 "creator": "7v5za3f62102s6t81wue5uyo",
-                "title": "未知",
+                "title": "",
                 "description": "PicBridge - 哔咔桥",
-                "author": "未知",
-                "chineseTeam": "未知",
+                "author": "",
+                "chineseTeam": "",
                 "categories": "[]",
                 "tags": "[]",
                 "pagesCount": 1,
