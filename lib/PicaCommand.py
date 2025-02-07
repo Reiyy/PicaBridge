@@ -16,14 +16,10 @@ def run(comic_id, user_id, contentdata):
 
     # 提取命令内容
     content = contentdata.get("content", "")
-
-    # 解析命令和参数
-    parts = content.split(" ", 2)  # 分割命令字符串为最多三个部分
-    if len(parts) < 2:
-        return {"status": False, "message": "命令格式错误"}
-
-    main_command = parts[1]  # 获取主命令名称
-    command_args = parts[2] if len(parts) > 2 else ""  # 获取命令参数部分
+    picacommand = content[1:].strip() # 去除前缀并去除前后多余空格
+    parts = picacommand.split(" ", 1) # 分割主命令和命令参数
+    main_command = parts[0]  # 获取主命令
+    command_args = parts[1] if len(parts) > 1 else ""  # 获取命令参数
 
     # 主命令别名映射
     alias_map = {

@@ -230,7 +230,7 @@ def new_comment(comic_id):
     contentdata = request.get_json()
     content = contentdata["content"]
     # 检查是否是命令
-    if content.startswith("PBCMD"):
+    if content.startswith("/"):
         # 调用命令处理函数
         print(f"命令评论")
         return PicaCommand.run(comic_id, user_id, contentdata)
