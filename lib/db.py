@@ -500,7 +500,7 @@ def initcomic(comic_id):
                 INSERT INTO comic_info (id, creator, title, description, author, chineseTeam, 
                 categories, tags, pagesCount, epsCount, finished, updated_at, created_at, 
                 allowDownload, allowComment, viewsCount, likesCount, commentsCount, viewed_at)
-                VALUES (%(comic_id)s, %(creator)s, %(title)s, %(description)s, %(author)s, %(chineseTeam)s, 
+                VALUES (%(id)s, %(creator)s, %(title)s, %(description)s, %(author)s, %(chineseTeam)s, 
                 %(categories)s, %(tags)s, %(pagesCount)s, %(epsCount)s, %(finished)s, %(updated_at)s, 
                 %(created_at)s, %(allowDownload)s, %(allowComment)s, %(viewsCount)s, %(likesCount)s, 
                 %(commentsCount)s, %(viewed_at)s)
