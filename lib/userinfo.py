@@ -100,43 +100,32 @@ def get_favourite_comics(user_id, page):
     print(f"用户ID({user_id})")
     favourite = json.loads(user_info.get("favourite", "[]")) if user_info.get("favourite") else []
     comictotal = len(favourite)
-    print("收藏的漫画ID数组:", favourite)
-    
-    lanraragi_data = {
-        "data": []  # 初始化包含数据的字典
-    }
-    
-    # 遍历所有漫画ID并获取对应的元数据
-    for comic_id in favourite:
-        comic_metadata = api.get_archive_metadata(comic_id)
-        print(f"获取到的漫画元数据({comic_id}):", comic_metadata)
-        if comic_metadata:
-            lanraragi_data["data"].append(comic_metadata)
-    
-    comics_data = []
-    for comic in lanraragi_data["data"]:
-        comic_id = comic["arcid"]
+    print(f"收藏的漫画ID数组长度: {comictotal}, 收藏的漫画ID数组: {favourite}")
 
-        thumbnail_path = f"thumbnail/{comic_id}"
+    comics_data = []
+    
+    # 遍历所有漫画ID从数据库获取对应的元数据
+    for comic_id in favourite:
         comic_data = db.get_comic_info(comic_id) or {}
+        print(f"从数据库获取漫画元数据({comic_id}):", comic_data)
 
         # 组装漫画信息数据
         comic_info = {
             "_id": comic_id,
-            "title": comic_data.get("title", comic.get("title", "未知标题")),
-            "author": comic_data.get("author", "未知作者"),
-            "totalViews": comic_data.get("viewsCount", 0),
+            "title": comic_data.get("title"),
+            "author": comic_data.get("author"),
+            "totalViews": comic_data.get("viewsCount"),
             "totalLikes": comic_data.get("likesCount"),
-            "pagesCount": comic.get("pagecount"),
-            "epsCount": comic_data.get("epsCount", 1),
-            "finished": bool(comic_data.get("finished", True)),
+            "pagesCount": comic_data.get("pagesCount"),
+            "epsCount": comic_data.get("epsCount"),
+            "finished": bool(comic_data.get("finished")),
             "categories": json.loads(comic_data.get("categories", '[]')) if isinstance(comic_data.get("categories"), str) else comic_data.get("categories", ["未知分类"]),
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
-                "path": thumbnail_path,
+                "path": f"thumbnail/{comic_id}",
                 "fileServer": PROXY_URL
             },
-            "likesCount": comic_data.get("likesCount", 0)
+            "likesCount": comic_data.get("likesCount")
         }
         comics_data.append(comic_info)
 
