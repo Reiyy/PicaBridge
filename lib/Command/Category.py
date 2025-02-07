@@ -14,7 +14,10 @@ def run(comic_id, user_id, command_args):
         return {"status": False, "data": "缺少子命令"}
 
     # 提取子命令标识
-    subcommand = command_args[0]
+    subcommand_parts = command_args.split(" ", 1)
+    subcommand = subcommand_parts[0]
+    subcommand_args = subcommand_parts[1] if len(subcommand_parts) > 1 else ""
+    
     # 子命令别名映射
     subcommand_map = {
         "auto": AutoCategory,

@@ -16,7 +16,10 @@ def run(comic_id, user_id, command_args):
         return {"status": False, "data": "缺少子命令"}
 
     # 提取子命令标识
-    subcommand = command_args[0]
+    subcommand_parts = command_args.split(" ", 1)
+    subcommand = subcommand_parts[0]
+    subcommand_args = subcommand_parts[1] if len(subcommand_parts) > 1 else ""
+
     # 子命令别名映射
     subcommand_map = {
         "auto": AutoinitComic,
@@ -27,8 +30,7 @@ def run(comic_id, user_id, command_args):
     subcommand_function = subcommand_map.get(subcommand)
     if not subcommand_function:
         return {"status": False, "data": f"未知子命令：{subcommand}"}
-
-    subcommand_args = command_args[1:]
+    
     return subcommand_function(comic_id, user_id, subcommand_args)
 
 # 自动初始化漫画
@@ -40,8 +42,8 @@ def AutoinitComic(comic_id, user_id, subcommand_args):
     # 判断subcommand_args的第一个元素
     if not subcommand_args:
         return {"status": False, "data": "缺少子命令参数"}
-
-    subcommand = subcommand_args[0]
+    
+    subcommand = subcommand_args
 
     if subcommand == "all":
         return AutoinitComic_all()
