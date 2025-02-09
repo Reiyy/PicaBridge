@@ -264,6 +264,15 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         categories = list(set(categories))
         categories = json.dumps(categories, ensure_ascii=False) 
         
+        # 获取 created_at 和 updated_at（通过 tags 中的 date_added:）
+        created_at = updated_at = None
+        for tag in tags.split(","):
+            if tag.startswith("date_added:"):
+                timestamp = tag.split(":", 1)[1]
+                created_at = int(timestamp)
+                updated_at = created_at
+                break
+
         # 处理 tags，去除 source:、date_added: 等项，并修改性别相关标签
         cleaned_tags = []
         for tag in tags.split(","):
@@ -278,15 +287,6 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
 
         # 将清理后的标签转换为 JSON 数组形式
         tags = json.dumps(cleaned_tags, ensure_ascii=False)
-
-        # 获取 created_at 和 updated_at（通过 tags 中的 date_added:）
-        created_at = updated_at = None
-        for tag in tags.split(","):
-            if tag.startswith("date_added:"):
-                timestamp = tag.split(":", 1)[1]
-                created_at = int(timestamp)
-                updated_at = created_at
-                break
 
         # 更新数据库
         try:
