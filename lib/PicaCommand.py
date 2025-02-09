@@ -52,11 +52,11 @@ def run(comic_id, user_id, contentdata):
 
     response_payload = {"content": response_text}
 
-    # 判断返回参数中是否有 "comment_id"
-    if "comment_id" in result:
-        comment_id = result["comment_id"]  # 获取 comment_id
-        # 将返回文本作为子评论发布
-        comment.post_child_comment(comment_id, user_id, response_payload)
+    # # 判断返回参数中是否有 "comment_id"
+    # if "comment_id" in result:
+    #     comment_id = result.get("comment_id")  # 获取 comment_id
+    #     # 将返回文本作为子评论发布
+    #     comment.post_child_comment(comment_id, user_id, response_payload)
 
     # 将返回文本作为主评论发布
     return comment.post_comment(comic_id, user_id, response_payload)

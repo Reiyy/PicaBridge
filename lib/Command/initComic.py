@@ -166,8 +166,8 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
     if comic_id != "5822a6e3ad7ede654696e482":
         return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
     
-    #初始化评论ID
-    comment_id = 0
+    # #初始化评论ID
+    # comment_id = 0
     # 初始化漫画数据列表
     comics_to_process = []
     print(subcommand_args)
@@ -182,8 +182,8 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         except requests.RequestException as e:
             return {"status": False, "data": f"API请求失败: {str(e)}"}
         
-        response_text = {"content": f"完全初始化漫画操作执行成功！\n选择全部范围可能需要较长时间处理，\n执行完成后结果会发送到该条评论的回复中。\n请稍后来查看。"}
-        comment_id = comment.post_comment(comic_id, user_id, response_text)
+        # response_text = {"content": f"完全初始化漫画操作执行成功！\n选择全部范围可能需要较长时间处理，\n执行完成后结果会发送到该条评论的回复中。\n请稍后来查看。"}
+        # comment_id = comment.post_comment(comic_id, user_id, response_text)
 
     elif re.match(r"^\d+$", subcommand_args) or re.match(r"^\d+,\d+$", subcommand_args):
         # 如果是指定页数
@@ -308,7 +308,9 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         finally:
             connection.close()
 
-    if comment_id == 0:
-        return {"status": True, "data": "漫画信息初始化和元数据更新成功"}
-    else:
-        return {"status": True, "data": "漫画信息初始化和元数据更新成功", "comment_id": comment_id}
+    # if comment_id == 0:
+    #     return {"status": True, "data": "漫画信息初始化和元数据更新成功"}
+    # else:
+    #     return {"status": True, "data": "漫画信息初始化和元数据更新成功", "comment_id": comment_id}
+
+    return {"status": True, "data": "漫画信息初始化和元数据更新成功"}
