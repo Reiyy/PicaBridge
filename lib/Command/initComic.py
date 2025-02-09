@@ -294,9 +294,9 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
             with connection.cursor() as cursor:
                 cursor.execute("""
                     UPDATE comic_info SET title = %s, pagesCount = %s, author = %s,
-                    categories = %s, tags = %s, created_at = %s, updated_at = %s
+                    categories = %s, tags = %s, created_at = %s, updated_at = %s, description = %s
                     WHERE id = %s
-                """, (title, pagecount, author, str(categories), tags, created_at, updated_at, arcid))
+                """, (title, pagecount, author, categories, tags, created_at, updated_at, summary, arcid))
                 connection.commit()
         except pymysql.MySQLError as e:
             return {"status": False, "data": f"数据库更新失败: {str(e)}"}
