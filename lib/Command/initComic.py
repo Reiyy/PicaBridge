@@ -234,6 +234,7 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         title = comic.get("title")
         pagecount = comic.get("pagecount")
         tags = comic.get("tags", "")
+        summary = comic.get("summary") or "PicaBridge - 哔咔桥"
 
         # 获取作者
         author = ""
