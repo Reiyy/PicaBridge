@@ -162,10 +162,6 @@ def AutoinitComic_setpage(subcommand_args):
         return {"status": False, "data": f"运行完成，但有部分项失败！\n成功：{success_count}，失败：{error_count}"}
     
 def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
-    # 判断 comic_id 是否为指定值
-    if comic_id != "5822a6e3ad7ede654696e482":
-        return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
-    
     # #初始化评论ID
     # comment_id = 0
     # 初始化漫画数据列表
@@ -173,6 +169,9 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
     print(subcommand_args)
     # 判断 subcommand_args 的形式
     if subcommand_args == "all":
+        # 判断 comic_id 是否为指定值
+        if comic_id != "5822a6e3ad7ede654696e482":
+            return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
         # 获取所有漫画数据
         try:
             response = requests.get(f"{LANRARAGI_URL}/api/archives")
@@ -186,6 +185,9 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         # comment_id = comment.post_comment(comic_id, user_id, response_text)
 
     elif re.match(r"^\d+$", subcommand_args) or re.match(r"^\d+,\d+$", subcommand_args):
+        # 判断 comic_id 是否为指定值
+        if comic_id != "5822a6e3ad7ede654696e482":
+            return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
         # 如果是指定页数
         try:
             if ',' in subcommand_args:
@@ -206,9 +208,22 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
             return {"status": False, "data": f"API请求失败: {str(e)}"}
 
     elif len(subcommand_args) > 7:
+        # 判断 comic_id 是否为指定值
+        if comic_id != "5822a6e3ad7ede654696e482":
+            return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
         # 如果是字母加数字混合形式，获取单本漫画的元数据
         try:
             response = requests.get(f"{LANRARAGI_URL}/api/archives/{subcommand_args}/metadata")
+            response.raise_for_status()
+            comics_data = response.json()
+            comics_to_process.append(comics_data)
+        except requests.RequestException as e:
+            return {"status": False, "data": f"API请求失败: {str(e)}"}
+
+    elif not subcommand_args:
+        # 如果没有subcommand_args，使用 comic_id
+        try:
+            response = requests.get(f"{LANRARAGI_URL}/api/archives/{comic_id}/metadata")
             response.raise_for_status()
             comics_data = response.json()
             comics_to_process.append(comics_data)
