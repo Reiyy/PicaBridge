@@ -257,6 +257,8 @@ def post_comment(comic_id, user_id, contentdata):
     finally:
         connection.close()
 
+    return comment_id
+
 
 # 发布子评论
 def post_child_comment(parent_comment_id, user_id, childcontentdata):
