@@ -56,7 +56,7 @@ def run(comic_id, user_id, contentdata):
     if "comment_id" in result:
         comment_id = result["comment_id"]  # 获取 comment_id
         # 将返回文本作为子评论发布
-        comment.post_child_comment(comment_id, user_id, result)
+        comment.post_child_comment(comment_id, user_id, response_payload)
 
     # 将返回文本作为主评论发布
     return comment.post_comment(comic_id, user_id, response_payload)
