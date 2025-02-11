@@ -8,7 +8,6 @@ def load_config():
 config = load_config()
 LANRARAGI_URL = config.get('lanraragi_api')
 
-
 def run(comic_id, user_id, contentdata):
     # 判断权限
     if user_id != "7v5za3f62102s6t81wue5uyo":
@@ -27,6 +26,8 @@ def run(comic_id, user_id, contentdata):
         "categ": "Category",
         "初始化漫画": "initComic",
         "initcmc": "initComic",
+        "编辑简介": "EditSummary",
+        "editdesc": "EditSummary",
     }
 
     # 获取实际的主命令名称
