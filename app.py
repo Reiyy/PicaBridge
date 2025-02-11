@@ -282,11 +282,10 @@ def main():
         print("初始化数据库完成，进入程序...")
     else:
         print("PicaBridge哔咔桥，开始运行...")
-    
-    # 启动 Flask
-    app.run(host='0.0.0.0', port=6888)
 
 if __name__ == "__main__":
     main()
     # debug模式
-    app.run(debug=True)
+    app.run(debug=False)
+    # 启动 Flask
+    app.run(host='0.0.0.0', port=6888)
