@@ -33,5 +33,13 @@
         "AI生成": [1,"其他:AI生成"],
         "萝莉": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
         "百合": [1,"女性:百合"]
+    },
+    "LaunchImage": {
+        "GeneralDay": {
+            "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"]
+        },
+        "SpeciallDay": {
+            "烧烤节": ["0215","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg"]
+        }
     }
 }

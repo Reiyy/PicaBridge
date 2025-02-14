@@ -1,6 +1,6 @@
 import json
 from flask import Flask, jsonify, request, redirect, make_response
-from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand
+from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand, LaunchImage
 
 app = Flask(__name__)
 
@@ -13,6 +13,11 @@ def load_config():
 def save_config(config):
     with open('config.json', 'w') as file:
         json.dump(config, file, indent=4)
+
+# 获取动态启动图
+@app.route('/GetLaunchImage', methods=['GET'])
+def get_launch_image():
+    return LaunchImage.Get()
 
 # 重定向
 # 公告图片重定向
