@@ -8,7 +8,14 @@
         "host": "192.168.7.205",
         "user": "mypic",
         "password": "IIvYmIwQ5q230A",
-        "name": "mypic"
+        "name": "mypic",
+        "pool": {
+            "maxconnections": 9,
+            "mincached": 3,
+            "blocking": true,
+            "ping": 1,
+            "reset": true
+        }
     },
     "categories": {
         "长篇": "SET_0000000000",

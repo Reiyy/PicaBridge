@@ -1,24 +1,47 @@
-import pymysql, json, time
+import pymysql, json, time, threading
+from dbutils.pooled_db import PooledDB
 
 # 读取配置文件
 def load_config():
     with open('config.json', 'r') as file:
         return json.load(file)
 
-# 获取数据库连接信息
+
+class DBPool:
+    _lock = threading.Lock()
+    _pool = None
+
+    @classmethod
+    def get_pool(cls):
+        if cls._pool is None:
+            with cls._lock:
+                if cls._pool is None:
+                    config = load_config()
+                    db_config = config['db']
+                    
+                    # 合并默认配置和用户配置
+                    pool_config = {
+                        'maxconnections': 5,
+                        'mincached': 1,
+                        'blocking': False,
+                        'ping': 0
+                    }
+                    pool_config.update(db_config.get('pool', {}))
+
+                    cls._pool = PooledDB(
+                        creator=pymysql,
+                        host=db_config['host'],
+                        user=db_config['user'],
+                        password=db_config['password'],
+                        database=db_config['name'],
+                        charset='utf8mb4',
+                        cursorclass=pymysql.cursors.DictCursor,
+                        **pool_config  # 应用连接池配置
+                    )
+        return cls._pool
+
 def get_db_connection():
-    config = load_config()
-    db_config = config['db']
-    
-    connection = pymysql.connect(
-        host=db_config['host'],
-        user=db_config['user'],
-        password=db_config['password'],
-        database=db_config['name'],
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-    return connection
+    return DBPool.get_pool().connection()
 
 # 获取数据库用户信息
 def get_user_info(user_id):
