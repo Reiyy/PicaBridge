@@ -1,6 +1,6 @@
 import json
 from flask import Flask, jsonify, request, redirect, make_response
-from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand, LaunchImage
+from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand, LaunchImage, ModeSwitch
 
 app = Flask(__name__)
 
@@ -270,6 +270,13 @@ def like_comment_route(comment_id):
     if not user_id:
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
     return comment.like_comment(user_id, comment_id)
+
+# 监听模式切换
+@app.route('/modeswitch', methods=['POST'])
+def modeswitch_route():
+    user_id = request.headers.get('authorization')
+    mode = request.args.get('mode')
+    return ModeSwitch.switch(user_id, mode)
 
 def main():
     print("当前版本 Beta 0.7.2-241028")
