@@ -1,25 +1,57 @@
-import os, sys
+import os, sys, requests, base64
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lib import api, edit_comics
 
-# def main():
+api_key = "kamimamita"
+lanraragiurl = "http://192.168.7.205:7277"
+# lanraragi验证头
+def get_auth_header():
+    encoded_key = base64.b64encode(api_key.encode()).decode()
+    return {
+        'Authorization': f'Bearer {encoded_key}',
+        'Accept': 'application/json'
+    }
+
+# 创建新的合集
+def new_tankoubon(name):
+
+    lanraragi_api = lanraragiurl
+    url = f"{lanraragi_api}/api/tankoubons"
+    headers = get_auth_header()
+    params = {'name': name}
+    
+    try:
+        response = requests.put(url, headers=headers, params=params)
+        return response.json()  # 返回 API 的 JSON 响应
+    except requests.RequestException as e:
+        return {"error": str(e)}
+
+# 将 档案 添加到指定合集
+def add_archive_tankoubon(id, archive):
+    lanraragi_api = lanraragiurl
+    url = f"{lanraragi_api}/api/tankoubons/{id}/{archive}"
+    headers = get_auth_header()
+    
+    try:
+        response = requests.put(url, headers=headers)
+        return response.json()  # 返回 API 的 JSON 响应
+    except requests.RequestException as e:
+        return {"error": str(e)}
+
+
+def test__tankoubon():
     # name = "测试合集"
     # print(f"合集名称: {name}")
-    # response = api.new_tankoubon(name)
+    # response = new_tankoubon(name)
     # print("返回数据:")
     # print(response)
 
-    # name = "测试合集"
-    # print(f"合集名称: {name}")
-    # response = api.new_tankoubon(name)
-    # print("返回数据:")
-    # print(response)
 
-    # id = "TANK_1728657266"
-    # archive_id = "de02df748deb2ae2e1876e68506c456f4b2042ee"
-    # response = api.add_archive_tankoubon(id, archive_id)
-    # print("返回数据:")
-    # print(response)
+    id = "TANK_1739907957"
+    archive_id = "5e9313c7b07291d49d9d98c29888b160d724f1c7"
+    response = add_archive_tankoubon(id, archive_id)
+    print("返回数据:")
+    print(response)
 
 
 
@@ -43,10 +75,8 @@ def test_single_comic():
 
     print("返回信息:", result)
 
-if __name__ == "__main__":
-    test_single_comic()
 
 
 if __name__ == '__main__':
     # main()
-    test_single_comic()
+    test__tankoubon()
