@@ -125,7 +125,7 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
         comics_data.append(comic_info)
 
     # 处理分页
-    total = lanraragi_data["recordsTotal"]
+    total = lanraragi_data["recordsFiltered"]
     limit = 20
     pages = math.ceil(total / limit)
 
