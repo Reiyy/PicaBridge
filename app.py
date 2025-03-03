@@ -99,6 +99,13 @@ def handle_comics_route():
 
     return comiclist.get_comics_data(user_id, page, s, c, t, a)
 
+# 监听获取随机漫画请求
+@app.route('/comics/random', methods=['GET'])
+def handle_comics_route():
+    user_id = request.headers.get('authorization')
+
+    return comiclist.get_random_comics(user_id)
+
 # 监听公告消息请求
 @app.route('/announcements', methods=['GET'])
 def announcements_route():

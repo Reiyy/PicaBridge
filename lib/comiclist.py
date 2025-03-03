@@ -234,3 +234,77 @@ def leaderboard(tt):
     }
 
     return jsonify(response_data), 200
+
+
+# 获取随机漫画数据
+def get_random_comics(user_id):
+    config = load_config()  # 加载配置文件
+
+    # 如果用户模式为SFW，只返回SFW漫画
+    if ModeSwitch.GetMode(user_id) == "sfw":
+        print(f"SFW模式")
+        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search/random?filter=无H$&count=20")
+    else:
+        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search/random?count=20")
+
+    if isinstance(lanraragi_response, dict):
+        lanraragi_data = lanraragi_response
+    else:
+        lanraragi_data = lanraragi_response.json()
+    
+    comics_data = []
+    for comic in lanraragi_data["data"]:
+        comic_id = comic["arcid"]
+
+        thumbnail_path = f"thumbnail/{comic_id}"
+        comic_data = db.get_comic_info(comic_id) or {}
+
+        # 提取作者信息
+        # 优先从数据库获取
+        author = comic_data.get("author")
+        # 否则从元数据提取
+        if not author:
+            tags = comic.get("tags", "")
+            for tag in tags.split(","):
+                if tag.startswith("artist:"):
+                    author = tag.split(":", 1)[1]
+                    break
+                elif tag.startswith("艺术家:"):
+                    author = tag.split(":", 1)[1]
+
+        comic_info = {
+            "_id": comic_id,
+            #"title": comic_data.get("title", comic.get("title")),
+            "title": comic_data.get("title") or comic.get("title"),
+            "author": author or "",
+            "totalViews": comic_data.get("viewsCount", 0),
+            "totalLikes": comic_data.get("likesCount"),
+            "pagesCount": comic.get("pagecount"),
+            "epsCount": comic_data.get("epsCount", 1),
+            "finished": bool(comic_data.get("finished", True)),
+            "categories": json.loads(comic_data.get("categories", '[]')) if isinstance(comic_data.get("categories"), str) else comic_data.get("categories", ["未知分类"]),
+            "thumb": {
+                "originalName": f"{comic_id}.jpg",
+                "path": thumbnail_path,
+                "fileServer": PROXY_URL
+            },
+            "id": comic_id,
+            "likesCount": comic_data.get("likesCount", 0)
+        }
+        comics_data.append(comic_info)
+
+    # 处理分页
+    total = lanraragi_data["recordsTotal"]
+    limit = 20
+    pages = math.ceil(total / limit)
+
+    # 组装返回数据
+    response_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+            "comics": comics_data,
+            }
+        }
+
+    return jsonify(response_data), 200
