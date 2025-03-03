@@ -90,13 +90,14 @@ def handle_thumbnail_route(arcid):
 # 监听获取漫画列表请求
 @app.route('/comics', methods=['GET'])
 def handle_comics_route():
+    user_id = request.headers.get('authorization')
     page = request.args.get('page', default=1, type=int)
     s = request.args.get('s', default=None, type=str)  # 排序标记
     c = request.args.get('c', default=None, type=str)  # 获取分类
     t = request.args.get('t', default=None, type=str)  # 获取标签
     a = request.args.get('a', default=None, type=str)  # 获取作者
 
-    return comiclist.get_comics_data(page, s, c, t, a)
+    return comiclist.get_comics_data(user_id, page, s, c, t, a)
 
 # 监听公告消息请求
 @app.route('/announcements', methods=['GET'])
@@ -111,7 +112,8 @@ def banners_route():
 # 监听获取分类请求
 @app.route('/categories', methods=['GET'])
 def categories_route():
-    return categories.get_categories()
+    user_id = request.headers.get('authorization')
+    return categories.get_categories(user_id)
 
 # 监听获取漫画信息请求
 @app.route('/comics/<comic_id>', methods=['GET'])
@@ -226,7 +228,8 @@ def handle_advanced_search_route():
 # 监听获取常用标签
 @app.route('/keywords', methods=['GET'])
 def keywords_route():
-    return keywords.get_keywords()
+    user_id = request.headers.get('authorization')
+    return keywords.get_keywords(user_id)
 
 # 监听发布主评论
 @app.route('/comics/<comic_id>/comments', methods=['POST'])

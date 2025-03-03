@@ -1,5 +1,6 @@
 import json
 from flask import jsonify
+import lib.ModeSwitch as ModeSwitch
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -9,7 +10,7 @@ config = load_config()
 PROXY_URL = config.get('PROXY_URL')
 
 # 获取分类，暂时为硬编码
-def get_categories():
+def get_categories(user_id):
     categories_data = {
         "code": 200,
         "message": "success",
@@ -99,4 +100,18 @@ def get_categories():
         }
     }
     
-    return jsonify(categories_data), 200
+    sfw_categories_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+            "categories": [
+            ]
+        }
+    }
+
+    # 如果用户模式为SFW，只返回SFW分类
+    if ModeSwitch.GetMode(user_id) == "sfw":
+        return jsonify(sfw_categories_data), 200
+    else:
+        return jsonify(categories_data), 200
+

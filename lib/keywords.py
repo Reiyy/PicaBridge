@@ -1,5 +1,6 @@
 import json
 from flask import jsonify
+import lib.ModeSwitch as ModeSwitch
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -9,8 +10,8 @@ config = load_config()
 PROXY_URL = config.get('PROXY_URL')
 
 # 获取常用标签
-def get_keywords():
-    categories_data = {
+def get_keywords(user_id):
+    keywords_data = {
         "code": 200,
         "message": "success",
         "data": {
@@ -23,5 +24,20 @@ def get_keywords():
             ]
         }
     }
+
+    sfw_keywords_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+            "keywords": [
+            "无H"
+            ]
+        }
+    }
     
-    return jsonify(categories_data), 200
+    # 如果用户模式为SFW，只返回SFW分类
+    if ModeSwitch.GetMode(user_id) == "sfw":
+        return jsonify(sfw_keywords_data), 200
+    else:
+        return jsonify(keywords_data), 200
+

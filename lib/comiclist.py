@@ -2,6 +2,8 @@ import requests, math, json, time
 from flask import jsonify, redirect
 import lib.db as db
 import lib.api as api
+import lib.ModeSwitch as ModeSwitch
+
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -21,7 +23,7 @@ def redirect_thumbnail(arcid):
         return jsonify({"code": 500, "message": "Internal Server Error", "detail": str(e)}), 500
 
 # 获取漫画数据
-def get_comics_data(page, s=None, c=None, t=None, a=None):
+def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
     config = load_config()  # 加载配置文件
     start = (page - 1) * 20
 
@@ -38,8 +40,13 @@ def get_comics_data(page, s=None, c=None, t=None, a=None):
         sortby = None
         order = None
 
+    # 如果用户模式为SFW，只返回SFW漫画
+    if ModeSwitch.GetMode(user_id) == "sfw":
+        print(f"SFW模式")
+        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?filter=无H$&start={start}&sortby={sortby}&order={order}")
+
     # 如果没有传入类型参数 (只有page和s)，获取全部漫画
-    if not c and not t and not a:
+    elif not c and not t and not a:
         print(f"第一种")
         if sortby:
             lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&sortby={sortby}&order={order}")
