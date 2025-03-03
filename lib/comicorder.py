@@ -44,7 +44,8 @@ def get_pages(comic_id, page):
         doc_id = f"{comic_id[:20]}{i:04d}"  # 根据 comic_id 和页数生成 ID
         media = {
             "originalName": original_name,
-            "path": "bzpic" + page_url[1:],  # 去掉开头的 "." 并添加前缀
+            "path": "bzpic" + page_url,
+            #"path": "bzpic" + page_url[1:],  # 去掉开头的 "." 并添加前缀
             "fileServer": PROXY_URL
         }
         docs.append({
