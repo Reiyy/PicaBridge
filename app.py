@@ -101,7 +101,7 @@ def handle_comics_route():
 
 # 监听获取随机漫画请求
 @app.route('/comics/random', methods=['GET'])
-def handle_comics_route():
+def handle_random_comics_route():
     user_id = request.headers.get('authorization')
 
     return comiclist.get_random_comics(user_id)
