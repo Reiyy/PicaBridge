@@ -64,17 +64,17 @@ def Get(user_name):
     else:
         # 返回NSFW启动图
         global unused_nsfw_indices
-        if not general_images_list:
+        if not nsfw_images_list:
             return jsonify({"error": "No general launch images configured"}), 500
         
         if not unused_nsfw_indices:
             # 新一轮：生成新的随机打乱的索引列表
-            unused_nsfw_indices = list(range(len(general_images_list)))
+            unused_nsfw_indices = list(range(len(nsfw_images_list)))
             random.shuffle(unused_nsfw_indices)
         
         # 按顺序取出一个启动图
         index = unused_nsfw_indices.pop()
-        image_url, blur_image_url = general_images_list[index]
+        image_url, blur_image_url = nsfw_images_list[index]
         
         # 返回数据
         return jsonify({
