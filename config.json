@@ -43,10 +43,12 @@
     },
     "LaunchImage": {
         "GeneralDay": {
-            "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"]
+            "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"],
+            "幻丝": ["https://cdn.reiyy.com/img/2025/03/03/4ca579d5a93ca.jpg","https://cdn.reiyy.com/img/2025/03/03/50f4c1e57d89a.jpg"]
         },
         "NSFW": {
-            "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"]
+            "n1": ["https://cdn.reiyy.com/img/2025/03/03/6b83f9e75762d.jpg","https://cdn.reiyy.com/img/2025/03/03/f2d3700ab7a6b.jpg"],
+            "n2": ["https://cdn.reiyy.com/img/2025/03/03/924f1a78c6e84.jpg","https://cdn.reiyy.com/img/2025/03/03/e78666e4f4be7.jpg"]
         },
         "SpeciallDay": {
             "烧烤节": ["0215","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg"]
