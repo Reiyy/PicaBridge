@@ -297,7 +297,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # debug模式
-    app.run(debug=False)
     # 启动 Flask
-    app.run(host='0.0.0.0', port=6888)
+    app.run(debug=True, host='0.0.0.0', port=6888)
