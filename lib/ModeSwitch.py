@@ -36,3 +36,19 @@ def switch(user_id, mode):
     finally:
         if connection:
             connection.close()
+
+# 查询用户当前模式
+def GetMode(user_id):
+    connection = db.get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT mode FROM users WHERE id = %s"
+            cursor.execute(sql, (user_id,))
+            result = cursor.fetchone()
+            
+            if result:
+                return result['mode']
+            else:
+                return None
+    finally:
+        connection.close()
