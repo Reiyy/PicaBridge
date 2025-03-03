@@ -17,7 +17,8 @@ def save_config(config):
 # 获取动态启动图
 @app.route('/GetLaunchImage', methods=['GET'])
 def get_launch_image():
-    return LaunchImage.Get()
+    user_name = request.args.get('user', default="")
+    return LaunchImage.Get(user_name)
 
 # 重定向
 # 公告图片重定向

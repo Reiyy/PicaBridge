@@ -539,3 +539,22 @@ def initcomic(comic_id):
 
     finally:
         connection.close()
+
+
+# 通过用户名获取用户id
+def get_userid(user_name):
+    # 获取数据库连接
+    connection = get_db_connection()
+    
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT id FROM users WHERE email = %s"
+            cursor.execute(sql, (user_name,))
+            result = cursor.fetchone()
+            
+            if result:
+                return result['id']
+            else:
+                return None
+    finally:
+        connection.close()
