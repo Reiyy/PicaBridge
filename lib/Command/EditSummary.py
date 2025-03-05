@@ -1,5 +1,6 @@
 import json, requests, base64
 from lib.Command import initComic
+from lib import db
 
 # 加载配置文件
 def load_config():
@@ -11,6 +12,9 @@ LANRARAGI_URL = config.get('lanraragi_api')
 
 api_key = load_config()["lanraragi_api_key"]
 
+# 允许调用该命令的用户组
+allow_groups = ["official", "knight"]
+
 # lanraragi验证头
 def get_auth_header():
     encoded_key = base64.b64encode(api_key.encode()).decode()
@@ -20,6 +24,12 @@ def get_auth_header():
     }
 
 def run(comic_id, user_id, command_args):
+    # 检测用户权限
+    user_groups = db.get_user_characters(user_id)
+    for group in user_groups:
+        if group not in allow_groups:
+            return {"status": False, "data": "你当前无权执行此命令！"}
+
     # 获取当前漫画元数据
     get_url = f"{LANRARAGI_URL}/api/archives/{comic_id}/metadata"
     headers = get_auth_header()

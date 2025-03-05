@@ -558,3 +558,26 @@ def get_userid(user_name):
                 return None
     finally:
         connection.close()
+
+# 获取用户的用户组
+def get_user_characters(userid):
+    connection = get_db_connection()
+    
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT characters FROM users WHERE id = %s"
+            cursor.execute(sql, (userid,))
+            result = cursor.fetchone()
+            
+            if result:
+                characters = result['characters']
+                if isinstance(characters, str):
+                    try:
+                        characters = json.loads(characters)
+                    except json.JSONDecodeError:
+                        characters = []
+                return characters
+            else:
+                return []
+    finally:
+        connection.close()

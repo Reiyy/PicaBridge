@@ -9,10 +9,6 @@ config = load_config()
 LANRARAGI_URL = config.get('lanraragi_api')
 
 def run(comic_id, user_id, contentdata):
-    # 判断权限
-    if user_id != "7v5za3f62102s6t81wue5uyo":
-        return {"status": False, "message": "无权限执行命令"}
-
     # 提取命令内容
     content = contentdata.get("content", "")
     picacommand = content[1:].strip() # 去除前缀并去除前后多余空格

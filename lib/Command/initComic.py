@@ -10,7 +10,15 @@ def load_config():
 config = load_config()
 LANRARAGI_URL = config.get('lanraragi_api')
 
+# 允许调用该命令的用户组
+allow_groups = ["official", "knight"]
+
 def run(comic_id, user_id, command_args):
+    # 检测用户权限
+    user_groups = db.get_user_characters(user_id)
+    for group in user_groups:
+        if group not in allow_groups:
+            return {"status": False, "data": "你当前无权执行此命令！"}
 
     if not command_args or len(command_args) < 1:
         return {"status": False, "data": "缺少子命令"}
