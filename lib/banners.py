@@ -1,4 +1,4 @@
-import json
+import json, os
 from flask import jsonify
 
 def load_config():
@@ -10,25 +10,33 @@ PROXY_URL = config.get('PROXY_URL')
 
 # 横幅公告
 def get_banners():
-    banners_data = {
+    # 获取所有横幅公告
+    banners = config.get("banners", {})
+    # 格式化横幅公告信息
+    formatted_banners = []
+    for banner in banners.values():
+        thumb_path = banner.get("thumb", "")
+        original_name = os.path.basename(thumb_path)  # 从路径中提取文件名
+
+        formatted_banner = {
+            "_id": banner.get("id", ""),
+            "title": banner.get("title", ""),
+            "shortDescription": banner.get("shortDescription", ""),
+            "type": banner.get("type", ""),
+            "link": banner.get("link", ""),
+            "thumb": {
+                "fileServer": PROXY_URL,
+                "path": thumb_path,
+                "originalName": original_name
+            }
+        }
+        formatted_banners.append(formatted_banner)
+
+    # 返回最终结果
+    return {
         "code": 200,
         "message": "success",
         "data": {
-            "banners": [
-                {
-                    "_id": "toBe1",
-                    "title": "Yareiy's BZLib",
-                    "shortDescription": "PicaBridge",
-                    "type": "web",
-                    "link": "https://bzlib.home.reiyy.com:2333/",
-                    "thumb": {
-                        "fileServer": PROXY_URL,
-                        "path": "img/2022/08/31/b44125355d4c5.png",
-                        "originalName": "b44125355d4c5.png"
-                    }
-                }
-            ]
+            "banners": formatted_banners
         }
     }
-    
-    return jsonify(banners_data), 200

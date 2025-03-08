@@ -11,33 +11,25 @@ PROXY_URL = config.get('PROXY_URL')
 
 # 获取常用标签
 def get_keywords(user_id):
-    keywords_data = {
-        "code": 200,
-        "message": "success",
-        "data": {
-            "keywords": [
-            "熟肉",
-            "生肉",
-            "长篇",
-            "短篇",
-            "单行本"
-            ]
-        }
-    }
+    # 从配置文件读取常用标签配置
+    keywords = config.get("keywords", {})
+    nsfw_keywords = keywords.get("NSFW", [])
+    sfw_keywords = keywords.get("SFW", [])
 
-    sfw_keywords_data = {
-        "code": 200,
-        "message": "success",
-        "data": {
-            "keywords": [
-            "无H"
-            ]
-        }
-    }
-    
-    # 如果用户模式为SFW，只返回SFW分类
+    # 根据用户模式返回常用标签
     if ModeSwitch.GetMode(user_id) == "sfw":
-        return jsonify(sfw_keywords_data), 200
+        return {
+            "code": 200,
+            "message": "success",
+            "data": {
+                "keywords": sfw_keywords
+            }
+        }
     else:
-        return jsonify(keywords_data), 200
-
+        return {
+            "code": 200,
+            "message": "success",
+            "data": {
+                "keywords": nsfw_keywords
+            }
+        }

@@ -53,5 +53,29 @@
         "SpeciallDay": {
             "烧烤节": ["0215","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg"]
         }
-    }
+    },
+    "announcements": {
+        "公告1": {
+            "id": "66eeec47c765ef0843f44812",
+            "title": "PicaBridge测试",
+            "content": "当前为测试版本，可能不稳定！",
+            "thumb": "img/2024/10/08/48d9b9a733185.png"
+        }
+    },
+    "banners": {
+        "横幅公告1": {
+            "id": "toBe1",
+            "title": "Yareiy's BZLib",
+            "shortDescription": "PicaBridge",
+            "type": "web",
+            "link": "https://bzlib.home.reiyy.com:2333/",
+            "thumb": "img/2022/08/31/b44125355d4c5.png"
+        }
+    },
+    "keywords": {
+        "NSFW": ["熟肉","生肉","长篇","短篇","单行本"],
+        "SFW": ["无H"]
+        }
+ 
+    
 }

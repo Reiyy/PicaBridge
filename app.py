@@ -110,7 +110,8 @@ def handle_random_comics_route():
 # 监听公告消息请求
 @app.route('/announcements', methods=['GET'])
 def announcements_route():
-    return announcements.get_announcements()
+    page = request.args.get('page', default=1, type=int)
+    return announcements.get_announcements(page)
 
 # 监听横幅公告请求
 @app.route('/banners', methods=['GET'])
