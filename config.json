@@ -57,9 +57,15 @@
     "announcements": {
         "公告1": {
             "id": "66eeec47c765ef0843f44812",
-            "title": "PicaBridge测试",
+            "title": "PicaBridge测试版本",
             "content": "当前为测试版本，可能不稳定！",
             "thumb": "img/2024/10/08/48d9b9a733185.png"
+        },
+        "公告2": {
+            "id": "78eeec47c765ef0843f44964",
+            "title": "PicaBridge Wiki🦉",
+            "content": "PicaBridge 说明\n命令：\n命令通过发表评论的方式执行。\n分为全局命令和普通命令，全局命令只能在首页留言板中执行。\n普通命令可以在漫画评论区内执行。在哪本漫画的评论区执行，则该命令操作的就是哪本漫画。\n\n命令列表：\n1.切换模式命令\n用法：\n/模式切换 <sfw/nsfw>\n/modesw <sfw/nsfw>\n\n更多命令待补充。",
+            "thumb": "img/2025/03/08/9a9b968b95b74.png"
         }
     },
     "banners": {

@@ -26,15 +26,15 @@ def init(platform, user_id):
             "data": {
                 "isPunched": is_punched,
                 "latestApplication": {
-                    "_id": "5dc58b151e103c60e7663b12",
-                    "downloadUrl": "https://picaapi.reiyy.com/assets/apps/2.2.1.3.3.4.71_collections.apk",
-                    "updateContent": "【一般更新】\n\n1・无\n\n2・无\n\n後備下載連結\nhttps://picaapi.reiyy.com/assets/apps/2.2.1.3.3.4-7.1_collections.apk",
-                    "version": "2.2.1.3.3.4.71",
-                    "updated_at": "2019-11-08T15:38:45.706Z",
-                    "created_at": "2019-11-08T15:34:45.163Z",
+                    "_id": "5dc58b151e103c60e7663b19",
+                    "downloadUrl": "https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk",
+                    "updateContent": "【强制更新】\n\n发布前测试第一版\n由于签名更改，本次更新需要卸载后重新安装！\n请点击“镜像下载”按钮来更新！\n备用下载：https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk\n更新日志：\n1.修复了低分辨率手机APP图标显示错误的问题。\n2.将更新弹窗中的“镜像下载”按钮重命名为“下载更新”\n\nHookMyPica 2.7.0.0更新：\n1.添加了动态启动图。\n2.移除更新弹窗中的“官方下载”按钮\n\n本更新为强制更新，如不更新无法将正常使用！",
+                    "version": "2.7.0.0.1.1",
+                    "updated_at": "2025-03-08T09:14:18.468Z",
+                    "created_at": "2025-03-08T09:14:18.468Z",
                     "apk": {
-                        "originalName": "2.2.1.3.3.4.71_collections.apk",
-                        "path": "4da05b12-3534-4b4d-b9bf-804de301d2e0.apk",
+                        "originalName": "2.7.0.0.1.1-398-lspatched_sign.apk",
+                        "path": "assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk",
                         "fileServer": "https://picaapi.reiyy.com:2333"
                     }
                 },
