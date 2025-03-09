@@ -1,5 +1,6 @@
 {
     "firstrun": 1,
+    "JWT_KEY": "6gabm1ig9nbyqce3imkhm6f52tdboygq",
     "lanraragi_api_key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
     "lanraragi_api": "https://bzlib.home.reiyy.com:2333",
     "PROXY_URL": "https://picaapi.reiyy.com:2333",
@@ -41,6 +42,30 @@
         "萝莉": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
         "百合": [1,"女性:百合"]
     },
+
+    "categoriesrule1": {
+        "长篇": {
+            "lrr_id": "SET_0000000000",
+            "rule": null,
+            "id": "SET_0000000000",
+            "title": "SET_0000000000",
+            "description": "SET_0000000000",
+            "thumb": "SET_0000000000"
+
+        },
+        "熟肉": [0,"语言:汉语","language:中国翻訳"],
+        "生肉": [0,"语言:日语","语言:英语"],
+        "无H": [1,"重新分类:无H"],
+        "同人": [1,"重新分类:同人志"],
+        "CG": [0,"重新分类:画师CG","重新分类:游戏CG"],
+        "无修正": [1,"其他:无修正"],
+        "单行本": [1,"其他:单行本"],
+        "AI生成": [1,"其他:AI生成"],
+        "萝莉": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
+        "百合": [1,"女性:百合"]
+    },
+
+
     "LaunchImage": {
         "GeneralDay": {
             "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"],
