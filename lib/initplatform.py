@@ -26,15 +26,15 @@ def init(platform, user_id):
             "data": {
                 "isPunched": is_punched,
                 "latestApplication": {
-                    "_id": "5dc58b151e103c60e7663b19",
-                    "downloadUrl": "https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk",
-                    "updateContent": "【强制更新】\n\n发布前测试第一版\n由于签名更改，本次更新需要卸载后重新安装！\n请点击“镜像下载”按钮来更新！\n备用下载：https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk\n更新日志：\n1.修复了低分辨率手机APP图标显示错误的问题。\n2.将更新弹窗中的“镜像下载”按钮重命名为“下载更新”\n\nHookMyPica 2.7.0.0更新：\n1.添加了动态启动图。\n2.移除更新弹窗中的“官方下载”按钮\n\n本更新为强制更新，如不更新无法将正常使用！",
-                    "version": "2.7.0.0.1.1",
-                    "updated_at": "2025-03-08T09:14:18.468Z",
-                    "created_at": "2025-03-08T09:14:18.468Z",
+                    "_id": "3ed58b151e103c60e7663b19",
+                    "downloadUrl": "https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
+                    "updateContent": "【强制更新】\n\n发布前测试第二版\n由于签名更改，本次更新需要卸载后重新安装！\n请点击“镜像下载“来下载更新！本次更新完成后，此后更新即可正常点击下载更新按钮下载了\nAPP更新日志：\n1.修改了更新下载按钮的名称\nHookMyPica 2.7.0.1更新：\n1.移除了隐藏更新弹出按钮的hook\n2.新增修改下载链接拼接逻辑的hook\n\n本更新为强制更新，如不更新无法将正常使用！",
+                    "version": "2.7.0.1.2.2",
+                    "updated_at": "2025-03-10T01:39:07.363Z",
+                    "created_at": "2025-03-10T01:39:07.363Z",
                     "apk": {
-                        "originalName": "2.7.0.0.1.1-398-lspatched_sign.apk",
-                        "path": "assets/app_updates/2.7.0.0.1.1-398-lspatched_sign.apk",
+                        "originalName": "2.7.0.1.2.2-398-lspatched_sign.apk",
+                        "path": "assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
                         "fileServer": "https://picaapi.reiyy.com:2333"
                     }
                 },
