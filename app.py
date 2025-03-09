@@ -1,5 +1,6 @@
-import json
+import json, jwt
 from flask import Flask, jsonify, request, redirect, make_response
+from functools import wraps
 from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand, LaunchImage, ModeSwitch
 
 app = Flask(__name__)
@@ -13,6 +14,38 @@ def load_config():
 def save_config(config):
     with open('config.json', 'w') as file:
         json.dump(config, file, indent=4)
+
+# JWT校验
+def verify_token(token):
+    JWT_KEY = load_config().get('JWT_KEY')
+    try:
+        payload = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
+        return payload
+    except jwt.ExpiredSignatureError as e:
+        print(f"Token expired: {e}")
+        return None
+    except jwt.InvalidTokenError as e:
+        print(f"Invalid token: {e}")
+        return None
+
+# JWT验证装饰器
+def jwt_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header or not auth_header.strip():
+            return jsonify({"error": "Unauthorized"}), 401
+        
+        token = auth_header.strip()
+        jwt_payload = verify_token(token)
+        if not jwt_payload:
+            return jsonify({"error": "Invalid or expired token"}), 401
+        
+        # 把用户数据传递给被装饰的函数
+        return f(*args, **kwargs, jwt_payload=jwt_payload)
+    
+    return decorated_function
 
 # 获取动态启动图
 @app.route('/GetLaunchImage', methods=['GET'])
@@ -43,9 +76,10 @@ def comic_redirect_route(filepath):
 # 监听
 # 监听init
 @app.route('/init', methods=['GET'])
-def init_route():
+@jwt_required
+def init_route(jwt_payload):
     platform = request.args.get('platform')
-    user_id = request.headers.get('authorization')
+    user_id = jwt_payload.get("user_id")
     return initplatform.init(platform, user_id)
 
 # 监听点击救哔咔广告
@@ -90,8 +124,9 @@ def handle_thumbnail_route(arcid):
 
 # 监听获取漫画列表请求
 @app.route('/comics', methods=['GET'])
-def handle_comics_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def handle_comics_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     page = request.args.get('page', default=1, type=int)
     s = request.args.get('s', default=None, type=str)  # 排序标记
     c = request.args.get('c', default=None, type=str)  # 获取分类
@@ -102,8 +137,9 @@ def handle_comics_route():
 
 # 监听获取随机漫画请求
 @app.route('/comics/random', methods=['GET'])
-def handle_random_comics_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def handle_random_comics_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
 
     return comiclist.get_random_comics(user_id)
 
@@ -120,14 +156,16 @@ def banners_route():
 
 # 监听获取分类请求
 @app.route('/categories', methods=['GET'])
-def categories_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def categories_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     return categories.get_categories(user_id)
 
 # 监听获取漫画信息请求
 @app.route('/comics/<comic_id>', methods=['GET'])
-def comic_detail_route(comic_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def comic_detail_route(comic_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     comic_info = comicinfo.get_comic_info(comic_id, user_id)
     if comic_info is None:
         return jsonify({"code": 404, "message": "Comic not found"}), 404
@@ -148,8 +186,9 @@ def comic_pages_route(comic_id, order):
 
 # 监听漫画收藏
 @app.route('/comics/<comic_id>/favourite', methods=['POST'])
-def favourite_comic_route(comic_id):
-    user_id = request.headers.get('authorization') # 将用户ID直接作为验证cookie
+@jwt_required
+def favourite_comic_route(comic_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
 
@@ -157,8 +196,9 @@ def favourite_comic_route(comic_id):
 
 # 监听漫画点赞
 @app.route('/comics/<comic_id>/like', methods=['POST'])
-def like_comic_route(comic_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def like_comic_route(comic_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
 
@@ -177,16 +217,18 @@ def knight_leaderboard_route():
 
 # 监听个人中心
 @app.route('/users/profile', methods=['GET'])
-def user_profile_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def user_profile_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Authorization required."}), 400
     return userinfo.user_info(user_id)
 
 # 监听收藏列表
 @app.route('/users/favourite', methods=['GET'])
-def favourite_comics_route():
-    user_id = request.headers.get("authorization")
+@jwt_required
+def favourite_comics_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     page = request.args.get('page', default=1, type=int)
     if not user_id:
         return jsonify({"code": 401, "message": "Unauthorized"}), 401
@@ -199,8 +241,9 @@ def get_user_profile_route(user_id):
 
 # 监听用户简介修改
 @app.route('/users/profile', methods=['PUT'])
-def user_profile_put_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def user_profile_put_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Authorization required."}), 400
     json_data = request.get_json()
@@ -210,14 +253,16 @@ def user_profile_put_route():
 
 # 监听签到
 @app.route('/users/punch-in', methods=['POST'])
-def punch_in_route():
-    user_id = request.headers.get("authorization")
+@jwt_required
+def punch_in_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     return userinfo.punch_in(user_id)
 
 # 监听头像上传
 @app.route('/users/avatar', methods=['PUT'])
-def upload_user_avatar_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def upload_user_avatar_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Authorization required."}), 400
     picdata = request.json.get('avatar')
@@ -236,14 +281,16 @@ def handle_advanced_search_route():
 
 # 监听获取常用标签
 @app.route('/keywords', methods=['GET'])
-def keywords_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def keywords_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     return keywords.get_keywords(user_id)
 
 # 监听发布主评论
 @app.route('/comics/<comic_id>/comments', methods=['POST'])
-def new_comment(comic_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def new_comment(comic_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     contentdata = request.get_json()
     content = contentdata["content"]
     # 检查是否是命令
@@ -256,42 +303,47 @@ def new_comment(comic_id):
 
 # 监听获取主评论列表
 @app.route('/comics/<comic_id>/comments', methods=['GET'])
-def get_comment_list(comic_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def get_comment_list(comic_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     page = request.args.get('page', default=1, type=int)
     return comment.load_comments(comic_id, page, user_id)
 
 # 监听发布子评论
 @app.route('/comments/<parent_comment_id>', methods=['POST'])
-def new_child_comment(parent_comment_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def new_child_comment(parent_comment_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     childcontentdata = request.get_json()
     return comment.post_child_comment(parent_comment_id, user_id, childcontentdata)
 
 # 监听获取子评论列表
 @app.route('/comments/<parent_comment_id>/childrens', methods=['GET'])
-def get_child_comments_list(parent_comment_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def get_child_comments_list(parent_comment_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     page = int(request.args.get('page', 1))
     return comment.load_child_comments(parent_comment_id, page, user_id)
                              
 # 监听漫画点赞
 @app.route('/comments/<comment_id>/like', methods=['POST'])
-def like_comment_route(comment_id):
-    user_id = request.headers.get('authorization')
+@jwt_required
+def like_comment_route(comment_id, jwt_payload):
+    user_id = jwt_payload.get("user_id")
     if not user_id:
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
     return comment.like_comment(user_id, comment_id)
 
 # 监听模式切换
 @app.route('/modeswitch', methods=['POST'])
-def modeswitch_route():
-    user_id = request.headers.get('authorization')
+@jwt_required
+def modeswitch_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     mode = request.args.get('mode')
     return ModeSwitch.switch(user_id, mode)
 
 def main():
-    print("当前版本 Beta 0.7.2-241028")
+    print("当前版本 Beta 0.7.5-250310")
     # 加载配置文件
     config = load_config()
     

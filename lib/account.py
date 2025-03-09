@@ -1,8 +1,13 @@
-import json, random, string
+import json, random, string, bcrypt, jwt
 from flask import jsonify
-from datetime import datetime
+from datetime import datetime, timedelta
 import lib.db as db
 
+def load_config():
+    with open('config.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+config = load_config()
 
 # 生成24位随机用户id
 def generate_random_id():
@@ -10,6 +15,28 @@ def generate_random_id():
     digits = ''.join(random.choices(string.digits, k=12))  # 生成12个数字
     random_id = ''.join(random.sample(letters + digits, 24))  # 混合并随机打乱
     return random_id
+
+# 生成密码哈希
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+
+# 验证密码哈希
+def verify_password(password, hashpassword):
+    return bcrypt.checkpw(password.encode('utf-8'), hashpassword.encode('utf-8'))
+
+# 生成jwt token
+def generate_token(user_id, email):
+    JWT_KEY = config.get('JWT_KEY')
+    payload = {
+        "user_id": user_id,
+        "email": email,
+        "exp": datetime.utcnow() + timedelta(days=1),
+        "iat": datetime.utcnow()
+    }
+    token = jwt.encode(payload, JWT_KEY, algorithm="HS256")
+    return token
 
 # 注册
 def Register(data):
@@ -49,6 +76,8 @@ def Register(data):
 
     # 生成随机ID
     user_id = generate_random_id()
+    # 生成密码哈希
+    hashpassword = hash_password(password)
 
     # 写入用户信息至数据库
     cursor.execute("""
@@ -58,7 +87,7 @@ def Register(data):
                            verified, characters, favourite, `like`) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                 %s, %s, %s, %s)
-    """, (user_id, email, name, password, birthday, gender, 
+    """, (user_id, email, name, hashpassword, birthday, gender, 
           question1, answer1, question2, answer2, question3, answer3,
           datetime.now(), "萌新", "还没有写哦~", 0, 1, "", "", 
           False, json.dumps([]), json.dumps({}), json.dumps([])))
@@ -83,7 +112,7 @@ def SignIn(data):
     cursor = connection.cursor()
 
     # 检查用户名和密码是否匹配
-    cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
+    cursor.execute("SELECT id, password FROM users WHERE email = %s", (email,))
     user = cursor.fetchone()
 
     if user is None:
@@ -91,13 +120,15 @@ def SignIn(data):
         connection.close()
         return jsonify({"code": 400, "error": "1004", "message": "invalid email or password", "detail": ":("}), 400
 
-    # 登录成功，生成一个随机 token
-    # token = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
-    # 由于漫画收藏，点赞等功能需要跟随用户，故弃用无意义的随机码
+    user_id, hashpassword = user['id'], user['password']
+    # 验证用户输入的密码是否匹配数据库中的哈希密码
+    if not verify_password(password, hashpassword):
+        cursor.close()
+        connection.close()
+        return {"error": "Invalid email or password"}, 401  # 密码错误
 
-    # 登录成功，返回用户ID作为Token
-    user_id = db.get_user_id(email)
-    token = str(user_id)
+    # 生成jwt token
+    token = generate_token(user_id, email)
     
     cursor.close()
     connection.close()
@@ -109,4 +140,4 @@ def SignIn(data):
         "data": {
             "token": token
         }
-    }), 200    
+    }), 200
