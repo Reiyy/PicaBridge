@@ -44,7 +44,10 @@ def run(comic_id, user_id, command_args):
 def AutoCategory(comic_id, user_id, subcommand_args):
     # 获取配置信息
     config = load_config()
-    categories_rule = config["categoriesrule"]
+
+    categories_rule = {}
+    for category_name, category_data in config.get("categories", {}).items():
+        categories_rule[category_name] = category_data.get("rule", [])
 
     # 获取 API 数据
     try:

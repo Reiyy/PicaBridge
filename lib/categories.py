@@ -1,4 +1,4 @@
-import json
+import json, os
 from flask import jsonify
 import lib.ModeSwitch as ModeSwitch
 
@@ -9,109 +9,39 @@ def load_config():
 config = load_config()
 PROXY_URL = config.get('PROXY_URL')
 
-# 获取分类，暂时为硬编码
 def get_categories(user_id):
-    categories_data = {
-        "code": 200,
-        "message": "success",
-        "data": {
-            "categories": [
-                # {
-                #     "title": "那年今天",
-                #     "thumb": {
-                #     "originalName": "old.jpg",
-                #     "path": "old.jpg",
-                #     "fileServer": "https://diwodiwo.xyz/static/"
-                #     },
-                #     "isWeb": "false",
-                #     "active": "true"
-                # },
-                {
-                    "_id": "5821859b5f6b9a4f93d12345",
-                    "title": "熟肉",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "shurou.png",
-                        "path": "assets/img/categories/shurou.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d12347",
-                    "title": "生肉",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "shengrou.png",
-                        "path": "assets/img/categories/shengrou.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d12778",
-                    "title": "无修正",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "wuma.png",
-                        "path": "assets/img/categories/wuma.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d12990",
-                    "title": "长篇",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "changpian.png",
-                        "path": "assets/img/categories/changpian.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d12123",
-                    "title": "短篇",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "duanpian.png",
-                        "path": "assets/img/categories/duanpian.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d12456",
-                    "title": "AI生成",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "ai.png",
-                        "path": "assets/img/categories/ai.png",
-                        "fileServer": PROXY_URL
-                    }
-                },
-                {
-                    "_id": "5821859b5f6b9a4f93d16789",
-                    "title": "萝莉",
-                    "description": "未知",
-                    "thumb": {
-                        "originalName": "loli.png",
-                        "path": "assets/img/categories/loli.png",
-                        "fileServer": PROXY_URL
-                    }
-                }
-            ]
-        }
-    }
-    
-    sfw_categories_data = {
-        "code": 200,
-        "message": "success",
-        "data": {
-            "categories": [
-            ]
-        }
-    }
-
-    # 如果用户模式为SFW，只返回SFW分类
+    # 根据用户模式选择分类
     if ModeSwitch.GetMode(user_id) == "sfw":
-        return jsonify(sfw_categories_data), 200
+        categories_key = "SFW_categories"
     else:
-        return jsonify(categories_data), 200
+        categories_key = "categories"
 
+    categories_data = config.get(categories_key, {})
+    categories_list = []
+
+    for category_name, category_info in categories_data.items():
+        thumb_path = category_info["thumb"]
+        original_name = os.path.basename(thumb_path)  # 提取文件名
+
+        # 组装返回的分类数据
+        category_dict = {
+            "_id": category_info["id"],
+            "title": category_info["title"],
+            "description": category_info["description"],
+            "thumb": {
+                "originalName": original_name,
+                "path": thumb_path,
+                "fileServer": PROXY_URL
+            }
+        }
+        categories_list.append(category_dict)
+
+    response_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+            "categories": categories_list
+        }
+    }
+
+    return jsonify(response_data), 200

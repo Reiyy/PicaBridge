@@ -19,53 +19,115 @@
         }
     },
     "categories": {
-        "长篇": "SET_0000000000",
-        "短篇": "SET_0000000000",
-        "熟肉": "SET_1727680889",
-        "百合": "SET_1727681047",
-        "生肉": "SET_1728329300",
-        "无H": "SET_1728329318",
-        "同人": "SET_1728329330",
-        "无修正": "SET_1728329341",
-        "AI生成": "SET_1728329352",
-        "萝莉": "SET_1728329362"
-    },
-    "categoriesrule": {
-        "熟肉": [0,"语言:汉语","language:中国翻訳"],
-        "生肉": [0,"语言:日语","语言:英语"],
-        "无H": [1,"重新分类:无H"],
-        "同人": [1,"重新分类:同人志"],
-        "CG": [0,"重新分类:画师CG","重新分类:游戏CG"],
-        "无修正": [1,"其他:无修正"],
-        "单行本": [1,"其他:单行本"],
-        "AI生成": [1,"其他:AI生成"],
-        "萝莉": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
-        "百合": [1,"女性:百合"]
-    },
-
-    "categoriesrule1": {
-        "长篇": {
-            "lrr_id": "SET_0000000000",
-            "rule": null,
-            "id": "SET_0000000000",
-            "title": "SET_0000000000",
-            "description": "SET_0000000000",
-            "thumb": "SET_0000000000"
+        "熟肉": {
+            "lrr_id": "SET_1727680889",
+            "rule": [0,"语言:汉语","language:中国翻訳"],
+            "id": "5821859b5f6b9a4f93d12345",
+            "title": "熟肉",
+            "description": "熟肉，指代已经被翻译成中文的作品",
+            "thumb": "assets/img/categories/shurou.png"
 
         },
-        "熟肉": [0,"语言:汉语","language:中国翻訳"],
-        "生肉": [0,"语言:日语","语言:英语"],
-        "无H": [1,"重新分类:无H"],
-        "同人": [1,"重新分类:同人志"],
-        "CG": [0,"重新分类:画师CG","重新分类:游戏CG"],
-        "无修正": [1,"其他:无修正"],
-        "单行本": [1,"其他:单行本"],
-        "AI生成": [1,"其他:AI生成"],
-        "萝莉": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
-        "百合": [1,"女性:百合"]
+        "生肉": {
+            "lrr_id": "SET_1728329300",
+            "rule": [0,"语言:日语","语言:英语"],
+            "id": "5821859b5f6b9a4f93d12347",
+            "title": "同人",
+            "description": "生肉，指代未翻译的作品",
+            "thumb": "assets/img/categories/shurou.png"
+
+        },
+        "无修正": {
+            "lrr_id": "SET_1728329341",
+            "rule": [1,"其他:无修正"],
+            "id": "5821859b5f6b9a4f93d12778",
+            "title": "无修正",
+            "description": "无修正，指没有马赛克的作品",
+            "thumb": "assets/img/categories/wuma.png"
+        },
+        "长篇": {
+            "lrr_id": "SET_1734954527",
+            "rule": null,
+            "id": "5821859b5f6b9a4f93d12990",
+            "title": "长篇",
+            "description": "长篇，页数大于95页的作品",
+            "thumb": "assets/img/categories/changpian.png"
+        },
+        "短篇": {
+            "lrr_id": "SET_1734954555",
+            "rule": null,
+            "id": "5821859b5f6b9a4f93d12123",
+            "title": "短篇",
+            "description": "短篇，页数大小于95页的作品",
+            "thumb": "assets/img/categories/duanpian.png"
+        },
+        "AI生成": {
+            "lrr_id": "SET_1728329352",
+            "rule": [1,"其他:AI生成"],
+            "id": "5821859b5f6b9a4f93d12456",
+            "title": "AI生成",
+            "description": "AI生成，指通过AI生成的作品",
+            "thumb": "assets/img/categories/ai.png"
+        },
+        "萝莉": {
+            "lrr_id": "SET_1728329362",
+            "rule": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
+            "id": "5821859b5f6b9a4f93d16789",
+            "title": "萝莉",
+            "description": "萝莉",
+            "thumb": "assets/img/categories/loli.png"
+        },
+        "百合": {
+            "lrr_id": "SET_1727681047",
+            "rule": [1,"女性:百合"],
+            "id": "5821859b5f6b456f93d16789",
+            "title": "百合",
+            "description": "女孩子贴贴",
+            "thumb": "assets/img/categories/baihe.png"
+        },
+        "单行本": {
+            "lrr_id": "null",
+            "rule": [1,"其他:单行本"],
+            "id": "5821859b5f6b456f98626789",
+            "title": "单行本",
+            "description": "单行本",
+            "thumb": "assets/img/categories/default.png"
+        },
+        "同人志": {
+            "lrr_id": "SET_1728329330",
+            "rule": [1,"重新分类:同人志"],
+            "id": "583ac59b5f6b456f98626789",
+            "title": "同人志",
+            "description": "同人志",
+            "thumb": "assets/img/categories/default.png"
+        },
+        "CG": {
+            "lrr_id": "null",
+            "rule": [0,"重新分类:画师CG","重新分类:游戏CG"],
+            "id": "583ac59b5f7n456f98626789",
+            "title": "CG",
+            "description": "CG",
+            "thumb": "assets/img/categories/default.png"
+        },
+        "无H": {
+            "lrr_id": "SET_1728329318",
+            "rule": [1,"重新分类:无H"],
+            "id": "583ac59b5f7n456f7uyt6789",
+            "title": "无H",
+            "description": "无H",
+            "thumb": "assets/img/categories/default.png"
+        }
     },
-
-
+    "SFW_categories": {
+        "无H": {
+            "lrr_id": "SET_1728329318",
+            "rule": [1,"重新分类:无H"],
+            "id": "583ac59b5f7n456f7uyt6789",
+            "title": "无H",
+            "description": "无H",
+            "thumb": "assets/img/categories/default.png"
+        }
+    },
     "LaunchImage": {
         "GeneralDay": {
             "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"],
@@ -107,6 +169,4 @@
         "NSFW": ["熟肉","生肉","长篇","短篇","单行本"],
         "SFW": ["无H"]
         }
- 
-    
 }

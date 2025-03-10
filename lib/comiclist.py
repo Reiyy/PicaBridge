@@ -56,7 +56,7 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
     # 如果有传入类型参数 c=文本，获取相应分类的漫画
     elif c and c in config["categories"]:
         print(f"第二种: {c}")
-        category_id = config["categories"][c]
+        category_id = config["categories"][c]["lrr_id"]
         if sortby:
             lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}")
         else:
