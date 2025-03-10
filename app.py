@@ -32,7 +32,7 @@ def verify_token(token):
 def jwt_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        auth_header = request.headers.get("Authorization")
+        auth_header = request.headers.get("authorization")
 
         if not auth_header or not auth_header.strip():
             return jsonify({"error": "Unauthorized"}), 401
@@ -76,10 +76,20 @@ def comic_redirect_route(filepath):
 # 监听
 # 监听init
 @app.route('/init', methods=['GET'])
+def init_route():
+    platform = request.args.get('platform')
+    user_id = request.args.get('authorization') # 此处仅作为占位兼容原函数，不起实际作用
+    # 如果platform为空，不需要JWT验证
+    if platform is None:
+        return initplatform.init(platform, user_id)
+    return init_route_auth()
+
+# 如果platform不为空，需要JWT验证
 @jwt_required
-def init_route(jwt_payload):
+def init_route_auth(jwt_payload):
     platform = request.args.get('platform')
     user_id = jwt_payload.get("user_id")
+
     return initplatform.init(platform, user_id)
 
 # 监听点击救哔咔广告
