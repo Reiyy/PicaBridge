@@ -1,5 +1,8 @@
-import json, os
+import json
+import os
+
 from flask import jsonify
+
 import lib.ModeSwitch as ModeSwitch
 
 def load_config():

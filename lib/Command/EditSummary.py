@@ -1,4 +1,7 @@
-import json, requests, base64
+import json
+import requests
+import base64
+
 from lib.Command import initComic
 from lib import db
 

@@ -1,5 +1,7 @@
-import json, importlib, requests, pymysql
-from lib import comment, db
+import json
+import importlib
+
+from lib import comment
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

@@ -1,5 +1,10 @@
-import requests, math, json, time
+import requests
+import math
+import json
+import time
+
 from flask import jsonify, redirect
+
 import lib.db as db
 import lib.api as api
 import lib.ModeSwitch as ModeSwitch

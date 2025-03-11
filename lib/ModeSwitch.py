@@ -1,5 +1,7 @@
-from flask import jsonify
 import pymysql
+
+from flask import jsonify
+
 from lib import db
 
 def switch(user_id, mode):

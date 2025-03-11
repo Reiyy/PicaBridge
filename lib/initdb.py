@@ -1,4 +1,3 @@
-import pymysql
 from lib.db import get_db_connection
 
 def initialize_database():

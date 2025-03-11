@@ -1,4 +1,8 @@
-import pymysql, json, time, threading
+import pymysql
+import json
+import time
+import threading
+
 from dbutils.pooled_db import PooledDB
 
 # 读取配置文件

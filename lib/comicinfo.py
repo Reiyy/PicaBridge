@@ -1,8 +1,11 @@
 import json
+
 from flask import jsonify
-import lib.db as db
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
+
+import lib.db as db
 from lib.api import get_archive_metadata
 
 def load_config():

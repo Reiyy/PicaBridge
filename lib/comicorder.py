@@ -1,5 +1,5 @@
 import json
-from flask import jsonify
+
 import lib.api as api
 
 def load_config():

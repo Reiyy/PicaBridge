@@ -1,5 +1,6 @@
 from flask import jsonify
 from datetime import datetime
+
 import lib.db as db
 
 # 打开app请求平台信息，广告信息和新版本信息

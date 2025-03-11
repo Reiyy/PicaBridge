@@ -1,7 +1,10 @@
-from flask import jsonify
-from datetime import datetime, timezone
-from lib.db import get_comic_info
 import json
+
+from flask import jsonify
+from datetime import datetime
+from datetime import timezone
+
+from lib.db import get_comic_info
 
 def format_timestamp(ts):
     if ts is not None:

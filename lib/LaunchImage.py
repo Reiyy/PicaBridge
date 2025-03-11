@@ -1,7 +1,11 @@
-from flask import Flask, jsonify
-import datetime, random, json
-import lib.ModeSwitch as ModeSwitch
+import datetime
+import random
+import json
+
+from flask import jsonify
+
 import lib.db as db
+import lib.ModeSwitch as ModeSwitch
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as file:

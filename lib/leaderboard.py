@@ -1,8 +1,11 @@
-import requests, json, time
+import requests
+import json
+import time
+
 from flask import jsonify
+
 import lib.db as db
 import lib.api as api
-
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -11,7 +14,6 @@ def load_config():
 config = load_config()
 LANRARAGI_URL = config.get('lanraragi_api')
 PROXY_URL = config.get('PROXY_URL')
-
 
 # 获取排行榜
 def get_comic_leaderboard(tt):

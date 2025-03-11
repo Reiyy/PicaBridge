@@ -1,4 +1,6 @@
-import json, requests, base64
+import json
+import requests
+import base64
 
 # 加载配置文件
 def load_config():

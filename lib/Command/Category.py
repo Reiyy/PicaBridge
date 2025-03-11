@@ -1,4 +1,7 @@
-import json, requests, pymysql
+import json
+import requests
+import pymysql
+
 from lib import db
 
 def load_config():

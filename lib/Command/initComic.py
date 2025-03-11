@@ -1,6 +1,9 @@
-import json, requests, pymysql, re
+import json
+import requests
+import pymysql
+import re
+
 from lib import db
-from lib import comment
 
 # 加载配置文件
 def load_config():

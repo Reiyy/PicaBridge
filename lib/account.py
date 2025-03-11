@@ -1,6 +1,13 @@
-import json, random, string, bcrypt, jwt
+import json
+import random
+import string
+import bcrypt
+import jwt
+
 from flask import jsonify
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
+
 import lib.db as db
 
 def load_config():

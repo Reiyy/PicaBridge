@@ -1,12 +1,15 @@
-from flask import jsonify
 import pymysql
-import lib.db as db
 import json
 import math
 import string
 import random
 import time
 import datetime
+
+from flask import jsonify
+
+import lib.db as db
+
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

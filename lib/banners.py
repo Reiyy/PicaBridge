@@ -1,5 +1,5 @@
-import json, os
-from flask import jsonify
+import json
+import os
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

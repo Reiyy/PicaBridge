@@ -1,7 +1,11 @@
-import requests, math, json, time
-from flask import jsonify, redirect
+import requests
+import math
+import json
+
+from flask import jsonify
+from flask import redirect
+
 import lib.db as db
-import lib.api as api
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
