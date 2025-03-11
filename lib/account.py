@@ -7,6 +7,7 @@ import jwt
 from flask import jsonify
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 
 import lib.db as db
 
@@ -39,8 +40,8 @@ def generate_token(user_id, email):
     payload = {
         "user_id": user_id,
         "email": email,
-        "exp": datetime.utcnow() + timedelta(days=1),
-        "iat": datetime.utcnow()
+        "exp": datetime.now(timezone.utc) + timedelta(days=1),
+        "iat": datetime.now(timezone.utc)
     }
     token = jwt.encode(payload, JWT_KEY, algorithm="HS256")
     return token
