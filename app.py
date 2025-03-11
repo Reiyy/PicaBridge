@@ -37,6 +37,7 @@ def load_config():
 config = load_config()
 
 LRR_URL = config.get('lrr_Api')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 URL_MAPPINGS = config.get("URL_Mappings", {})
 DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
 
@@ -130,7 +131,7 @@ def init_route_auth(jwt_payload):
 # 监听点击救哔咔广告
 @app.route('/ad/android/cat', methods=['GET'])
 def android_cat_route():
-    response = make_response('<!DOCTYPE html><html><head><meta charSet="utf-8" class="next-head"/><title class="next-head">嗶咔廣告</title><meta name="viewport" content="initial-scale=1.0, width=device-width" class="next-head"/><style class="next-head">body {margin: 0}</style><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/show.js" as="script"/><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/_app.js" as="script"/><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/_error.js" as="script"/><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" as="script"/><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" as="script"/><link rel="preload" href="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" as="script"/></head><body><div id="__next"><div data-reactroot=""><div style="width:100%"></div></div></div><script>__NEXT_DATA__ = {"props":{"pageProps":{}},"page":"/show","query":{"zoneId":"zone_233","location":"wakamoment"},"buildId":"nXBZRN9Bnol3egSoxUs8s"};__NEXT_LOADED_PAGES__=[];__NEXT_REGISTER_PAGE=function(r,f){__NEXT_LOADED_PAGES__.push([r, f])}</script><script async="" id="__NEXT_PAGE__/show" src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/show.js"></script><script async="" id="__NEXT_PAGE__/_app" src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/_app.js"></script><script async="" id="__NEXT_PAGE__/_error" src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/pages/_error.js"></script><script src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" async=""></script><script src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" async=""></script><script src="https://picaapi.reiyy.com:2333/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" async=""></script></body></html>', 200)
+    response = make_response('<!DOCTYPE html><html><head><meta charSet="utf-8" class="next-head"/><title class="next-head">嗶咔廣告</title><meta name="viewport" content="initial-scale=1.0, width=device-width" class="next-head"/><style class="next-head">body {margin: 0}</style><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/show.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/_app.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/_error.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" as="script"/></head><body><div id="__next"><div data-reactroot=""><div style="width:100%"></div></div></div><script>__NEXT_DATA__ = {"props":{"pageProps":{}},"page":"/show","query":{"zoneId":"zone_233","location":"wakamoment"},"buildId":"nXBZRN9Bnol3egSoxUs8s"};__NEXT_LOADED_PAGES__=[];__NEXT_REGISTER_PAGE=function(r,f){__NEXT_LOADED_PAGES__.push([r, f])}</script><script async="" id="__NEXT_PAGE__/show" src="/assets/ad/clicktohelppica/js/pages/show.js"></script><script async="" id="__NEXT_PAGE__/_app" src="/assets/ad/clicktohelppica/js/pages/_app.js"></script><script async="" id="__NEXT_PAGE__/_error" src="/assets/ad/clicktohelppica/js/pages/_error.js"></script><script src="/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" async=""></script><script src="/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" async=""></script><script src="/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" async=""></script></body></html>', 200)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
@@ -138,17 +139,18 @@ def android_cat_route():
 # 监听广告信息
 @app.route('/get-ad-zones', methods=['GET'])
 def android_cat2_route():
+    image = config.get('AD_Help_Pica', {}).get('image', '')
     response_data = {
         "ads": [
             {
                 "zoneId": "zone_233",
                 "title": "LANraragi",
-                "link": "{LRR_URL}",
-                "rawLink": "{LRR_URL}",
-                "image": "{PROXY_URL}/assets/img/ezgif-1-83147a2658.gif"
+                "link": LRR_URL,
+                "rawLink": LRR_URL,
+                "image": image
             }
         ],
-        "cdoe": 200
+        "code": 200
     }
     return jsonify(response_data), 200
 

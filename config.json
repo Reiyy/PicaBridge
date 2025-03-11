@@ -23,6 +23,9 @@
         "img": "https://cdn.reiyy.com",
         "assets": "https://picaapi.reiyy.com:2333"
     },
+    "AD_Help_Pica": {
+        "image": "https://picaapi.reiyy.com:2333/assets/img/ezgif-1-83147a2658.gif"
+    },
     "categories": {
         "熟肉": {
             "lrr_id": "SET_1727680889",
