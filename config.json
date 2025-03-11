@@ -4,6 +4,7 @@
     "lanraragi_api_key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
     "lanraragi_api": "https://bzlib.home.reiyy.com:2333",
     "PROXY_URL": "https://picaapi.reiyy.com:2333",
+    "CDN_URL": "https://cdn.reiyy.com",
     "avatarfilepath": "/data/wwwroot/mypic/assets/img/avatar",
     "db": {
         "host": "192.168.7.205",

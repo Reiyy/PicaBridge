@@ -10,6 +10,11 @@ def load_config():
     with open('config.json', 'r') as file:
         return json.load(file)
 
+config = load_config()
+CDN_URL = config.get('CDN_URL')
+PROXY_URL = config.get('PROXY_URL')
+LANRARAGI_URL = config.get('lanraragi_api')
+
 # 写入 JSON 配置文件
 def save_config(config):
     with open('config.json', 'w') as file:
@@ -57,18 +62,18 @@ def get_launch_image():
 # 公告图片重定向
 @app.route('/static/img/<path:filepath>', methods=['GET'])
 def static_redirect_route(filepath):
-    return redirect(f"https://cdn.reiyy.com/img/{filepath}", code=302)
+    return redirect(f"{CDN_URL}/img/{filepath}", code=302)
 
 # 用户图片重定向
 @app.route('/static/assets/<path:filepath>', methods=['GET'])
 def static_redirect2_route(filepath):
-    return redirect(f"https://picaapi.reiyy.com:2333/assets/{filepath}", code=302)
+    return redirect(f"{PROXY_URL}/assets/{filepath}", code=302)
 
 # 漫画图片重定向
 @app.route('/static/bzpic/<path:filepath>', methods=['GET'])
 def comic_redirect_route(filepath):
     query_string = request.query_string.decode("utf-8")
-    target_url = f"https://bzlib.home.reiyy.com:2333/{filepath}"
+    target_url = f"{LANRARAGI_URL}/{filepath}"
     if query_string:
         target_url = f"{target_url}?{query_string}"
     return redirect(target_url, code=302)
@@ -108,9 +113,9 @@ def android_cat2_route():
             {
                 "zoneId": "zone_233",
                 "title": "LANraragi",
-                "link": "https://bzlib.home.reiyy.com:2333/",
-                "rawLink": "https://bzlib.home.reiyy.com:2333/",
-                "image": "https://picaapi.reiyy.com:2333/assets/img/ezgif-1-83147a2658.gif"
+                "link": "{LANRARAGI_URL}",
+                "rawLink": "{LANRARAGI_URL}",
+                "image": "{PROXY_URL}/assets/img/ezgif-1-83147a2658.gif"
             }
         ],
         "cdoe": 200
