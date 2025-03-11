@@ -1,7 +1,31 @@
-import json, jwt
-from flask import Flask, jsonify, request, redirect, make_response
+import json
+import jwt
+
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask import redirect
+from flask import make_response
 from functools import wraps
-from lib import initdb, account, announcements, banners, categories, comiclist, comicinfo, eps, comicorder, userinfo, leaderboard, initplatform, search, keywords, comment, PicaCommand, LaunchImage, ModeSwitch
+
+from lib import initdb
+from lib import account
+from lib import announcements
+from lib import banners
+from lib import categories
+from lib import comiclist
+from lib import comicinfo
+from lib import eps
+from lib import comicorder
+from lib import userinfo
+from lib import leaderboard
+from lib import initplatform
+from lib import search
+from lib import keywords
+from lib import comment
+from lib import PicaCommand
+from lib import LaunchImage
+from lib import ModeSwitch
 
 app = Flask(__name__)
 
