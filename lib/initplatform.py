@@ -1,16 +1,27 @@
+import json
+
 from flask import jsonify
 from datetime import datetime
 
 import lib.db as db
 
+# 读取 JSON 配置文件
+def load_config():
+    with open('config.json', 'r') as file:
+        return json.load(file)
+
+config = load_config()
+
+PICABRIDGE_URL = config.get('PicaBridge_URL', '')
+
 # 打开app请求平台信息，广告信息和新版本信息
 def init(platform, user_id):
-
+    addresses = PICABRIDGE_URL.replace('https://', '').replace('http://', '')
     if platform is None:
         response_data = {
             "status": "ok",
-            "addresses": ["picaapi.reiyy.com:2333", "picaapi.reiyy.com:2333"],
-            "waka": "https://picaapi.reiyy.com:2333/ad",
+            "addresses": [addresses, addresses],
+            "waka": f"{PICABRIDGE_URL}/ad",
             "adKeyword": "diwodiwo"
         }
         return jsonify(response_data), 200
