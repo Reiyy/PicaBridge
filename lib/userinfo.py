@@ -15,7 +15,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
     
 # 用户信息
 def user_info(user_id):
@@ -47,7 +47,7 @@ def user_info(user_id):
             "originalName": user_info.get("avatar").split("/")[-1],  # 提取文件名
             "path": "/".join(user_info.get("avatar").split("/")[3:]),  # 提取路径
             #"fileServer": "/".join(user_info.get("avatar").split("/")[:3])
-            "fileServer": PROXY_URL # 域
+            "fileServer": PICABRIDGE_URL # 域
         },
         "isPunched": is_punched
     }
@@ -80,7 +80,7 @@ def get_user_profile(user_id):
         "exp": user_info.get("exp"),
         "level": user_info.get("level"),
         "avatar": {
-            "fileServer": PROXY_URL,
+            "fileServer": PICABRIDGE_URL,
             "path": "/".join(user_info.get("avatar", "").split("/")[3:]),  # 获取路径
             "originalName": user_info.get("avatar").split("/")[-1] if user_info.get("avatar") else ""
         },
@@ -129,7 +129,7 @@ def get_favourite_comics(user_id, page):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": f"thumbnail/{comic_id}",
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "likesCount": comic_data.get("likesCount")
         }
@@ -218,13 +218,11 @@ def upload_avatar(user_id, picdata):
     # 获取数据库连接
     connection = db.get_db_connection()
     try:
-        # 读取配置文件中的 PROXY_URL
-        PROXY_URL = config.get('PROXY_URL')
         middle_url = '/assets/img/avatar/'
         filename = f"{user_id}{random_suffix}.jpg"
         
         # 构造头像 URL
-        avatar_url = f"{PROXY_URL}{middle_url}{filename}"
+        avatar_url = f"{PICABRIDGE_URL}{middle_url}{filename}"
 
         # 更新数据库中对应用户的头像URL
         with connection.cursor() as cursor:

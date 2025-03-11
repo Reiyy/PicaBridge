@@ -6,7 +6,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 横幅公告
 def get_banners():
@@ -25,7 +25,7 @@ def get_banners():
             "type": banner.get("type", ""),
             "link": banner.get("link", ""),
             "thumb": {
-                "fileServer": PROXY_URL,
+                "fileServer": PICABRIDGE_URL,
                 "path": thumb_path,
                 "originalName": original_name
             }

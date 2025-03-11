@@ -11,16 +11,16 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
+LRR_URL = config.get('lrr_Api')
 
-api_key = load_config()["lanraragi_api_key"]
+LRR_API_KEY = load_config()["lrr_Api_Key"]
 
 # 允许调用该命令的用户组
 allow_groups = ["official", "knight"]
 
 # lanraragi验证头
 def get_auth_header():
-    encoded_key = base64.b64encode(api_key.encode()).decode()
+    encoded_key = base64.b64encode(LRR_API_KEY.encode()).decode()
     return {
         'Authorization': f'Bearer {encoded_key}',
         'Accept': 'application/json'
@@ -34,7 +34,7 @@ def run(comic_id, user_id, command_args):
             return {"status": False, "data": "你当前无权执行此命令！"}
 
     # 获取当前漫画元数据
-    get_url = f"{LANRARAGI_URL}/api/archives/{comic_id}/metadata"
+    get_url = f"{LRR_URL}/api/archives/{comic_id}/metadata"
     headers = get_auth_header()
 
     try:

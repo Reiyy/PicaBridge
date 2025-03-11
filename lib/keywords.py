@@ -7,7 +7,6 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
 
 # 获取常用标签
 def get_keywords(user_id):

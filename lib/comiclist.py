@@ -15,12 +15,12 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
-PROXY_URL = config.get('PROXY_URL')
+LRR_URL = config.get('lrr_Api')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 def redirect_thumbnail(arcid):
     try:
-        lanraragi_thumbnail_url = f"{LANRARAGI_URL}/api/archives/{arcid}/thumbnail"
+        lanraragi_thumbnail_url = f"{LRR_URL}/api/archives/{arcid}/thumbnail"
         print(f"Redirecting to: {lanraragi_thumbnail_url}")  # 调试输出
         return redirect(lanraragi_thumbnail_url, code=302)
     except Exception as e:
@@ -48,24 +48,24 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
     # 如果用户模式为SFW，只返回SFW漫画
     if ModeSwitch.GetMode(user_id) == "sfw":
         print(f"SFW模式")
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?filter=无H$&start={start}&sortby={sortby}&order={order}")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search?filter=无H$&start={start}&sortby={sortby}&order={order}")
 
     # 如果没有传入类型参数 (只有page和s)，获取全部漫画
     elif not c and not t and not a:
         print(f"第一种")
         if sortby:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}")
         else:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}")
     
     # 如果有传入类型参数 c=文本，获取相应分类的漫画
     elif c and c in config["categories"]:
         print(f"第二种: {c}")
         category_id = config["categories"][c]["lrr_id"]
         if sortby:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}")
         else:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&category={category_id}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}")
 
     # 有传入类型参数 t=文本，返回相应标签漫画
     elif t is not None:
@@ -76,17 +76,17 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
         elif t.startswith("男:"):
             t = t.replace("男:", "男性:")
         if sortby:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={t}$&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$&sortby={sortby}&order={order}")
         else:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={t}$")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$")
 
     # 有传入类型参数 a=文本，返回相应作者漫画
     elif a is not None:
         print(f"第四种: {a}")
         if sortby:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={a}$&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$&sortby={sortby}&order={order}")
         else:
-            lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter={a}$")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$")
     else:
         print(f"未知传入参数")
 
@@ -129,7 +129,7 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": thumbnail_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "id": comic_id,
             "likesCount": comic_data.get("likesCount", 0)
@@ -222,7 +222,7 @@ def leaderboard(tt):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": thumbnail_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "viewsCount": comic_info.get("viewsCount", 0),
             "leaderboardCount": count
@@ -248,9 +248,9 @@ def get_random_comics(user_id):
     # 如果用户模式为SFW，只返回SFW漫画
     if ModeSwitch.GetMode(user_id) == "sfw":
         print(f"SFW模式")
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search/random?filter=无H$&count=20")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?filter=无H$&count=20")
     else:
-        lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search/random?count=20")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?count=20")
 
     if isinstance(lanraragi_response, dict):
         lanraragi_data = lanraragi_response
@@ -291,7 +291,7 @@ def get_random_comics(user_id):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": thumbnail_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "id": comic_id,
             "likesCount": comic_data.get("likesCount", 0)

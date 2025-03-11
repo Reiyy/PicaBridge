@@ -1,10 +1,9 @@
 {
     "firstrun": 1,
+    "PicaBridge_URL": "https://picaapi.reiyy.com:2333",
     "JWT_KEY": "6gabm1ig9nbyqce3imkhm6f52tdboygq",
-    "lanraragi_api_key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
-    "lanraragi_api": "https://bzlib.home.reiyy.com:2333",
-    "PROXY_URL": "https://picaapi.reiyy.com:2333",
-    "CDN_URL": "https://cdn.reiyy.com",
+    "lrr_Api": "https://bzlib.home.reiyy.com:2333",
+    "lrr_Api_Key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
     "avatarfilepath": "/data/wwwroot/mypic/assets/img/avatar",
     "db": {
         "host": "192.168.7.205",
@@ -18,6 +17,11 @@
             "ping": 1,
             "reset": true
         }
+    },
+    "URL_Mappings": {
+        "lrr_img": "https://bzlib.home.reiyy.com:2333",
+        "img": "https://cdn.reiyy.com",
+        "assets": "https://picaapi.reiyy.com:2333"
     },
     "categories": {
         "熟肉": {

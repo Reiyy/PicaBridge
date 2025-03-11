@@ -9,7 +9,7 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
+LRR_URL = config.get('lrr_Api')
 
 # 允许调用该命令的用户组
 allow_groups = ["official", "knight"]
@@ -54,7 +54,7 @@ def AutoCategory(comic_id, user_id, subcommand_args):
 
     # 获取 API 数据
     try:
-        response = requests.get(f"{LANRARAGI_URL}/api/archives/{comic_id}/metadata")
+        response = requests.get(f"{LRR_URL}/api/archives/{comic_id}/metadata")
         response.raise_for_status()
         metadata = response.json()
     except requests.RequestException as e:

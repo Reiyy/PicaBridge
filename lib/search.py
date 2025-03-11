@@ -12,13 +12,13 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
-PROXY_URL = config.get('PROXY_URL')
+LRR_URL = config.get('lrr_Api')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 重定向缩略图
 def redirect_thumbnail(arcid):
     try:
-        lanraragi_thumbnail_url = f"{LANRARAGI_URL}/api/archives/{arcid}/thumbnail"
+        lanraragi_thumbnail_url = f"{LRR_URL}/api/archives/{arcid}/thumbnail"
         print(f"Redirecting to: {lanraragi_thumbnail_url}")
         return redirect(lanraragi_thumbnail_url, code=302)
     except Exception as e:
@@ -30,7 +30,7 @@ def search_comic(keyword, page=1):
     config = load_config()
     start = (page - 1) * 20
 
-    lanraragi_response = requests.get(f"{LANRARAGI_URL}/api/search?start={start}&filter=*{keyword}")
+    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter=*{keyword}")
     lanraragi_data = lanraragi_response.json()
 
     comics_data = []
@@ -53,7 +53,7 @@ def search_comic(keyword, page=1):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": thumbnail_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "likesCount": comic_data.get("likesCount", 0)
         }

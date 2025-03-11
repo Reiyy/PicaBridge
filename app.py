@@ -27,7 +27,7 @@ from lib import PicaCommand
 from lib import LaunchImage
 from lib import ModeSwitch
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 
 # 读取 JSON 配置文件
 def load_config():
@@ -35,9 +35,10 @@ def load_config():
         return json.load(file)
 
 config = load_config()
-CDN_URL = config.get('CDN_URL')
-PROXY_URL = config.get('PROXY_URL')
-LANRARAGI_URL = config.get('lanraragi_api')
+
+LRR_URL = config.get('lrr_Api')
+URL_MAPPINGS = config.get("URL_Mappings", {})
+DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
 
 # 写入 JSON 配置文件
 def save_config(config):
@@ -82,22 +83,27 @@ def get_launch_image():
     user_name = request.args.get('user', default="")
     return LaunchImage.Get(user_name)
 
-# 重定向
-# 公告图片重定向
-@app.route('/static/img/<path:filepath>', methods=['GET'])
-def static_redirect_route(filepath):
-    return redirect(f"{CDN_URL}/img/{filepath}", code=302)
+# 图片资源重定向
+@app.route('/static/<path:filepath>', methods=['GET'])
+def static_redirect(filepath):
+    query_string = request.query_string.decode("utf-8")
+    prefix = filepath.split("/")[0]  # 获取路径前缀
+    # 查找是否有相应映射，如果没有使用默认域
+    fileserver = URL_MAPPINGS.get(prefix, DEFAULT_FILE_SERVER)
+    # 如果默认值也为空，返回错误
+    if not fileserver:
+        return "No fileServer", 500
+    # 如果存在查询参数，带上查询参数
+    if query_string:
+        return redirect(f"{fileserver}/{filepath}?{query_string}", code=302)
 
-# 用户图片重定向
-@app.route('/static/assets/<path:filepath>', methods=['GET'])
-def static_redirect2_route(filepath):
-    return redirect(f"{PROXY_URL}/assets/{filepath}", code=302)
+    return redirect(f"{fileserver}/{filepath}", code=302)
 
-# 漫画图片重定向
-@app.route('/static/bzpic/<path:filepath>', methods=['GET'])
+# LRR档案图像重定向
+@app.route('/static/lrr_img/<path:filepath>', methods=['GET'])
 def comic_redirect_route(filepath):
     query_string = request.query_string.decode("utf-8")
-    target_url = f"{LANRARAGI_URL}/{filepath}"
+    target_url = f"{LRR_URL}/{filepath}"
     if query_string:
         target_url = f"{target_url}?{query_string}"
     return redirect(target_url, code=302)
@@ -137,8 +143,8 @@ def android_cat2_route():
             {
                 "zoneId": "zone_233",
                 "title": "LANraragi",
-                "link": "{LANRARAGI_URL}",
-                "rawLink": "{LANRARAGI_URL}",
+                "link": "{LRR_URL}",
+                "rawLink": "{LRR_URL}",
                 "image": "{PROXY_URL}/assets/img/ezgif-1-83147a2658.gif"
             }
         ],

@@ -16,7 +16,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 点赞评论
 def like_comment(user_id, comment_id):
@@ -117,7 +117,7 @@ def load_comments(comic_id, page, user_id):
                 avatar_data = {
                     "originalName": user_info.get("avatar").split("/")[-1] if user_info.get("avatar") else "",
                     "path": "/".join(user_info.get("avatar").split("/")[3:]) if user_info.get("avatar") else "",
-                    "fileServer": PROXY_URL
+                    "fileServer": PICABRIDGE_URL
                 }
 
                 characters = json.loads(user_info.get("characters", '[]')) if isinstance(user_info.get("characters"), str) else user_info.get("characters", [])
@@ -386,7 +386,7 @@ def load_child_comments(parent_comment_id, page, user_id):
                 avatar_data = {
                     "originalName": user_info.get("avatar").split("/")[-1],
                     "path": "/".join(user_info.get("avatar").split("/")[3:]),
-                    "fileServer": PROXY_URL
+                    "fileServer": PICABRIDGE_URL
                 }
 
                 # 检查是否被点赞

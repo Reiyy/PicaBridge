@@ -13,7 +13,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 获取漫画信息
 def get_comic_info(comic_id, user_id):
@@ -28,7 +28,7 @@ def get_comic_info(comic_id, user_id):
     avatar_data = {
         "originalName": user_info.get("avatar").split("/")[-1],
         "path": "/".join(user_info.get("avatar").split("/")[3:]),
-        "fileServer": PROXY_URL
+        "fileServer": PICABRIDGE_URL
     }
 
     # 漫画封面
@@ -82,7 +82,7 @@ def get_comic_info(comic_id, user_id):
                 ("title", comic_data.get("title") or metadata.get("title")),
                 ("description", comic_data.get("description") or metadata.get("summary")),
                 ("thumb", OrderedDict([
-                    ("fileServer", PROXY_URL),
+                    ("fileServer", PICABRIDGE_URL),
                     ("path", thumbnail_path),
                     ("originalName", f"{comic_id}.jpg"),
                 ])),

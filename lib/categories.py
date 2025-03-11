@@ -10,7 +10,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 def get_categories(user_id):
     # 根据用户模式选择分类
@@ -34,7 +34,7 @@ def get_categories(user_id):
             "thumb": {
                 "originalName": original_name,
                 "path": thumb_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             }
         }
         categories_list.append(category_dict)

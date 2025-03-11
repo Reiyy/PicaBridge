@@ -7,11 +7,11 @@ def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
         return json.load(f)
     
-api_key = load_config()["lanraragi_api_key"]
+LRR_API_KEY = load_config()["lrr_Api_Key"]
 
 # lanraragi验证头
 def get_auth_header():
-    encoded_key = base64.b64encode(api_key.encode()).decode()
+    encoded_key = base64.b64encode(LRR_API_KEY.encode()).decode()
     return {
         'Authorization': f'Bearer {encoded_key}',
         'Accept': 'application/json'
@@ -20,8 +20,8 @@ def get_auth_header():
 # 从 Lanraragi API 获取漫画元数据
 def get_archive_metadata(comic_id):
     config = load_config()
-    lanraragi_api = config['lanraragi_api']
-    url = f"{lanraragi_api}/api/archives/{comic_id}/metadata"
+    lrr_Api = config['lrr_Api']
+    url = f"{lrr_Api}/api/archives/{comic_id}/metadata"
     headers = get_auth_header()
     
     try:
@@ -36,8 +36,8 @@ def get_archive_metadata(comic_id):
 # 从 Lanraragi API 获取漫画档案
 def get_extract_archive(comic_id):
     config = load_config()
-    lanraragi_api = config['lanraragi_api']
-    url = f"{lanraragi_api}/api/archives/{comic_id}/files"
+    lrr_Api = config['lrr_Api']
+    url = f"{lrr_Api}/api/archives/{comic_id}/files"
     
     try:
         response = requests.get(url)
@@ -50,8 +50,8 @@ def get_extract_archive(comic_id):
 # 从 Lanraragi API 获取所有漫画元数据
 def get_all_archives():
     config = load_config()
-    lanraragi_api = config['lanraragi_api']
-    url = f"{lanraragi_api}/api/archives"
+    lrr_Api = config['lrr_Api']
+    url = f"{lrr_Api}/api/archives"
 
     try:
         response = requests.get(url)
@@ -64,8 +64,8 @@ def get_all_archives():
 # 创建新的合集
 def new_tankoubon(name):
     config = load_config()
-    lanraragi_api = config['lanraragi_api']
-    url = f"{lanraragi_api}/api/tankoubons"
+    lrr_Api = config['lrr_Api']
+    url = f"{lrr_Api}/api/tankoubons"
     headers = get_auth_header()
     params = {'name': name}
     
@@ -78,8 +78,8 @@ def new_tankoubon(name):
 # 将 档案 添加到指定合集
 def add_archive_tankoubon(id, archive):
     config = load_config()
-    lanraragi_api = config['lanraragi_api']
-    url = f"{lanraragi_api}/api/tankoubons/{id}/{archive}"
+    lrr_Api = config['lrr_Api']
+    url = f"{lrr_Api}/api/tankoubons/{id}/{archive}"
     headers = get_auth_header()
     
     try:

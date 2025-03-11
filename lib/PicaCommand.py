@@ -8,7 +8,7 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
+LRR_URL = config.get('lrr_Api')
 
 def run(comic_id, user_id, contentdata):
     # 提取命令内容

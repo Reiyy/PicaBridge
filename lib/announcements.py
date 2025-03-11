@@ -7,7 +7,7 @@ def load_config():
         return json.load(f)
     
 config = load_config()
-PROXY_URL = config.get('PROXY_URL')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 公告信息
 def get_announcements(page):
@@ -35,7 +35,7 @@ def get_announcements(page):
             "thumb": {
                 "originalName": original_name,
                 "path": thumb_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             }
         }
         formatted_announcements.append(formatted_announcement)

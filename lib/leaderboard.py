@@ -12,8 +12,8 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
-PROXY_URL = config.get('PROXY_URL')
+LRR_URL = config.get('lrr_Api')
+PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 获取排行榜
 def get_comic_leaderboard(tt):
@@ -92,7 +92,7 @@ def get_comic_leaderboard(tt):
             "thumb": {
                 "originalName": f"{comic_id}.jpg",
                 "path": thumbnail_path,
-                "fileServer": PROXY_URL
+                "fileServer": PICABRIDGE_URL
             },
             "viewsCount": comic_info.get("viewsCount", 0),
             "leaderboardCount": count
@@ -117,7 +117,7 @@ def get_knight_leaderboard():
 
     # 请求一次API以获取库中漫画总数作为comics_uploaded数据
     try:
-        comics_uploaded_response = requests.get(f"{LANRARAGI_URL}/api/search?start=0", timeout=2)
+        comics_uploaded_response = requests.get(f"{LRR_URL}/api/search?start=0", timeout=2)
         comics_uploaded_response.raise_for_status()
         comics_uploaded = comics_uploaded_response.json().get("recordsTotal", 0)
         print(f"库中漫画总数: {comics_uploaded}")
@@ -143,7 +143,7 @@ def get_knight_leaderboard():
                 "avatar": {
                     "originalName": user_info.get("avatar").split("/")[-1],
                     "path": "/".join(user_info.get("avatar").split("/")[3:]),
-                    "fileServer": PROXY_URL
+                    "fileServer": PICABRIDGE_URL
                 },
                 "comicsUploaded": comics_uploaded,
                 "character": user_info.get("frame")

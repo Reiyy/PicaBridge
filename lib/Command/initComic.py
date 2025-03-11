@@ -11,7 +11,7 @@ def load_config():
         return json.load(f)
 
 config = load_config()
-LANRARAGI_URL = config.get('lanraragi_api')
+LRR_URL = config.get('lrr_Api')
 
 # 允许调用该命令的用户组
 allow_groups = ["official", "knight"]
@@ -71,7 +71,7 @@ def AutoinitComic(comic_id, user_id, subcommand_args):
 # 查询所有漫画数据并初始化未初始化的漫画
 def AutoinitComic_all():
     try:
-        response = requests.get(f"{LANRARAGI_URL}/api/archives")
+        response = requests.get(f"{LRR_URL}/api/archives")
         response.raise_for_status()  # 如果请求失败，抛出异常
         archives = response.json()
     except requests.RequestException as e:
@@ -140,7 +140,7 @@ def AutoinitComic_setpage(subcommand_args):
     for page in range(start_page, end_page + 1):
         # 获取每页的数据
         try:
-            response = requests.get(f"{LANRARAGI_URL}/api/search?start={page}&sortby=date_added&order=desc")
+            response = requests.get(f"{LRR_URL}/api/search?start={page}&sortby=date_added&order=desc")
             response.raise_for_status()  # 如果请求失败，抛出异常
             data = response.json().get("data", [])
         except requests.RequestException as e:
@@ -185,7 +185,7 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
             return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
         # 获取所有漫画数据
         try:
-            response = requests.get(f"{LANRARAGI_URL}/api/archives")
+            response = requests.get(f"{LRR_URL}/api/archives")
             response.raise_for_status()
             comics_data = response.json()
             comics_to_process.extend(comics_data)
@@ -209,7 +209,7 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
             
             # 获取指定页数的数据
             for page in range(start_page, end_page + 1):
-                response = requests.get(f"{LANRARAGI_URL}/api/search?start={page}&sortby=date_added&order=desc")
+                response = requests.get(f"{LRR_URL}/api/search?start={page}&sortby=date_added&order=desc")
                 response.raise_for_status()
                 comics_data = response.json().get("data", [])
                 comics_to_process.extend(comics_data)
@@ -224,7 +224,7 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
             return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
         # 如果是字母加数字混合形式，获取单本漫画的元数据
         try:
-            response = requests.get(f"{LANRARAGI_URL}/api/archives/{subcommand_args}/metadata")
+            response = requests.get(f"{LRR_URL}/api/archives/{subcommand_args}/metadata")
             response.raise_for_status()
             comics_data = response.json()
             comics_to_process.append(comics_data)
@@ -234,7 +234,7 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
     elif not subcommand_args:
         # 如果没有subcommand_args，使用 comic_id
         try:
-            response = requests.get(f"{LANRARAGI_URL}/api/archives/{comic_id}/metadata")
+            response = requests.get(f"{LRR_URL}/api/archives/{comic_id}/metadata")
             response.raise_for_status()
             comics_data = response.json()
             comics_to_process.append(comics_data)
