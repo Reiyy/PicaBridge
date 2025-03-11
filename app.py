@@ -64,12 +64,12 @@ def jwt_required(f):
         auth_header = request.headers.get("authorization")
 
         if not auth_header or not auth_header.strip():
-            return jsonify({"error": "Unauthorized"}), 401
+            return jsonify({"code": 401, "error": "1005", "message": "unauthorized"}), 401
         
         token = auth_header.strip()
         jwt_payload = verify_token(token)
         if not jwt_payload:
-            return jsonify({"error": "Invalid or expired token"}), 401
+            return jsonify({"code": 401, "error": "1005", "message": "invalid or expired"}), 401
         
         # 把用户数据传递给被装饰的函数
         return f(*args, **kwargs, jwt_payload=jwt_payload)
