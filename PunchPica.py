@@ -81,7 +81,7 @@ def main():
     print("初始化完成！")
     print("正在启动 哔咔桥PicaBridge ！")
     listen_address = config.get("Listen", "0.0.0.0:7777")  # 读取 Listen 配置，默认 0.0.0.0:7777
-    subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "app:app"])
+    subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "PicaBridge:PicaBridge"])
 
 if __name__ == "__main__":
     main()

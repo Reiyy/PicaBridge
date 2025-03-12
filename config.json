@@ -1,5 +1,5 @@
 {
-    "Listen": "0.0.0.0:7777",
+    "Listen": "0.0.0.0:6888",
     "PicaBridge_URL": "https://picaapi.reiyy.com:2333",
     "JWT_KEY": "6gabm1ig9nbyqce3imkhm6f52tdboygq",
     "lrr_Api": "https://bzlib.home.reiyy.com:2333",

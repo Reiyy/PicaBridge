@@ -27,7 +27,7 @@ from lib import PicaCommand
 from lib import LaunchImage
 from lib import ModeSwitch
 
-app = Flask(__name__, static_folder=None)
+PicaBridge = Flask(__name__, static_folder=None)
 
 # 读取 JSON 配置文件
 def load_config():
@@ -79,13 +79,13 @@ def jwt_required(f):
     return decorated_function
 
 # 获取动态启动图
-@app.route('/GetLaunchImage', methods=['GET'])
+@PicaBridge.route('/GetLaunchImage', methods=['GET'])
 def get_launch_image():
     user_name = request.args.get('user', default="")
     return LaunchImage.Get(user_name)
 
 # 图片资源重定向
-@app.route('/static/<path:filepath>', methods=['GET'])
+@PicaBridge.route('/static/<path:filepath>', methods=['GET'])
 def static_redirect(filepath):
     query_string = request.query_string.decode("utf-8")
     prefix = filepath.split("/")[0]  # 获取路径前缀
@@ -101,7 +101,7 @@ def static_redirect(filepath):
     return redirect(f"{fileserver}/{filepath}", code=302)
 
 # LRR档案图像重定向
-@app.route('/static/lrr_img/<path:filepath>', methods=['GET'])
+@PicaBridge.route('/static/lrr_img/<path:filepath>', methods=['GET'])
 def comic_redirect_route(filepath):
     query_string = request.query_string.decode("utf-8")
     target_url = f"{LRR_URL}/{filepath}"
@@ -111,7 +111,7 @@ def comic_redirect_route(filepath):
 
 # 监听
 # 监听init
-@app.route('/init', methods=['GET'])
+@PicaBridge.route('/init', methods=['GET'])
 def init_route():
     platform = request.args.get('platform')
     user_id = request.args.get('authorization') # 此处仅作为占位兼容原函数，不起实际作用
@@ -129,7 +129,7 @@ def init_route_auth(jwt_payload):
     return initplatform.init(platform, user_id)
 
 # 监听点击救哔咔广告
-@app.route('/ad/android/cat', methods=['GET'])
+@PicaBridge.route('/ad/android/cat', methods=['GET'])
 def android_cat_route():
     response = make_response('<!DOCTYPE html><html><head><meta charSet="utf-8" class="next-head"/><title class="next-head">嗶咔廣告</title><meta name="viewport" content="initial-scale=1.0, width=device-width" class="next-head"/><style class="next-head">body {margin: 0}</style><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/show.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/_app.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/pages/_error.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" as="script"/><link rel="preload" href="/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" as="script"/></head><body><div id="__next"><div data-reactroot=""><div style="width:100%"></div></div></div><script>__NEXT_DATA__ = {"props":{"pageProps":{}},"page":"/show","query":{"zoneId":"zone_233","location":"wakamoment"},"buildId":"nXBZRN9Bnol3egSoxUs8s"};__NEXT_LOADED_PAGES__=[];__NEXT_REGISTER_PAGE=function(r,f){__NEXT_LOADED_PAGES__.push([r, f])}</script><script async="" id="__NEXT_PAGE__/show" src="/assets/ad/clicktohelppica/js/pages/show.js"></script><script async="" id="__NEXT_PAGE__/_app" src="/assets/ad/clicktohelppica/js/pages/_app.js"></script><script async="" id="__NEXT_PAGE__/_error" src="/assets/ad/clicktohelppica/js/pages/_error.js"></script><script src="/assets/ad/clicktohelppica/js/runtime/webpack-42652fa8b82c329c0559.js" async=""></script><script src="/assets/ad/clicktohelppica/js/chunks/commons.31d10eeff7ba6e9319c7.js" async=""></script><script src="/assets/ad/clicktohelppica/js/runtime/main-1b037b55b33d0a347283.js" async=""></script></body></html>', 200)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -137,7 +137,7 @@ def android_cat_route():
     return response
 
 # 监听广告信息
-@app.route('/get-ad-zones', methods=['GET'])
+@PicaBridge.route('/get-ad-zones', methods=['GET'])
 def android_cat2_route():
     image = config.get('AD_Help_Pica', {}).get('image', '')
     response_data = {
@@ -155,22 +155,22 @@ def android_cat2_route():
     return jsonify(response_data), 200
 
 # 监听注册请求
-@app.route('/auth/register', methods=['POST'])
+@PicaBridge.route('/auth/register', methods=['POST'])
 def register_route():
     return account.Register(request.json)
 
 # 监听登录请求
-@app.route('/auth/sign-in', methods=['POST'])
+@PicaBridge.route('/auth/sign-in', methods=['POST'])
 def sign_in_route():
     return account.SignIn(request.json)
 
 # 监听获取漫画封面请求
-@app.route('/static/thumbnail/<arcid>', methods=['GET'])
+@PicaBridge.route('/static/thumbnail/<arcid>', methods=['GET'])
 def handle_thumbnail_route(arcid):
     return comiclist.redirect_thumbnail(arcid)
 
 # 监听获取漫画列表请求
-@app.route('/comics', methods=['GET'])
+@PicaBridge.route('/comics', methods=['GET'])
 @jwt_required
 def handle_comics_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -183,7 +183,7 @@ def handle_comics_route(jwt_payload):
     return comiclist.get_comics_data(user_id, page, s, c, t, a)
 
 # 监听获取随机漫画请求
-@app.route('/comics/random', methods=['GET'])
+@PicaBridge.route('/comics/random', methods=['GET'])
 @jwt_required
 def handle_random_comics_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -191,25 +191,25 @@ def handle_random_comics_route(jwt_payload):
     return comiclist.get_random_comics(user_id)
 
 # 监听公告消息请求
-@app.route('/announcements', methods=['GET'])
+@PicaBridge.route('/announcements', methods=['GET'])
 def announcements_route():
     page = request.args.get('page', default=1, type=int)
     return announcements.get_announcements(page)
 
 # 监听横幅公告请求
-@app.route('/banners', methods=['GET'])
+@PicaBridge.route('/banners', methods=['GET'])
 def banners_route():
     return banners.get_banners()
 
 # 监听获取分类请求
-@app.route('/categories', methods=['GET'])
+@PicaBridge.route('/categories', methods=['GET'])
 @jwt_required
 def categories_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     return categories.get_categories(user_id)
 
 # 监听获取漫画信息请求
-@app.route('/comics/<comic_id>', methods=['GET'])
+@PicaBridge.route('/comics/<comic_id>', methods=['GET'])
 @jwt_required
 def comic_detail_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -219,20 +219,20 @@ def comic_detail_route(comic_id, jwt_payload):
     return jsonify(dict(comic_info)), 200
 
 # 监听获取漫画章节请求
-@app.route('/comics/<comic_id>/eps')
+@PicaBridge.route('/comics/<comic_id>/eps')
 def eps_route(comic_id):
     page = request.args.get('page', 1, type=int)
     return eps.get_eps(comic_id, page)
 
 # 监听获取漫画图片请求
-@app.route('/comics/<comic_id>/order/<int:order>/pages', methods=['GET'])
+@PicaBridge.route('/comics/<comic_id>/order/<int:order>/pages', methods=['GET'])
 def comic_pages_route(comic_id, order):
     page = request.args.get('page', default=1, type=int)
     response = comicorder.get_pages(comic_id, page)
     return jsonify(response)
 
 # 监听漫画收藏
-@app.route('/comics/<comic_id>/favourite', methods=['POST'])
+@PicaBridge.route('/comics/<comic_id>/favourite', methods=['POST'])
 @jwt_required
 def favourite_comic_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -242,7 +242,7 @@ def favourite_comic_route(comic_id, jwt_payload):
     return comicinfo.comic_favourite(user_id, comic_id)
 
 # 监听漫画点赞
-@app.route('/comics/<comic_id>/like', methods=['POST'])
+@PicaBridge.route('/comics/<comic_id>/like', methods=['POST'])
 @jwt_required
 def like_comic_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -252,18 +252,18 @@ def like_comic_route(comic_id, jwt_payload):
     return comicinfo.comic_like(user_id, comic_id)
 
 # 监听漫画排行榜
-@app.route('/comics/leaderboard', methods=['GET'])
+@PicaBridge.route('/comics/leaderboard', methods=['GET'])
 def get_leaderboard_route():
     tt = request.args.get('tt')
     return leaderboard.get_comic_leaderboard(tt)
 
 # 监听骑士排行榜
-@app.route('/comics/knight-leaderboard', methods=['GET'])
+@PicaBridge.route('/comics/knight-leaderboard', methods=['GET'])
 def knight_leaderboard_route():
     return leaderboard.get_knight_leaderboard()
 
 # 监听个人中心
-@app.route('/users/profile', methods=['GET'])
+@PicaBridge.route('/users/profile', methods=['GET'])
 @jwt_required
 def user_profile_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -272,7 +272,7 @@ def user_profile_route(jwt_payload):
     return userinfo.user_info(user_id)
 
 # 监听收藏列表
-@app.route('/users/favourite', methods=['GET'])
+@PicaBridge.route('/users/favourite', methods=['GET'])
 @jwt_required
 def favourite_comics_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -282,12 +282,12 @@ def favourite_comics_route(jwt_payload):
     return userinfo.get_favourite_comics(user_id, page)
 
 # 监听用户资料
-@app.route('/users/<user_id>/profile', methods=['GET'])
+@PicaBridge.route('/users/<user_id>/profile', methods=['GET'])
 def get_user_profile_route(user_id):
     return userinfo.get_user_profile(user_id)
 
 # 监听用户简介修改
-@app.route('/users/profile', methods=['PUT'])
+@PicaBridge.route('/users/profile', methods=['PUT'])
 @jwt_required
 def user_profile_put_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -299,14 +299,14 @@ def user_profile_put_route(jwt_payload):
     return jsonify({"code": 400, "message": "Invalid data."}), 400
 
 # 监听签到
-@app.route('/users/punch-in', methods=['POST'])
+@PicaBridge.route('/users/punch-in', methods=['POST'])
 @jwt_required
 def punch_in_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     return userinfo.punch_in(user_id)
 
 # 监听头像上传
-@app.route('/users/avatar', methods=['PUT'])
+@PicaBridge.route('/users/avatar', methods=['PUT'])
 @jwt_required
 def upload_user_avatar_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -319,7 +319,7 @@ def upload_user_avatar_route(jwt_payload):
     return result
 
 # 监听搜索
-@app.route('/comics/advanced-search', methods=['POST'])
+@PicaBridge.route('/comics/advanced-search', methods=['POST'])
 def handle_advanced_search_route():
     data = request.get_json()
     keyword = data.get('keyword', '')
@@ -327,14 +327,14 @@ def handle_advanced_search_route():
     return search.search_comic(keyword, page)
 
 # 监听获取常用标签
-@app.route('/keywords', methods=['GET'])
+@PicaBridge.route('/keywords', methods=['GET'])
 @jwt_required
 def keywords_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     return keywords.get_keywords(user_id)
 
 # 监听发布主评论
-@app.route('/comics/<comic_id>/comments', methods=['POST'])
+@PicaBridge.route('/comics/<comic_id>/comments', methods=['POST'])
 @jwt_required
 def new_comment(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -349,7 +349,7 @@ def new_comment(comic_id, jwt_payload):
     return comment.post_comment(comic_id, user_id, contentdata)
 
 # 监听获取主评论列表
-@app.route('/comics/<comic_id>/comments', methods=['GET'])
+@PicaBridge.route('/comics/<comic_id>/comments', methods=['GET'])
 @jwt_required
 def get_comment_list(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -357,7 +357,7 @@ def get_comment_list(comic_id, jwt_payload):
     return comment.load_comments(comic_id, page, user_id)
 
 # 监听发布子评论
-@app.route('/comments/<parent_comment_id>', methods=['POST'])
+@PicaBridge.route('/comments/<parent_comment_id>', methods=['POST'])
 @jwt_required
 def new_child_comment(parent_comment_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -365,7 +365,7 @@ def new_child_comment(parent_comment_id, jwt_payload):
     return comment.post_child_comment(parent_comment_id, user_id, childcontentdata)
 
 # 监听获取子评论列表
-@app.route('/comments/<parent_comment_id>/childrens', methods=['GET'])
+@PicaBridge.route('/comments/<parent_comment_id>/childrens', methods=['GET'])
 @jwt_required
 def get_child_comments_list(parent_comment_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -373,7 +373,7 @@ def get_child_comments_list(parent_comment_id, jwt_payload):
     return comment.load_child_comments(parent_comment_id, page, user_id)
                              
 # 监听漫画点赞
-@app.route('/comments/<comment_id>/like', methods=['POST'])
+@PicaBridge.route('/comments/<comment_id>/like', methods=['POST'])
 @jwt_required
 def like_comment_route(comment_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -382,7 +382,7 @@ def like_comment_route(comment_id, jwt_payload):
     return comment.like_comment(user_id, comment_id)
 
 # 监听模式切换
-@app.route('/modeswitch', methods=['POST'])
+@PicaBridge.route('/modeswitch', methods=['POST'])
 @jwt_required
 def modeswitch_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -409,4 +409,4 @@ def main():
 if __name__ == "__main__":
     main()
     # 启动 Flask
-    app.run(debug=True, host='0.0.0.0', port=6888)
+    PicaBridge.run(debug=True, host='0.0.0.0', port=6888)
