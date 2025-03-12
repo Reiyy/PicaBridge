@@ -1,15 +1,15 @@
 {
     "Listen": "0.0.0.0:7777",
-    "PicaBridge_URL": "https://picaapi.reiyy.com:2333",
-    "JWT_KEY": "6gabm1ig9nbyqce3imkhm6f52tdboygq",
-    "lrr_Api": "https://bzlib.home.reiyy.com:2333",
-    "lrr_Api_Key": "99SNcrtWqi5DSwQEXQHLMBFvKx67eoc4",
-    "avatarfilepath": "/data/wwwroot/mypic/assets/img/avatar",
+    "PicaBridge_URL": "https://picaapi.example.com:2333",
+    "JWT_KEY": "wpd5xyxqdhm3zx6322l7m42nz5n6ms2i",
+    "lrr_Api": "https://lrr.example.com:2333",
+    "lrr_Api_Key": "Wdw1GMdlOU0XHQXLnXZTQ2Z5dsOi4SuG",
+    "avatarfilepath": "/data/wwwroot/picabridge/assets/img/avatar",
     "db": {
-        "host": "192.168.7.205",
-        "user": "mypic",
-        "password": "IIvYmIwQ5q230A",
-        "name": "mypic",
+        "host": "192.168.7.42",
+        "user": "picabridge",
+        "password": "picabridge",
+        "name": "picabridge",
         "pool": {
             "maxconnections": 9,
             "mincached": 3,
@@ -19,26 +19,26 @@
         }
     },
     "URL_Mappings": {
-        "lrr_img": "https://bzlib.home.reiyy.com:2333",
-        "img": "https://cdn.reiyy.com",
-        "assets": "https://picaapi.reiyy.com:2333"
+        "lrr_img": "https://lrr.example.com:2333",
+        "img": "https://cdn.example.com",
+        "assets": "https://picaapi.example.com:2333"
     },
     "AD_Help_Pica": {
-        "image": "https://picaapi.reiyy.com:2333/assets/img/ezgif-1-83147a2658.gif"
+        "image": "https://picaapi.example.com:2333/assets/img/ezgif-1-83147a2658.gif"
     },
     "initPlatform": {
-        "imageServer": "https://picaapi.reiyy.com:2333/static/",
+        "imageServer": "https://picaapi.example.com:2333/static/",
         "latestApplication": {
             "_id": "3ed58b151e103c60e7663b19",
-            "downloadUrl": "https://picaapi.reiyy.com:2333/assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
-            "updateContent": "【强制更新】\n\n发布前测试第二版\n由于签名更改，本次更新需要卸载后重新安装！\n请点击“镜像下载“来下载更新！本次更新完成后，此后更新即可正常点击下载更新按钮下载了\nAPP更新日志：\n1.修改了更新下载按钮的名称\nHookMyPica 2.7.0.1更新：\n1.移除了隐藏更新弹出按钮的hook\n2.新增修改下载链接拼接逻辑的hook\n\n本更新为强制更新，如不更新无法将正常使用！",
-            "version": "2.7.0.1.2.2",
+            "downloadUrl": "https://picaapi.example.com:2333/assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
+            "updateContent": "【一般更新】",
+            "version": "2.2.1.3.3.4",
             "updated_at": "2025-03-10T01:39:07.363Z",
             "created_at": "2025-03-10T01:39:07.363Z",
             "apk": {
                 "originalName": "2.7.0.1.2.2-398-lspatched_sign.apk",
                 "path": "assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
-                "fileServer": "https://picaapi.reiyy.com:2333"
+                "fileServer": "https://picaapi.example.com:2333"
             }
         }
     },
@@ -93,14 +93,6 @@
             "description": "AI生成，指通过AI生成的作品",
             "thumb": "assets/img/categories/ai.png"
         },
-        "萝莉": {
-            "lrr_id": "SET_1728329362",
-            "rule": [0,"女性:低存在萝莉", "女性:巨乳萝莉", "女性:萝莉"],
-            "id": "5821859b5f6b9a4f93d16789",
-            "title": "萝莉",
-            "description": "萝莉",
-            "thumb": "assets/img/categories/loli.png"
-        },
         "百合": {
             "lrr_id": "SET_1727681047",
             "rule": [1,"女性:百合"],
@@ -154,22 +146,22 @@
     },
     "LaunchImage": {
         "GeneralDay": {
-            "爱丽丝1": ["https://cdn.reiyy.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.reiyy.com/img/2025/02/14/fbf645c7b500b.jpg"],
-            "幻丝": ["https://cdn.reiyy.com/img/2025/03/03/4ca579d5a93ca.jpg","https://cdn.reiyy.com/img/2025/03/03/50f4c1e57d89a.jpg"]
+            "1": ["https://cdn.example.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.example.com/img/2025/02/14/fbf645c7b500b.jpg"],
+            "2": ["https://cdn.example.com/img/2025/03/03/4ca579d5a93ca.jpg","https://cdn.example.com/img/2025/03/03/50f4c1e57d89a.jpg"]
         },
         "NSFW": {
-            "n1": ["https://cdn.reiyy.com/img/2025/03/03/6b83f9e75762d.jpg","https://cdn.reiyy.com/img/2025/03/03/f2d3700ab7a6b.jpg"],
-            "n2": ["https://cdn.reiyy.com/img/2025/03/03/924f1a78c6e84.jpg","https://cdn.reiyy.com/img/2025/03/03/e78666e4f4be7.jpg"]
+            "n1": ["https://cdn.example.com/img/2025/03/03/6b83f9e75762d.jpg","https://cdn.example.com/img/2025/03/03/f2d3700ab7a6b.jpg"],
+            "n2": ["https://cdn.example.com/img/2025/03/03/924f1a78c6e84.jpg","https://cdn.example.com/img/2025/03/03/e78666e4f4be7.jpg"]
         },
         "SpeciallDay": {
-            "烧烤节": ["0215","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.reiyy.com/img/2025/02/13/4954cb7d59db7.jpg"]
+            "烧烤节": ["0215","https://cdn.example.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.example.com/img/2025/02/13/4954cb7d59db7.jpg"]
         }
     },
     "announcements": {
         "公告1": {
             "id": "66eeec47c765ef0843f44812",
-            "title": "PicaBridge测试版本",
-            "content": "当前为测试版本，可能不稳定！",
+            "title": "欢迎来到 哔咔桥PicaBridge",
+            "content": "领养一只属于你的哔咔娘吧！",
             "thumb": "img/2024/10/08/48d9b9a733185.png"
         },
         "公告2": {
@@ -182,10 +174,10 @@
     "banners": {
         "横幅公告1": {
             "id": "toBe1",
-            "title": "Yareiy's BZLib",
+            "title": "Open Lanraragi",
             "shortDescription": "PicaBridge",
             "type": "web",
-            "link": "https://bzlib.home.reiyy.com:2333/",
+            "link": "https://lrr.example.com:2333/",
             "thumb": "img/2022/08/31/b44125355d4c5.png"
         }
     },
