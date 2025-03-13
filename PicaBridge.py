@@ -41,11 +41,6 @@ PICABRIDGE_URL = config.get('PicaBridge_URL')
 URL_MAPPINGS = config.get("URL_Mappings", {})
 DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
 
-# 写入 JSON 配置文件
-def save_config(config):
-    with open('config.json', 'w') as file:
-        json.dump(config, file, indent=4)
-
 # JWT校验
 def verify_token(token):
     JWT_KEY = load_config().get('JWT_KEY')
@@ -390,23 +385,11 @@ def modeswitch_route(jwt_payload):
     return ModeSwitch.switch(user_id, mode)
 
 def main():
-    print("当前版本 Beta 0.7.5-250310")
-    # 加载配置文件
-    config = load_config()
-    
-    # 检查是否为首次运行
-    firstrun = config.get('firstrun', 1)
-    if firstrun == 0:
-        print("程序未安装，开始初始化数据库...")
-        initdb.initialize_database()
-
-        config['firstrun'] = 1
-        save_config(config)
-        print("初始化数据库完成，进入程序...")
-    else:
-        print("PicaBridge哔咔桥，开始运行...")
+    print("你正在运行调试模式！")
+    print("如果这不是你想要的，请通过PunchPica.py运行！")
+    # 启动 Flask
+    print("正在启动Flask！")
+    PicaBridge.run(debug=True, host='0.0.0.0', port=7777)
 
 if __name__ == "__main__":
     main()
-    # 启动 Flask
-    PicaBridge.run(debug=True, host='0.0.0.0', port=6888)
