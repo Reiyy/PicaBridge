@@ -8,8 +8,8 @@ import lib.db as db
 import lib.ModeSwitch as ModeSwitch
 
 def load_config():
-    with open('config.json', 'r', encoding='utf-8') as file:
-        return json.load(file)
+    with open('config.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 config = load_config()
 

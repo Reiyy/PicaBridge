@@ -7,8 +7,8 @@ from dbutils.pooled_db import PooledDB
 
 # 读取配置文件
 def load_config():
-    with open('config.json', 'r') as file:
-        return json.load(file)
+    with open('config.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 
 class DBPool:

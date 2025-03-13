@@ -31,8 +31,8 @@ PicaBridge = Flask(__name__, static_folder=None)
 
 # 读取 JSON 配置文件
 def load_config():
-    with open('config.json', 'r') as file:
-        return json.load(file)
+    with open('config.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 config = load_config()
 
