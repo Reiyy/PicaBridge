@@ -5,7 +5,7 @@
 
 ## 简介 
 
-本项目模拟了 **PicaACG APP** 的后端 API 服务，实现了 **PicaACG** 大部分功能，其中漫画数据由 **LANraragi** 提供。
+本项目模拟了 **PicaACG APP** 的后端 API 服务，实现了 **PicaACG** 大部分功能，其中漫画数据由 **LANraragi** 提供。  
 哔咔桥(PicaBridge) 作为 **PicaACG APP** 与 **LANraragi** 之间的沟通桥梁，将 **LANraragi API** 返回的漫画数据转换为 APP 可接受的格式返回。
 
 > LANraragi 是一个开源的漫画/档案管理服务器，基于 Mojolicious 框架和 Redis 数据库构建。其提供强大的漫画归档和管理功能，支持多种格式档案，并可通过 API 交互。本项目利用 LANraragi 的 API 获取漫画数据，并对其数据进行加工使其适配 PicaACG APP。
@@ -40,7 +40,7 @@ LANraragi v0.9.31+
 
 - [LANraragi](https://github.com/Difegue/LANraragi): 提供强大的漫画库功能，本项目的核心
 - [DeepSeek AI](https://github.com/deepseek-ai): 性能强大的语言模型，为项目提供帮助
-- [XposedBridge](https://github.com/TheZoraiz/ascii-image-converter): 可将图像转换为ASCII艺术画，启动脚本中的ASCII画用其创建
+- [ascii-image-converter](https://github.com/TheZoraiz/ascii-image-converter): 可将图像转换为ASCII艺术画，启动脚本中的ASCII画用其创建
 
 ## 许可证
 
