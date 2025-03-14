@@ -47,6 +47,9 @@ LANraragi v0.9.31+
 ## 注意
 本项目自设计之初，并没有为多人访问等高并发场景进行优化，仅适合个人使用。
 
+关于如何使 **PicaACG APP** 指向 **PicaBridge**，本项目不提供详细方式。  
+你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。
+
 ## 致谢
 
 - [LANraragi](https://github.com/Difegue/LANraragi): 提供强大的漫画库功能，本项目的核心
