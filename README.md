@@ -26,7 +26,7 @@ LANraragi v0.9.31+
 7. 配置Web服务器，如 Nginx
 8. Enjoy, heart❤️! =w=
 
-或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/install.md)  
+或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/RunPicaBridge.md)  
 根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
 正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)
 
