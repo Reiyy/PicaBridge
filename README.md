@@ -1,18 +1,4 @@
 # PicaBridge
-
-这是一个可以将Lanraragi作为哔咔APP服务端的桥接器。
-
-漫画数据通过Lanraragi API获取，再转化为哔咔APP可以理解的格式。
-
-当前支持LRR版本：v0.9.22 or later
-当前支持哔咔APP版本：2.2.1.3.3.4
-（哔咔2.5大部分兼容，少部分暂不可用）
-
--------------------
-你需要使用诸如：修改hosts、dns重定向、代理、修改app，等方式将客户端请求地址指向PicaBridge
-本项目不提供以上方式的教程，请自行解决。
-
-# PicaBridge
 [<img src="https://img.shields.io/github/release/reiyy/picabridge.svg?label=latest%20release">](https://github.com/Reiyy/PicaBridge/releases/latest)
 [<img src="https://img.shields.io/docker/pulls/yareiy/picabridge.svg">](https://hub.docker.com/r/yareiy/picabridge/)
 [<img src="https://img.shields.io/github/downloads/reiyy/picabridge/total.svg">](https://github.com/Reiyy/PicaBridge/releases)
@@ -26,7 +12,7 @@
 
 ## 支持的版本
 
-PicaACG APP 2.2.1.3.3.4
+PicaACG APP 2.2.1.3.3.4  
 LANraragi v0.9.31+
 
 ## 运行
