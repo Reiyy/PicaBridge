@@ -1,0 +1,14 @@
+[Unit]
+Description=PicaBridge
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/PicaBridge
+ExecStart=/usr/bin/python3 /opt/PicaBridge/app.py
+Restart=always
+User=root
+Group=root
+Environment="PATH=/usr/bin:/opt/PicaBridge/venv/bin"
+
+[Install]
+WantedBy=multi-user.target
