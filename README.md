@@ -3,6 +3,8 @@
 [<img src="https://img.shields.io/docker/pulls/yareiy/picabridge.svg">](https://hub.docker.com/r/yareiy/picabridge/)
 [<img src="https://img.shields.io/github/downloads/reiyy/picabridge/total.svg">](https://github.com/Reiyy/PicaBridge/releases)
 
+注：本项目暂未完善，文档等未编写完整。
+
 ## 简介 
 
 本项目模拟了 **PicaACG APP** 的后端 API 服务，实现了 **PicaACG** 大部分功能，其中漫画数据由 **LANraragi** 提供。  
@@ -35,19 +37,46 @@ LANraragi v0.9.31+
 - 最新版本，前往 [Github 发布页](https://github.com/LSPosed/LSPosed/releases)
 
 ## 注意
+我并非专业人士，本项目仅为我业余开发。  
+开发本项目是因我使用多年的账号突然无法登录，这导致我丢失了数千收藏，  
+由此证明依赖他人提供的服务的不稳妥的。  
+为此，近两年我了搭建我的家庭服务器，运行了一些服务，LANraragi便是其中之一，但我始终没有找到喜欢的客户端，  
+鉴于多年来使用PicaACG APP习惯了，故制作了该项目。
+
 本项目自设计之初，并没有为多人访问等高并发场景进行优化，仅适合个人使用。
 
 关于如何使 **PicaACG APP** 指向 **PicaBridge**，本项目不提供详细方式。  
-你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。
+你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。  
 
 ## 功能
+已实现
+账号注册/登录
+公告信息/横幅公告信息
+分类列表
+漫画列表
+漫画浏览
+漫画列表可按时间顺序排序
+排行榜
+留言板/评论区
+漫画点赞/收藏
+随机漫画
+打哔咔签到
+用户头像上传
 
+附加功能：
+动态启动图，需配合Xposed
+命令(通过发布评论来指向命令)
 
+待实现：
+收藏列表按时间排序
+漫画关联/推荐
+小程序
+动态常用标签
+添加更多命令
 
 ## 致谢
 
 - [LANraragi](https://github.com/Difegue/LANraragi): 提供强大的漫画库功能，本项目的核心
-- [DeepSeek AI](https://github.com/deepseek-ai): 性能强大的语言模型，为项目提供帮助
 - [ascii-image-converter](https://github.com/TheZoraiz/ascii-image-converter): 可将图像转换为ASCII艺术画，启动脚本中的ASCII画用其创建
 
 ## 许可证
