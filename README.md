@@ -19,22 +19,30 @@ LANraragi v0.9.31+
 
 1. 安装 LANraragi v0.9.31+
 2. 安装 Python 3.8+
-3. 安装依赖 ```bash pip install -r requirements.txt ```
-4. 修改配置文件 查看文档
-5. 运行启动脚本 ```bash python PunchPica.py ```
-6. Enjoy, heart❤️! =w=
+3. 安装 MariaDB 10.6+ or MySQL 8.0+
+4. 安装依赖 ```pip install -r requirements.txt ```
+5. 修改配置文件 查看文档
+6. 运行启动脚本 ```python PunchPica.py ```
+7. 配置Web服务器，如 Nginx
+8. Enjoy, heart❤️! =w=
 
-更多详细步骤请 查看文档
+或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/install.md)  
+根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
+正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)
 
 ## 下载
 
-- 最新版本，前往 [Github Releases page](https://github.com/LSPosed/LSPosed/releases)
+- 最新版本，前往 [Github 发布页](https://github.com/LSPosed/LSPosed/releases)
 
 ## 注意
 本项目自设计之初，并没有为多人访问等高并发场景进行优化，仅适合个人使用。
 
 关于如何使 **PicaACG APP** 指向 **PicaBridge**，本项目不提供详细方式。  
 你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。
+
+## 功能
+
+
 
 ## 致谢
 
