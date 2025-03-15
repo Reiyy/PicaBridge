@@ -20,10 +20,12 @@ PicaACG APP 2.2.1.3.3.4
 目前的2.5测试版也基本兼容
 
 ## 演示图
-![主页](/tools/Documentation/img/主页.jpg)
-![分类页](/tools/Documentation/img/分类页.jpg)
-![漫画页](/tools/Documentation/img/漫画页.jpg)
-![评论页](/tools/Documentation/img/评论页.jpg)
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+  <img src="/tools/Documentation/img/主页.jpg" alt="主页" style="width: 48%; margin-bottom: 10px;">
+  <img src="/tools/Documentation/img/分类页.jpg" alt="分类页" style="width: 48%; margin-bottom: 10px;">
+  <img src="/tools/Documentation/img/漫画页.jpg" alt="漫画页" style="width: 48%; margin-bottom: 10px;">
+  <img src="/tools/Documentation/img/评论页.jpg" alt="评论页" style="width: 48%; margin-bottom: 10px;">
+</div>
 
 ## 运行
 
