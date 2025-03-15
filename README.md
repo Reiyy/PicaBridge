@@ -20,8 +20,10 @@ PicaACG APP 2.2.1.3.3.4
 目前的2.5测试版也基本兼容
 
 ## 演示图
-![主页](/tools/Documentation/img/主页.jpg =200x) ![分类页](/tools/Documentation/img/分类页.jpg =200x)
-![漫画页](/tools/Documentation/img/漫画页.jpg =200x) ![评论页](/tools/Documentation/img/评论页.jpg =200x)
+![主页](/tools/Documentation/img/主页.jpg =200x)
+![分类页](/tools/Documentation/img/分类页.jpg =200x)
+![漫画页](/tools/Documentation/img/漫画页.jpg =200x)
+![评论页](/tools/Documentation/img/评论页.jpg =200x)
 
 ## 运行
 
