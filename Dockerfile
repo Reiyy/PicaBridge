@@ -1,5 +1,5 @@
 # 选择基础镜像
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 # 设置工作目录
 WORKDIR /PicaBridge
