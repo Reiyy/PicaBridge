@@ -99,21 +99,22 @@ def get_user_profile(user_id):
     return jsonify(response_data), 200
 
 # 收藏漫画列表
-def get_favourite_comics(user_id, page):
+def get_favourite_comics(user_id, page, s):
 
     # 获取用户信息
     user_info = db.get_user_info(user_id)
-    print(f"用户ID({user_id})")
     favourite = json.loads(user_info.get("favourite", "[]")) if user_info.get("favourite") else []
-    comictotal = len(favourite)
-    print(f"收藏的漫画ID数组长度: {comictotal}, 收藏的漫画ID数组: {favourite}")
+    
+    # 根据排序标记排序,dd从新到旧，da从旧到新
+    reverse_order = True if s == "dd" else False
+    sorted_favourite = sorted(favourite.items(), key=lambda x: x[1], reverse=reverse_order)
 
+    comictotal = len(favourite)
     comics_data = []
     
     # 遍历所有漫画ID从数据库获取对应的元数据
-    for comic_id in favourite:
+    for comic_id in sorted_favourite:
         comic_data = db.get_comic_info(comic_id) or {}
-        print(f"从数据库获取漫画元数据({comic_id}):", comic_data)
 
         # 组装漫画信息数据
         comic_info = {

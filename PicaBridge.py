@@ -279,9 +279,10 @@ def user_profile_route(jwt_payload):
 def favourite_comics_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     page = request.args.get('page', default=1, type=int)
+    s = request.args.get('s', default=None, type=str)  # 排序标记
     if not user_id:
         return jsonify({"code": 401, "message": "Unauthorized"}), 401
-    return userinfo.get_favourite_comics(user_id, page)
+    return userinfo.get_favourite_comics(user_id, page, s)
 
 # 监听用户资料
 @PicaBridge.route('/users/<user_id>/profile', methods=['GET'])
