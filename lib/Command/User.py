@@ -192,3 +192,39 @@ def DeleteUser(comic_id, user_id, subcommand_args):
     connection.close()
     
     return {"status": True, "data": f"已删除用户：{target_useremail}"}
+
+# 修改用户称号
+def UserTitle(comic_id, user_id, subcommand_args):
+    # 解析命令参数
+    args = subcommand_args.split()
+
+    # 连接数据库
+    connection = db.get_db_connection()
+    cursor = connection.cursor()
+    
+    if len(args) == 2:
+        target_useremail, new_title = args
+        
+        # 查询 useremail 对应的 user_id
+        cursor.execute("SELECT id FROM users WHERE email = %s", (target_useremail,))
+        user = cursor.fetchone()
+        
+        if not user:
+            cursor.close()
+            connection.close()
+            return {"status": False, "data": f"未找到用户：{target_useremail}"}
+        
+        user_id = user["id"]  # 有额外传入用户名参数，以查询的user_id作为目标用户
+    elif len(args) == 1:
+        new_title = args[0]  # 没有额外传入用户名，已当前登录user_id作为目标用户
+    else:
+        return {"status": False, "data": f"未知的参数：{args}"}
+    
+    # 执行更新操作
+    cursor.execute("UPDATE users SET title = %s WHERE id = %s", (new_title, user_id))
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
+    
+    return {"status": True, "data": f"称号已改为：{new_title}"}
