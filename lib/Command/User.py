@@ -33,6 +33,8 @@ def run(comic_id, user_id, command_args):
         "权限组": UpdateUserRoles,
         "删除": DeleteUser,
         "del": DeleteUser,
+        "title": UserTitle,
+        "称号": UserTitle,
     }
 
     # 检查命令是否存在
