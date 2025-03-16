@@ -149,3 +149,41 @@ def SignIn(data):
             "token": token
         }
     }), 200
+
+
+def ChangePasswd(user_id, data):
+    new_password = data.get('new_password')
+    old_password = data.get('old_password')
+    
+    # 连接数据库
+    connection = db.get_db_connection()
+    cursor = connection.cursor()
+    
+    # 查询用户信息
+    cursor.execute("SELECT password FROM users WHERE id = %s", (user_id,))
+    userinfo = cursor.fetchone()
+    
+    if userinfo is None:
+        cursor.close()
+        connection.close()
+        return jsonify({"code": 400, "error": "1004", "message": "invalid email or password", "detail": ":("}), 400
+    
+    old_hashpassword = userinfo['password']
+    
+    # 验证旧密码
+    if not verify_password(old_password, old_hashpassword):
+        cursor.close()
+        connection.close()
+        return jsonify({"error": "Invalid email or password"}), 401
+    
+    # 生成新密码哈希
+    new_hashpassword = hash_password(new_password)
+    
+    # 更新密码
+    cursor.execute("UPDATE users SET password = %s WHERE id = %s", (new_hashpassword, user_id))
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
+    
+    return jsonify({"code": 200, "message": "success"})

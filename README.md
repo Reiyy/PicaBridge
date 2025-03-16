@@ -7,14 +7,14 @@
 
 ## 简介 
 
-本项目模拟了 **PicaACG APP** 的后端 API 服务，实现了 **PicaACG** 大部分功能，其中漫画数据由 **LANraragi** 提供。  
-哔咔桥(PicaBridge) 作为 **PicaACG APP** 与 **LANraragi** 之间的沟通桥梁，将 **LANraragi API** 返回的漫画数据转换为 APP 可接受的格式返回。
+本项目模拟了 **PicACG APP** 的后端 API 服务，实现了 **PicACG** 大部分功能，其中漫画数据由 **[LANraragi](https://github.com/Difegue/LANraragi)** 提供。  
+哔咔桥(PicaBridge) 作为 **PicACG APP** 与 **LANraragi** 之间的沟通桥梁，将 **LANraragi API** 返回的漫画数据转换为 APP 可接受的格式返回。
 
-> LANraragi 是一个开源的漫画/档案管理服务器，基于 Mojolicious 框架和 Redis 数据库构建。其提供强大的漫画归档和管理功能，支持多种格式档案，并可通过 API 交互。本项目利用 LANraragi 的 API 获取漫画数据，并对其数据进行加工使其适配 PicaACG APP。
+> LANraragi 是一个开源的漫画/档案管理服务器，基于 Mojolicious 框架和 Redis 数据库构建。其提供强大的漫画归档和管理功能，支持多种格式档案，并可通过 API 交互。本项目利用 LANraragi 的 API 获取漫画数据，并对其数据进行加工使其适配 PicACG APP。
 
 ## 支持的版本
 
-PicaACG APP 2.2.1.3.3.4  
+PicACG APP 2.2.1.3.3.4  
 
 其他第三方Pica客户端应该也兼容  
 目前的2.5测试版也基本兼容
@@ -45,13 +45,13 @@ PicaACG APP 2.2.1.3.3.4
 ## 注意事项
 我并非专业人士，本项目仅为我业余开发。  
 开发本项目是因我使用多年的账号突然无法登录，这导致我丢失了数千收藏，  
-由此证明依赖他人提供的服务的不稳妥的。  
+依赖他人提供的服务总是不稳妥的。  
 为此，近两年我了搭建我的家庭服务器，运行了一些服务，LANraragi便是其中之一，但我始终没有找到喜欢的客户端，  
-鉴于多年来使用PicaACG APP习惯了，故制作了该项目。
+鉴于多年来使用PicACG APP习惯了，故制作了该项目。
 
 本项目自设计之初，并没有为多人访问等高并发场景进行优化，仅适合个人使用。
 
-关于如何使 **PicaACG APP** 指向 **PicaBridge**，本项目不提供详细方式。  
+关于如何使 **PicACG APP** 指向 **PicaBridge**，本项目不提供详细方式。  
 你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。  
 
 ## 功能

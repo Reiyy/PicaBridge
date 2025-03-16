@@ -159,6 +159,13 @@ def register_route():
 def sign_in_route():
     return account.SignIn(request.json)
 
+# 监听修改密码请求
+@PicaBridge.route('/users/password', methods=['PUT'])
+@jwt_required
+def change_passwd_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
+    return account.ChangePasswd(user_id, request.json)
+
 # 监听获取漫画封面请求
 @PicaBridge.route('/static/thumbnail/<arcid>', methods=['GET'])
 def handle_thumbnail_route(arcid):
@@ -272,9 +279,10 @@ def user_profile_route(jwt_payload):
 def favourite_comics_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     page = request.args.get('page', default=1, type=int)
+    s = request.args.get('s', default=None, type=str)  # 排序标记
     if not user_id:
         return jsonify({"code": 401, "message": "Unauthorized"}), 401
-    return userinfo.get_favourite_comics(user_id, page)
+    return userinfo.get_favourite_comics(user_id, page, s)
 
 # 监听用户资料
 @PicaBridge.route('/users/<user_id>/profile', methods=['GET'])
