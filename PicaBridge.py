@@ -159,6 +159,13 @@ def register_route():
 def sign_in_route():
     return account.SignIn(request.json)
 
+# 监听修改密码请求
+@PicaBridge.route('/users/password', methods=['PUT'])
+@jwt_required
+def change_passwd_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
+    return account.ChangePasswd(user_id, request.json)
+
 # 监听获取漫画封面请求
 @PicaBridge.route('/static/thumbnail/<arcid>', methods=['GET'])
 def handle_thumbnail_route(arcid):
