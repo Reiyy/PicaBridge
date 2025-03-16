@@ -159,6 +159,16 @@ def register_route():
 def sign_in_route():
     return account.SignIn(request.json)
 
+# 监听忘记密码请求
+@PicaBridge.route('/auth/forgot-password', methods=['POST'])
+def forgot_password_route():
+    return account.forgot_password(request.json)
+
+# 监听重置密码请求
+@PicaBridge.route('/auth/reset-password', methods=['POST'])
+def reset_password_route():
+    return account.reset_password(request.json)
+
 # 监听修改密码请求
 @PicaBridge.route('/users/password', methods=['PUT'])
 @jwt_required

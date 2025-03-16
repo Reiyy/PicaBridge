@@ -187,3 +187,100 @@ def ChangePasswd(user_id, data):
     connection.close()
     
     return jsonify({"code": 200, "message": "success"})
+
+# 忘记密码
+def forgot_password(data):
+    email = data.get("email")
+    
+    # 查询用户对应的密保问题
+    connection = db.get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT question1, question2, question3 FROM users WHERE email = %s', (email,))
+    user_data = cursor.fetchone()
+
+    if user_data:
+        # 返回问题
+        response = {
+            "code": 200,
+            "message": "success",
+            "data": {
+                "question1": user_data["question1"],
+                "question2": user_data["question2"],
+                "question3": user_data["question3"]
+            }
+        }
+    else:
+        # 用户不存在
+        response = {
+            "code": 404,
+            "message": "User not found",
+            "data": None
+        }
+
+    connection.close()
+
+    return jsonify(response)
+
+# 生成随机临时密码
+def generate_temp_password():
+    # 随机生成前四个字母（首字母大写）
+    letters = random.choices(string.ascii_lowercase, k=3)  # 生成3个小写字母
+    first_letter = random.choice(string.ascii_uppercase)  # 生成一个大写字母
+    letters.insert(0, first_letter)  # 将大写字母放在开头
+
+    # 随机生成后四个数字
+    digits = random.choices(string.digits, k=4)
+
+    # 将字母和数字组合成一个完整的密码
+    temp_password = ''.join(letters) + ''.join(digits)
+    return temp_password
+
+# 重置密码
+def reset_password(data):
+    email = data.get("email")
+    question_no = data.get("questionNo")
+    answer = data.get("answer")
+
+    # 查询用户的答案
+    connection = db.get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT answer1, answer2, answer3 FROM users WHERE email = %s', (email,))
+    user_data = cursor.fetchone()
+
+    if user_data:
+        # 根据 questionNo 获取对应的正确答案
+        correct_answer = user_data.get(f"answer{question_no}")
+        
+        if correct_answer and answer.lower() == correct_answer.lower():
+            # 答案匹配，生成临时密码
+            temp_password = generate_temp_password() # 生成随机临时密码
+            # 生成临时密码哈希
+            temp_hashpassword = hash_password(temp_password)
+            # 更新密码
+            cursor.execute("UPDATE users SET password = %s WHERE email = %s", (temp_hashpassword, email))
+            connection.commit()  # 提交更改
+            # 返回信息
+            response = {
+                "code": 200,
+                "message": "success",
+                "data": {
+                    "password": temp_password
+                }
+            }
+        else:
+            # 答案不匹配
+            response = {
+                "code": 401,
+                "message": "Incorrect answer",
+                "data": None
+            }
+    else:
+        # 用户不存在
+        response = {
+            "code": 404,
+            "message": "User not found",
+            "data": None
+        }
+
+    connection.close()
+    return jsonify(response)

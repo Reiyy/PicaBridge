@@ -28,6 +28,8 @@ def run(comic_id, user_id, contentdata):
         "editdesc": "EditSummary",
         "模式切换": "ModeChange",
         "modesw": "ModeChange",
+        "用户": "User",
+        "user": "User"
     }
 
     # 获取实际的主命令名称

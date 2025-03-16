@@ -29,7 +29,7 @@ PicACG APP 2.2.1.3.3.4
 2. 安装 Python 3.8+
 3. 安装 MariaDB 10.6+ or MySQL 8.0+
 4. 安装依赖 ```pip install -r requirements.txt ```
-5. 修改配置文件 查看文档
+5. 修改配置文件，请查看 [配置修改](/tools/Documentation/setconfig.md)  
 6. 运行启动脚本 ```python PunchPica.py ```
 7. 配置Web服务器，如 Nginx
 8. Enjoy, heart❤️! =w=
@@ -37,6 +37,8 @@ PicACG APP 2.2.1.3.3.4
 或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/RunPicaBridge.md)  
 根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
 正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)
+默认管理员账号为：`Picabridge`，密码：`PicaBridge233password`
+你可以使用命令修改他们，请查看 [命令文档](/tools/Documentation/command.md)
 
 ## 下载
 
@@ -57,6 +59,8 @@ PicACG APP 2.2.1.3.3.4
 ## 功能
 已实现：  
 账号注册/登录  
+修改密码  
+忘记密码找回  
 公告信息/横幅公告信息  
 分类列表  
 漫画列表  
