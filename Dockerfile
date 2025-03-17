@@ -11,7 +11,7 @@ COPY . /PicaBridge
 RUN cp /PicaBridge/config.example.json /PicaBridge/config.json
 
 # 安装系统依赖
-RUN apt-get update && apt-get install -y \
+RUN apt update && apt install -y \
     gcc \
     build-essential \
     libffi-dev \
