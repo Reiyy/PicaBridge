@@ -1,5 +1,5 @@
 # 选择基础镜像
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 # 设置工作目录
 WORKDIR /PicaBridge
@@ -9,6 +9,14 @@ COPY . /PicaBridge
 
 # 复制 config.example.json 到 config.json
 RUN cp /PicaBridge/config.example.json /PicaBridge/config.json
+
+# 安装系统依赖
+RUN apt update && apt install -y \
+    gcc \
+    build-essential \
+    libffi-dev \
+    libev-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # 安装依赖
 RUN pip install --no-cache-dir -r requirements.txt
