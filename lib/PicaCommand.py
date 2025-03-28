@@ -14,7 +14,16 @@ def run(comic_id, user_id, contentdata):
     # 提取命令内容
     content = contentdata.get("content", "")
     picacommand = content[1:].strip() # 去除前缀并去除前后多余空格
-    parts = picacommand.split(" ", 1) # 分割主命令和命令参数
+
+    if "-" in picacommand:
+        picacommand, other_parts = picacommand.split("-", 1)  # 按"-"分割
+        other_parts = other_parts.replace(" ", "")  # 去除所有空格
+    else:
+        other_parts = ""  # 如果没有"-"，other_parts 为空
+
+    picacommand = picacommand.strip()  # 去除前后空格
+    parts = picacommand.split(" ", 1)  # 分割主命令和命令参数
+
     main_command = parts[0]  # 获取主命令
     command_args = parts[1] if len(parts) > 1 else ""  # 获取命令参数
 
@@ -62,4 +71,8 @@ def run(comic_id, user_id, contentdata):
     #     comment.post_child_comment(comment_id, user_id, response_payload)
 
     # 将返回文本作为主评论发布
-    return comment.post_comment(comic_id, user_id, response_payload)
+    # 如果有不报告标记，则不发布评论
+    if other_parts == "notreport":
+        return {"code": 200, "data": result}
+    else:
+        return comment.post_comment(comic_id, user_id, response_payload)
