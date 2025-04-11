@@ -1,0 +1,21 @@
+---
+# Docker compose file for dev environments.
+services:
+  picabridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: picabridge:latest
+    container_name: picabridge
+    restart: on-failure:3
+    ports:
+      - "7777:7777"
+    volumes:
+      - ./data/config.json:/PicaBridge/config.json
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - picabridge
+
+networks:
+  picabridge:

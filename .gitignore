@@ -1,0 +1,7 @@
+# 忽略 Python 编译文件
+__pycache__/
+*.pyc
+*.pyo
+
+# 忽略用户自定义配置文件
+config.json

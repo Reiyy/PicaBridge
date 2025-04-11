@@ -1,0 +1,116 @@
+{
+    "Listen": "0.0.0.0:7777",
+    "PicaBridge_URL": "填写哔咔桥地址，如果使用nginx反代，填写nginx监听地址或域名",
+    "JWT_KEY": "填写用于JWT Token的密钥",
+    "lrr_Api": "填写lanraragi地址：https://lrr.example.com:2333",
+    "lrr_Api_Key": "填写lanraragi中设置的api密钥",
+    "avatarfilepath": "用户上传头像的保存路径，指向你的web服务目录，比如：/data/wwwroot/picabridge/assets/img/avatar",
+    "db": {
+        "host": "192.168.7.42",
+        "user": "picabridge",
+        "password": "picabridge",
+        "name": "picabridge",
+        "pool": {
+            "maxconnections": 9,
+            "mincached": 3,
+            "blocking": true,
+            "ping": 1,
+            "reset": true
+        }
+    },
+    "URL_Mappings": {
+        "lrr_img": "https://lrr.example.com:2333",
+        "img": "https://cdn.example.com",
+        "assets": "https://picaapi.example.com:2333"
+    },
+    "AD_Help_Pica": {
+        "image": "https://picaapi.example.com:2333/assets/img/ezgif-1-83147a2658.gif"
+    },
+    "initPlatform": {
+        "imageServer": "https://picaapi.example.com:2333/static/",
+        "latestApplication": {
+            "_id": "3ed58b151e103c60e7663b19",
+            "downloadUrl": "https://picaapi.example.com:2333/assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
+            "updateContent": "【一般更新】",
+            "version": "2.2.1.3.3.4",
+            "updated_at": "2025-03-10T01:39:07.363Z",
+            "created_at": "2025-03-10T01:39:07.363Z",
+            "apk": {
+                "originalName": "2.7.0.1.2.2-398-lspatched_sign.apk",
+                "path": "assets/app_updates/2.7.0.1.2.2-398-lspatched_sign.apk",
+                "fileServer": "https://picaapi.example.com:2333"
+            }
+        }
+    },
+    "categories": {
+        "分类一": {
+            "lrr_id": "lanraragi的分类ID，比如：SET_1727680889",
+            "rule": [0,"语言:汉语","language:中国翻訳"],
+            "id": "5821859b5f6b9a4f93d12345",
+            "title": "分类一",
+            "description": "分类一简介",
+            "thumb": "assets/img/categories/shurou.png"
+
+        },
+        "生肉": {
+            "lrr_id": "SET_1728329300",
+            "rule": [0,"语言:日语","语言:英语"],
+            "id": "5821859b5f6b9a4f93d12347",
+            "title": "同人",
+            "description": "生肉，指代未翻译的作品",
+            "thumb": "assets/img/categories/shurou.png"
+
+        }
+    },
+    "SFW_categories": {
+        "SFW分类一": {
+            "lrr_id": "SET_1728329318",
+            "rule": [1,"重新分类:无H"],
+            "id": "583ac59b5f7n456f7uyt6789",
+            "title": "SFW分类一",
+            "description": "SFW分类一",
+            "thumb": "assets/img/categories/default.png"
+        }
+    },
+    "LaunchImage": {
+        "GeneralDay": {
+            "1": ["https://cdn.example.com/img/2025/02/13/763053dc0dd86.jpg","https://cdn.example.com/img/2025/02/14/fbf645c7b500b.jpg"],
+            "2": ["https://cdn.example.com/img/2025/03/03/4ca579d5a93ca.jpg","https://cdn.example.com/img/2025/03/03/50f4c1e57d89a.jpg"]
+        },
+        "NSFW": {
+            "n1": ["https://cdn.example.com/img/2025/03/03/6b83f9e75762d.jpg","https://cdn.example.com/img/2025/03/03/f2d3700ab7a6b.jpg"],
+            "n2": ["https://cdn.example.com/img/2025/03/03/924f1a78c6e84.jpg","https://cdn.example.com/img/2025/03/03/e78666e4f4be7.jpg"]
+        },
+        "SpeciallDay": {
+            "烧烤节": ["0215","https://cdn.example.com/img/2025/02/13/4954cb7d59db7.jpg","https://cdn.example.com/img/2025/02/13/4954cb7d59db7.jpg"]
+        }
+    },
+    "announcements": {
+        "公告1": {
+            "id": "66eeec47c765ef0843f44812",
+            "title": "欢迎来到 哔咔桥PicaBridge",
+            "content": "领养一只属于你的哔咔娘吧！",
+            "thumb": "img/2024/10/08/48d9b9a733185.png"
+        },
+        "公告2": {
+            "id": "78eeec47c765ef0843f44964",
+            "title": "PicaBridge Wiki🦉",
+            "content": "PicaBridge 说明\n命令：\n命令通过发表评论的方式执行。\n分为全局命令和普通命令，全局命令只能在首页留言板中执行。\n普通命令可以在漫画评论区内执行。在哪本漫画的评论区执行，则该命令操作的就是哪本漫画。\n\n命令列表：\n1.切换模式命令\n用法：\n/模式切换 <sfw/nsfw>\n/modesw <sfw/nsfw>\n\n更多命令待补充。",
+            "thumb": "img/2025/03/08/9a9b968b95b74.png"
+        }
+    },
+    "banners": {
+        "横幅公告1": {
+            "id": "toBe1",
+            "title": "Open Lanraragi",
+            "shortDescription": "PicaBridge",
+            "type": "web",
+            "link": "https://lrr.example.com:2333/",
+            "thumb": "img/2022/08/31/b44125355d4c5.png"
+        }
+    },
+    "keywords": {
+        "NSFW": ["熟肉","生肉","长篇","短篇","单行本"],
+        "SFW": ["无H"]
+        }
+}
