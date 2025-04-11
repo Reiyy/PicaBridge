@@ -57,6 +57,8 @@ networks:
 确认运行正常后使用使用ctrl+c退出，然后使用后台运行 ```docker compose up -d```  
 Enjoy, heart❤️! =w=
 
+注：使用默认密码登录后，别忘了在APP设置中修改密码！
+
 ###  源代码运行
 拉取项目 ```git clone https://github.com/Reiyy/PicaBridge.git```
 
