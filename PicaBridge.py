@@ -240,7 +240,7 @@ def eps_route(comic_id):
 @PicaBridge.route('/comics/<comic_id>/order/<int:order>/pages', methods=['GET'])
 def comic_pages_route(comic_id, order):
     page = request.args.get('page', default=1, type=int)
-    response = comicorder.get_pages(comic_id, page)
+    response = comicorder.get_pages(comic_id, page, order)
     return jsonify(response)
 
 # 监听漫画收藏

@@ -11,7 +11,7 @@ LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
 
 # 获取档案页数
-def get_pages(comic_id, page):
+def get_pages(comic_id, page, order):
     # 从 API 获取档案数据
     extract_data = api.get_extract_archive(comic_id)
     if not extract_data:
