@@ -585,3 +585,104 @@ def get_user_characters(userid):
                 return []
     finally:
         connection.close()
+
+# 获取关联推荐漫画
+def get_recommend_comics(comic_id, limit=10):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT id, author, categories, tags, viewsCount
+        FROM comic_info
+        WHERE id = %s
+    """, (comic_id,))
+
+    current = cursor.fetchone()
+    if not current:
+        cursor.close()
+        connection.close()
+        return []
+
+    def to_set(field):
+        if not field:
+            return set()
+        if isinstance(field, list):
+            return set(field)
+        if isinstance(field, str):
+            try:
+                data = json.loads(field)
+                return set(data) if isinstance(data, list) else set()
+            except:
+                return set()
+        return set()
+
+    current_author = current.get("author")
+    current_categories = to_set(current.get("categories"))
+    current_tags = to_set(current.get("tags"))
+
+    # SQL预筛选
+    cursor.execute("""
+        SELECT id, author, categories, tags, viewsCount
+        FROM comic_info
+        WHERE id != %s
+        LIMIT 2000
+    """, (comic_id,))
+
+    candidates = cursor.fetchall()
+
+    # 评分
+    scored = []
+
+    for comic in candidates:
+        score = 0
+
+        author = comic.get("author")
+        categories = to_set(comic.get("categories"))
+        tags = to_set(comic.get("tags"))
+        views = comic.get("viewsCount") or 0
+
+
+        # 作者权重
+        if author and author == current_author:
+            score += 6
+
+        # 标签交集
+        tag_overlap = len(current_tags & tags)
+        score += tag_overlap * 3
+
+        # 分类交集
+        category_overlap = len(current_categories & categories)
+        score += category_overlap * 2
+
+        if score > 0:
+            scored.append({
+                "id": comic["id"],
+                "score": score,
+                "author": author
+            })
+
+    # 排序
+    scored.sort(key=lambda x: x["score"], reverse=True)
+
+    # 作者限制
+    result = []
+    author_count = {}
+
+    for item in scored:
+        author = item["author"]
+
+        if author:
+            count = author_count.get(author, 0)
+            if count >= 3:
+                continue
+            author_count[author] = count + 1
+
+        result.append(item["id"])
+
+        if len(result) >= limit:
+            break
+
+    cursor.close()
+    connection.close()
+
+    return result

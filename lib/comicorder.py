@@ -110,5 +110,5 @@ def get_pages(comic_id, page, order):
             }
         }
     }
-    print(f"get_pages response: {response_data}")  # 调试输出
+    
     return response_data
