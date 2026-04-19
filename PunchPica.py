@@ -64,7 +64,7 @@ def is_database_initialized():
         connection.close()
 
 def main():
-    print("当前版本 Beta 0.7.5-250310")
+    print("版本：0.7.51")
     print("开始初始化...")
     print("正在检测数据库是否已初始化...")
     if is_database_initialized():
