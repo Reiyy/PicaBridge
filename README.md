@@ -1,9 +1,7 @@
 # PicaBridge
-[<img src="https://img.shields.io/github/release/reiyy/picabridge.svg?label=latest%20release">](https://github.com/Reiyy/PicaBridge/releases/latest)
+[<img src="https://img.shields.io/github/v/release/reiyy/picabridge?include_prereleases">](https://github.com/Reiyy/PicaBridge/releases)
 [<img src="https://img.shields.io/docker/pulls/yareiy/picabridge.svg">](https://hub.docker.com/r/yareiy/picabridge/)
 [<img src="https://img.shields.io/github/downloads/reiyy/picabridge/total.svg">](https://github.com/Reiyy/PicaBridge/releases)
-
-注：本项目暂未完善，文档等未编写完整。
 
 ## 简介 
 
@@ -16,8 +14,7 @@
 
 PicACG APP 2.2.1.3.3.4  
 
-其他第三方Pica客户端应该也兼容  
-目前的2.5测试版也基本兼容
+其他第三方Pica客户端应该也兼容(未测试)  
 
 ## 演示图
 ![主页和分类页](/tools/Documentation/img/主页和分类页.jpg)
@@ -25,7 +22,7 @@ PicACG APP 2.2.1.3.3.4
 
 ## 运行
 
-1. 安装 LANraragi v0.9.31+
+1. 安装 LANraragi v0.9.7+
 2. 安装 Python 3.8+
 3. 安装 MariaDB 10.6+ or MySQL 8.0+
 4. 安装依赖 ```pip install -r requirements.txt ```
@@ -72,14 +69,14 @@ PicACG APP 2.2.1.3.3.4
 漫画点赞/收藏  
 随机漫画  
 打哔咔签到  
-用户头像上传
+用户头像上传  
+漫画关联/推荐  
 
 附加功能：  
 动态启动图，需配合Xposed  
 命令(通过发布评论来指向命令)
 
 待实现：  
-漫画关联/推荐  
 小程序  
 动态常用标签  
 添加更多命令
