@@ -280,9 +280,14 @@ def AutoinitComicInfoFULL(comic_id, user_id, subcommand_args):
         categories = ["短篇"] if pagecount < 95 else ["长篇"]
 
         # 获取配置信息并根据规则匹配分类
-        categories_rule = config.get("categoriesrule", {})
+        categories_rule = config.get("categories", {})
 
-        for category, rule in categories_rule.items():
+        for category, data in categories_rule.items():
+            rule = data.get("rule", [])
+
+            if not rule:
+                continue
+            
             match_mode = rule[0]
             match_tags = rule[1:]
 
