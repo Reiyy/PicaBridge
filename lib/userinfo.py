@@ -111,9 +111,15 @@ def get_favourite_comics(user_id, page, s):
 
     comictotal = len(favourite)
     comics_data = []
+
+    limit = 20
+    start = (page - 1) * limit
+    end = start + limit
+
+    paged_favourite = sorted_favourite[start:end]
     
     # 遍历所有漫画ID从数据库获取对应的元数据
-    for comic_id in sorted_favourite:
+    for comic_id, _ in paged_favourite:
         comic_data = db.get_comic_info(comic_id) or {}
 
         # 组装漫画信息数据
@@ -138,7 +144,6 @@ def get_favourite_comics(user_id, page, s):
 
     # 处理分页数据
     total = comictotal
-    limit = 20
     pages = math.ceil(total / limit)
 
     # 返回数据
