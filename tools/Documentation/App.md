@@ -19,5 +19,4 @@ App修改部分基本为颜色值，文本，图标等静态资源，LSPosed模�
 （你也可以在配置完成后再次打开配置页来检查配置是否正确）
 
 ## 演示图
-![配置页说明](/tools/Documentation/img/配置页说明.jpg)
-![弹出配置窗口](/tools/Documentation/img/弹出配置窗口.png)
+![配置页说明](/tools/Documentation/img/配置页说明.png)
