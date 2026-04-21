@@ -86,7 +86,7 @@ PicACG App 2.2.1.3.3.4
 ## 致谢
 
 - [LANraragi](https://github.com/Difegue/LANraragi): 提供强大的漫画库功能，本项目的核心
-- [HookPicACG](https://github.com/AoEiuV020/HookPicACG): 提供Xposed修改参考和去广告部分代码，本项目的附加功能基于Xposed实现
+- [HookPicACG](https://github.com/AoEiuV020/HookPicACG): 提供Xposed修改参考和去广告部分代码，MyPica App的修改基于Xposed实现
 
 ## 许可证
 

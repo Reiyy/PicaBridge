@@ -17,7 +17,7 @@
 ```json
 "PicaBridge_URL": "https://picaapi.example.com:2333",
 ```
-用于设置PicaBridge的URL，APP通过此URL访问哔咔桥
+用于设置PicaBridge的URL，APP通过此URL访问哔咔桥  
 注意：url后面不要添加`/`
 
 ## JWT Token密钥
@@ -78,7 +78,7 @@
 假设某图片资源的实际URL是：`https://cdn.example.com/img/2025/03/03/4ca579d5a93ca.jpg`  
 需要取该渠道资源url中固定不变的部分，比如这是我的图床资源，其固定以`img`开头。  
 那么设置映射规则`"img": "https://cdn.example.com"`  
-`thumb`参数设置为`img/2025/03/03/4ca579d5a93ca.jpg`  
+调用该资源的`thumb`参数为`img/2025/03/03/4ca579d5a93ca.jpg`  
 `PicaBridge_URL`为`https://picaapi.example.com:2333`  
 
 效果：  
@@ -88,6 +88,20 @@ Flask根据映射规则`"img": "https://cdn.example.com"`，
 
 需要注意，第一条映射规则`"lrr_img": "https://lrr.example.com:2333"`  
 不能删除，请将URL设置为你的LANraragi地址，结尾不要加`/`。
+
+以下是我的配置例子：
+```json
+"URL_Mappings": {
+    "lrr_img": "https://bzlib.home.example.com:2333",
+    "img": "https://cdn.example.com",
+    "assets": "https://picaapi.example.com:2333"
+},
+```
+lrr_img是lanraragi资源用。  
+img是我的cdn地址，因为我在announcements中公告使用的图片资源来自我的cdn。  
+assets是哔咔桥配套nginx服务器上的资源，比如用户头像等。  
+这里面lrr_img和assets是必须的，img根据你自己的情况而定，你也可以把图片资源都放到nginx上，统一使用assets规则。
+
 
 ## 救哔咔告图片资源
 ```json
@@ -118,8 +132,10 @@ Flask根据映射规则`"img": "https://cdn.example.com"`，
     }
 },
 ```
-用于设置更新信息，如果你自行修改了客户端并想要将其推送更新，请修改此处。  
-如果你并非通过逆向工程客户端那么请不要修改此处信息，保持默认，否则APP可能会始终提示强制更新无法使用。
+用于设置更新信息，如果你使用MyPica App，  
+请把你使用的MyPica App版本号填入到"version"中。
+保持版本号一致则不会弹出更新窗口。  
+（从github发布动态获取版本信息的功能正在规划中）
 
 ## 分类配置
 ```json
@@ -228,3 +244,34 @@ categories`指定`NSFW`模式下的分类，`SFW_categories`指定`SFW`模式下
 },
 ```
 哔咔桥额外实现了动态启动图功能，需要配合Xposed模块使用，模块仍处于测试阶段，此配置可暂时忽略。
+
+## 常用关键字
+```json
+"FilterKeywords": {
+    "1": ["设定集", "设定集", "设\n定\n集"],
+    "2": ["生肉", "生肉", "生\n肉"],
+    "3": ["AI生成", "AI生成", "AI\n生\n成"],
+    "4": ["百合", "百合"],
+    "5": ["重口", "重口"],
+    "6": ["无H", "无H"],
+    "7": ["CG", "CG"],
+    "8": ["同人志", "同人志"]
+
+}
+```
+和“可自定义的分类屏蔽项”功能配合使用，漫画列表上方有八个屏蔽按钮，此处的配置可以自定义这些按钮所对应的分类。  
+ID 1-8 按顺序从左到右对应顶部的八个按钮。  
+前三个按钮还对应在漫画右侧出现的特殊高亮标签。  
+
+数组中的元素代表的含义如下：  
+第一个：屏蔽按钮上的显示文本
+第二个：代码逻辑实际屏蔽的分类文本
+第三个：（只针对前三个按钮）为特殊高亮标签的显示文本，需要加"\n"换行符来竖向显示。
+
+例如：  
+你设置"2": ["生肉", "未翻译", "生\n肉"],  
+那么显示在UI界面的按钮上的文本就是“生肉”，  
+你点击按钮启用屏蔽，实际屏蔽的是分类名为“未翻译”的分类中的漫画，  
+漫画右侧的特殊高亮标签显示的则是竖向的“生肉”文本。
+
+前两项也可以设置成一样的，根据你的实际情况配置。
