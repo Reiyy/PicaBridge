@@ -79,6 +79,16 @@ def get_launch_image():
     user_name = request.args.get('user', default="")
     return LaunchImage.Get(user_name)
 
+# 获取关键词屏蔽配置
+@PicaBridge.route('/GetFilterKeywords', methods=['GET'])
+def get_filter_keywords():
+    user_name = request.args.get('user', default="")
+    filter_keywords = config.get('FilterKeywords', {})
+
+    return jsonify({
+        "FilterKeywords": filter_keywords
+    })
+
 # 图片资源重定向
 @PicaBridge.route('/static/<path:filepath>', methods=['GET'])
 def static_redirect(filepath):
