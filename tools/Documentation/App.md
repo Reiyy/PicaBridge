@@ -9,11 +9,15 @@ App修改部分基本为颜色值，文本，图标等静态资源，LSPosed模�
 你可能需要使用：修改Hosts、DNS重定向、网络代理、Xposed、逆向工程，等方式。 
 
 ## 开始
-从 [Github 发布页](https://github.com/Reiyy/PicaBridge/releases) 下载**MyPica App**。
-
-安装并打开MyPica App  
+下载，安装并打开MyPica App  
 进行哔咔桥服务端API地址配置：  
 在登录页**打哔咔五下(连续点击屏幕上的哔咔娘五次)**，然后你会看到弹出的配置窗口  
 填入你的API地址，保存。  
 然后关闭MyPica App重新打开，使新的配置生效  
 至此配置完成，使用你的账户密码进行登录即可！
+
+（你也可以在配置完成后再次打开配置页来检查配置是否正确）
+
+## 演示图
+![配置页说明](/tools/Documentation/img/配置页说明.jpg)
+![弹出配置窗口](/tools/Documentation/img/弹出配置窗口.png)
