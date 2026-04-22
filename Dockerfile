@@ -27,5 +27,7 @@ RUN cp /PicaBridge/config.example.json /PicaBridge/config.json
 # 默认端口
 EXPOSE 7777
 
+ENV PYTHONUNBUFFERED=1
+
 # 启动初始化
 CMD ["python", "PunchPica.py"]

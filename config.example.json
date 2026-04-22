@@ -18,6 +18,9 @@
             "reset": true
         }
     },
+    "SysConfig": {
+        "gunicorn_workers": 4
+    },
     "URL_Mappings": {
         "lrr_img": "https://lrr.example.com:2333",
         "img": "https://cdn.example.com",

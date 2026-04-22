@@ -29,6 +29,8 @@ from lib import ModeSwitch
 
 PicaBridge = Flask(__name__, static_folder=None)
 
+VER = "0.7.51"
+
 # 读取 JSON 配置文件
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:

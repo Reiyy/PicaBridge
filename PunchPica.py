@@ -2,6 +2,7 @@ import pymysql
 import json
 import sys
 import subprocess
+import os
 
 # 读取配置文件
 def load_config():
@@ -64,7 +65,6 @@ def is_database_initialized():
         connection.close()
 
 def main():
-    print("版本：0.7.51")
     print("开始初始化...")
     print("正在检测数据库是否已初始化...")
     if is_database_initialized():
@@ -81,7 +81,18 @@ def main():
     print("初始化完成！")
     print("正在启动 哔咔桥PicaBridge ！")
     listen_address = config.get("Listen", "0.0.0.0:7777")  # 读取 Listen 配置，默认 0.0.0.0:7777
-    subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "PicaBridge:PicaBridge"])
+    workers = config["SysConfig"].get("gunicorn_workers", "2")
+    #subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "PicaBridge:PicaBridge"])
+    os.execvp("gunicorn", [
+        "gunicorn",
+        "-w", str(workers),
+        "-k", "gevent",
+        "-b", listen_address,
+        "--access-logfile", "-",
+        "--error-logfile", "-",
+        "--log-level", "info",
+        "PicaBridge:PicaBridge"
+    ])
 
 if __name__ == "__main__":
     main()
