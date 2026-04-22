@@ -20,7 +20,7 @@
     },
     "SysConfig": {
         "gunicorn_workers": 4,
-        "Debug": true
+        "Debug": false
     },
     "URL_Mappings": {
         "lrr_img": "https://lrr.example.com:2333",
