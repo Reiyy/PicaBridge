@@ -26,9 +26,9 @@ from lib import comment
 from lib import PicaCommand
 from lib import LaunchImage
 from lib import ModeSwitch
+from lib import log
 
-PicaBridge = Flask(__name__, static_folder=None)
-
+# 版本号
 VER = "0.7.51"
 
 # 读取 JSON 配置文件
@@ -37,6 +37,14 @@ def load_config():
         return json.load(f)
 
 config = load_config()
+
+# 设置Log日志级别
+is_debug = config.get("SysConfig", {}).get("Debug", False)
+target_level = "DEBUG" if is_debug else "INFO"
+log.init_logging(log_level=target_level)
+
+# 启动Flask
+PicaBridge = Flask(__name__, static_folder=None)
 
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
