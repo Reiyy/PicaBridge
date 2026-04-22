@@ -8,6 +8,7 @@ from flask import jsonify
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
+from loguru import logger
 
 import lib.db as db
 
@@ -22,6 +23,7 @@ def generate_random_id():
     letters = ''.join(random.choices(string.ascii_lowercase, k=12))  # 生成12个小写字母
     digits = ''.join(random.choices(string.digits, k=12))  # 生成12个数字
     random_id = ''.join(random.sample(letters + digits, 24))  # 混合并随机打乱
+    logger.debug(f"生成用户ID: {random_id}")
     return random_id
 
 # 生成密码哈希
@@ -44,6 +46,7 @@ def generate_token(user_id, email):
         "iat": datetime.now(timezone.utc)
     }
     token = jwt.encode(payload, JWT_KEY, algorithm="HS256")
+    logger.debug(f"为用户{user_id}|生成Token: {token}")
     return token
 
 # 注册
@@ -60,8 +63,11 @@ def Register(data):
     question3 = data.get('question3')
     answer3 = data.get('answer3')
 
+    logger.debug(f"收到注册请求: {data}")
+
     # 检查必填字段
     if not all([email, name, password, birthday, gender]):
+        logger.info("注册请求缺失必填字段")
         return jsonify({"code": 400, "message": "Missing required fields"}), 400
 
     # 连接数据库
@@ -73,6 +79,7 @@ def Register(data):
     if cursor.fetchone():
         cursor.close()
         connection.close()
+        logger.info(f"注册失败: 用户名 {email} 已存在")
         return jsonify({"code": 400, "error": "1008", "message": "email is already exist"}), 400
 
     # 检查昵称是否已存在
@@ -80,6 +87,7 @@ def Register(data):
     if cursor.fetchone():
         cursor.close()
         connection.close()
+        logger.info(f"注册失败: 昵称 {name} 已存在")
         return jsonify({"code": 400, "error": "1009", "message": "name is already exist"}), 400
 
     # 生成随机ID
@@ -103,6 +111,8 @@ def Register(data):
     connection.commit()
     cursor.close()
     connection.close()
+
+    logger.info(f"注册成功: {email} (ID: {user_id})")
 
     return jsonify({"code": 200, "message": "success"}), 200
 

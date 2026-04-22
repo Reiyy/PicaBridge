@@ -7,6 +7,7 @@ from flask import request
 from flask import redirect
 from flask import make_response
 from functools import wraps
+from loguru import logger
 
 from lib import initdb
 from lib import account
@@ -58,10 +59,10 @@ def verify_token(token):
         payload = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
         return payload
     except jwt.ExpiredSignatureError as e:
-        print(f"Token expired: {e}")
+        logger.info("Token过期: {e}")
         return None
     except jwt.InvalidTokenError as e:
-        print(f"Invalid token: {e}")
+        logger.warning("Token无效: {e}")
         return None
 
 # JWT验证装饰器
@@ -71,6 +72,7 @@ def jwt_required(f):
         auth_header = request.headers.get("authorization")
 
         if not auth_header or not auth_header.strip():
+            logger.warning("未经授权的请求！缺少Authorization头")
             return jsonify({"code": 401, "error": "1005", "message": "unauthorized"}), 401
         
         token = auth_header.strip()
@@ -108,7 +110,8 @@ def static_redirect(filepath):
     fileserver = URL_MAPPINGS.get(prefix, DEFAULT_FILE_SERVER)
     # 如果默认值也为空，返回错误
     if not fileserver:
-        return "No fileServer", 500
+        logger.warning("无匹配的前缀映射，请检查配置文件中的[URL_Mappings]配置！")
+        return "无匹配的前缀映射", 500
     # 如果存在查询参数，带上查询参数
     if query_string:
         return redirect(f"{fileserver}/{filepath}?{query_string}", code=302)
@@ -247,6 +250,7 @@ def comic_detail_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
     comic_info = comicinfo.get_comic_info(comic_id, user_id)
     if comic_info is None:
+        logger.warning(f"未找到漫画: {comic_id}，该漫画是否已删除？请尝试和LRR数据同步！")
         return jsonify({"code": 404, "message": "Comic not found"}), 404
     return jsonify(dict(comic_info)), 200
 
@@ -269,6 +273,7 @@ def comic_pages_route(comic_id, order):
 def favourite_comic_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
     if not user_id:
+        logger.warning(f"JWT Token中缺失用户ID信息！")
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
 
     return comicinfo.comic_favourite(user_id, comic_id)
@@ -279,6 +284,7 @@ def favourite_comic_route(comic_id, jwt_payload):
 def like_comic_route(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
     if not user_id:
+        logger.warning(f"JWT Token中缺失用户ID信息！")
         return jsonify({"code": 400, "message": "Missing user ID"}), 400
 
     return comicinfo.comic_like(user_id, comic_id)
@@ -300,7 +306,8 @@ def knight_leaderboard_route():
 def user_profile_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     if not user_id:
-        return jsonify({"code": 400, "message": "Authorization required."}), 400
+        logger.warning(f"JWT Token中缺失用户ID信息！")
+        return jsonify({"code": 400, "message": "Missing user ID"}), 400
     return userinfo.user_info(user_id)
 
 # 监听收藏列表
@@ -311,7 +318,8 @@ def favourite_comics_route(jwt_payload):
     page = request.args.get('page', default=1, type=int)
     s = request.args.get('s', default=None, type=str)  # 排序标记
     if not user_id:
-        return jsonify({"code": 401, "message": "Unauthorized"}), 401
+        logger.warning(f"JWT Token中缺失用户ID信息！")
+        return jsonify({"code": 400, "message": "Missing user ID"}), 400
     return userinfo.get_favourite_comics(user_id, page, s)
 
 # 监听用户资料
@@ -325,10 +333,12 @@ def get_user_profile_route(user_id):
 def user_profile_put_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     if not user_id:
-        return jsonify({"code": 400, "message": "Authorization required."}), 400
+        logger.warning(f"JWT Token中缺失用户ID信息！")
+        return jsonify({"code": 400, "message": "Missing user ID"}), 400
     json_data = request.get_json()
     if json_data and "slogan" in json_data:
         return userinfo.set_user_description(user_id, json_data)
+    logger.warning(f"无效的用户简介数据！")
     return jsonify({"code": 400, "message": "Invalid data."}), 400
 
 # 监听签到
@@ -344,9 +354,11 @@ def punch_in_route(jwt_payload):
 def upload_user_avatar_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     if not user_id:
-        return jsonify({"code": 400, "message": "Authorization required."}), 400
+        logger.warning(f"JWT Token中缺失用户ID信息！")
+        return jsonify({"code": 400, "message": "Missing user ID"}), 400
     picdata = request.json.get('avatar')
     if not picdata:
+        logger.warning(f"无效的头像数据！")
         return jsonify({"code": 400, "message": "Avatar data is required."}), 400
     result = userinfo.upload_avatar(user_id, picdata)
     return result
