@@ -68,7 +68,7 @@ def get_comic_leaderboard(tt):
         ((comic_id, count) for comic_id, count in leaderboard_data.items() if count > 0),
         key=lambda x: x[1],
         reverse=True
-    )
+    )[:40]
 
     # 组装返回数据
     comics_data = []
@@ -151,7 +151,7 @@ def get_knight_leaderboard():
             print(f"Processed user {index}/{len(user_ids)} (ID: {user_id})")
 
     # 根据经验值排序
-    user_data.sort(key=lambda x: x["exp"], reverse=True)
+    user_data = sorted(user_data, key=lambda x: x["exp"], reverse=True)[:50]
 
     # 构建响应数据
     response_data = {

@@ -60,6 +60,17 @@
 ```
 请填写你的数据库连接信息，并根据你的需要设置数据库连接池参数
 
+## 系统配置
+**必填项**
+```json
+"SysConfig": {
+    "gunicorn_workers": 4,
+    "Debug": false
+},
+```
+填写gunicorn_workers数量，根据你的CPU核心数而定，一般建议 2 x CPU核心(如2核心，设置为4)
+Debug：控制Debug日志输出，默认为false
+
 ## URL映射
 **必填项**
 ```json
