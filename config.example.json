@@ -116,7 +116,7 @@
     "keywords": {
         "NSFW": ["熟肉","生肉","长篇","短篇","单行本"],
         "SFW": ["无H"]
-        },
+    },
     "FilterKeywords": {
         "1": ["设定集", "设定集", "设\n定\n集"],
         "2": ["生肉", "生肉", "生\n肉"],
@@ -127,5 +127,14 @@
         "7": ["CG", "CG"],
         "8": ["同人志", "同人志"]
     
-    }
+    },
+    "apps": [
+      {
+        "title": "哔咔桥发布页",
+        "url": "https://github.com/Reiyy/PicaBridge",
+        "icon": "https://avatars.githubusercontent.com/u/73932244?v=4",
+        "showTitleBar": false,
+        "description": "哔咔桥项目发布页"
+      }
+    ]
 }

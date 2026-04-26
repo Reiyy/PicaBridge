@@ -59,10 +59,10 @@ def verify_token(token):
         payload = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
         return payload
     except jwt.ExpiredSignatureError as e:
-        logger.info("Token过期: {e}")
+        logger.info("Token过期: {e}".format(e=e))
         return None
     except jwt.InvalidTokenError as e:
-        logger.warning("Token无效: {e}")
+        logger.warning("Token无效: {e}".format(e=e))
         return None
 
 # JWT验证装饰器
@@ -446,6 +446,24 @@ def modeswitch_route(jwt_payload):
     user_id = jwt_payload.get("user_id")
     mode = request.args.get('mode')
     return ModeSwitch.switch(user_id, mode)
+
+# 监听小程序配置
+@PicaBridge.route('/pica-apps', methods=['GET'])
+@jwt_required
+def pica_apps_route(jwt_payload):
+    try:
+        # 获取小程序配置
+        apps = config.get("apps", [])
+        result = {
+            "code": 200,
+            "message": "success",
+            "data": {
+                "apps": apps
+            }
+        }
+        return result
+    except Exception as e:
+       logger.warning("获取小程序配置出错: {e}".format(e=e))
 
 def main():
     print("你正在运行调试模式！")
