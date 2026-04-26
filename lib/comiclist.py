@@ -316,6 +316,7 @@ def get_random_comics(user_id):
 
 import json
 
+# 获取漫画关联推荐
 def get_recommendation_comics(comic_id):
     # 获取推荐ID列表
     recommend_ids = db.get_recommend_comics(comic_id, 10)
@@ -363,6 +364,68 @@ def get_recommendation_comics(comic_id):
         "message": "success",
         "data": {
             "comics": comics_data
+        }
+    }
+
+    return jsonify(response_data), 200
+
+# 获取用户漫画推荐
+def get_collections_comics(user_id):
+    # 获取推荐ID列表
+    recommend_ids = db.get_user_recommend_comics(user_id, 4)
+
+    comics_data = []
+
+    for rid in recommend_ids:
+        comic_info = db.get_comic_info(rid)
+        if not comic_info:
+            continue
+
+        thumbnail_path = f"thumbnail/{rid}"
+
+        # 解析 categories
+        categories = comic_info.get("categories")
+        if isinstance(categories, str):
+            try:
+                categories = json.loads(categories)
+            except:
+                categories = ["未知分类"]
+        elif not categories:
+            categories = ["未知分类"]
+
+        tags = json.loads(comic_info.get("tags", '[]')) if isinstance(comic_info.get("tags"), str) else comic_info.get("tags", ["无标签"])
+
+        comic_data = {
+            "_id": rid,
+            "title": comic_info.get("title", "未知标题"),
+            "author": comic_info.get("author", "未知作者"),
+            "pagesCount": comic_info.get("pagesCount"),
+            "epsCount": comic_info.get("epsCount", 1),
+            "finished": bool(comic_info.get("finished", True)),
+            "categories": categories,
+            "tags": tags,
+            "thumb": {
+                "originalName": f"{rid}.jpg",
+                "path": thumbnail_path,
+                "fileServer": PICABRIDGE_URL
+            },
+            "totalViews": comic_info.get("viewsCount", 0),
+            "totalLikes": comic_info.get("likesCount", 0),
+        }
+
+        comics_data.append(comic_data)
+
+    # 返回
+    response_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+        "collections": [
+                {
+                    "title": "本子妹推荐",
+                    "comics": comics_data
+                }
+            ]
         }
     }
 

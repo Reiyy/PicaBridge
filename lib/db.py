@@ -3,6 +3,7 @@ import json
 import time
 import threading
 
+from collections import Counter
 from dbutils.pooled_db import PooledDB
 
 # 读取配置文件
@@ -674,6 +675,157 @@ def get_recommend_comics(comic_id, limit=10):
         if author:
             count = author_count.get(author, 0)
             if count >= 3:
+                continue
+            author_count[author] = count + 1
+
+        result.append(item["id"])
+
+        if len(result) >= limit:
+            break
+
+    cursor.close()
+    connection.close()
+
+    return result
+
+
+
+# 获取用户漫画推荐
+def get_user_recommend_comics(user_id, limit=4):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # 获取用户收藏和点赞列表
+    cursor.execute("""
+        SELECT favourite, `like`
+        FROM users
+        WHERE id = %s
+    """, (user_id,))
+    
+    user_record = cursor.fetchone()
+    
+    if not user_record:
+        cursor.close()
+        connection.close()
+        return []
+
+    interacted_ids = set() # 结合并去重
+
+    # 解析favourite数据
+    favourite_data = user_record.get("favourite")
+    if favourite_data:
+        if isinstance(favourite_data, str):
+            try:
+                favourite_data = json.loads(favourite_data)
+            except:
+                favourite_data = {}
+        if isinstance(favourite_data, dict):
+            interacted_ids.update(favourite_data.keys())
+
+    # 解析like数据
+    like_data = user_record.get("like")
+    if like_data:
+        if isinstance(like_data, str):
+            try:
+                like_data = json.loads(like_data)
+            except:
+                like_data = []
+        if isinstance(like_data, list):
+            interacted_ids.update(like_data)
+
+    # 如果用户没有任何收藏或点赞，返回空
+    if not interacted_ids:
+        cursor.close()
+        connection.close()
+        return []
+
+    # 2查询用户收藏和点赞的漫画的标签和分类
+    def to_list_safe(field):
+        if not field: return []
+        if isinstance(field, list): return field
+        if isinstance(field, str):
+            try:
+                data = json.loads(field)
+                return data if isinstance(data, list) else []
+            except:
+                return []
+        return []
+
+    format_strings = ','.join(['%s'] * len(interacted_ids))
+    cursor.execute(f"""
+        SELECT categories, tags
+        FROM comic_info
+        WHERE id IN ({format_strings})
+    """, tuple(interacted_ids))
+    
+    interacted_comics = cursor.fetchall()
+
+    # 统计标签和分类的出现频率
+    tag_counter = Counter()
+    category_counter = Counter()
+
+    for comic in interacted_comics:
+        categories = to_list_safe(comic.get("categories"))
+        tags = to_list_safe(comic.get("tags"))
+        
+        category_counter.update(categories)
+        tag_counter.update(tags)
+
+    # 如果历史记录里没有任何有效的标签和分类，直接结束
+    if not tag_counter and not category_counter:
+        cursor.close()
+        connection.close()
+        return []
+
+    # 获取候选漫画根据点击数排序，排除已经收藏和点赞过的漫画
+    cursor.execute(f"""
+        SELECT id, author, categories, tags, viewsCount
+        FROM comic_info
+        WHERE id NOT IN ({format_strings})
+        ORDER BY viewsCount DESC
+        LIMIT 2000
+    """, tuple(interacted_ids))
+
+    candidates = cursor.fetchall()
+
+    # 评分
+    scored = []
+
+    for comic in candidates:
+        score = 0
+        comic_categories = to_list_safe(comic.get("categories"))
+        comic_tags = to_list_safe(comic.get("tags"))
+        author = comic.get("author")
+
+        # 出现频率乘基础分数，出现次数越多评分越高
+        for tag in comic_tags:
+            if tag in tag_counter:
+                score += tag_counter[tag] * 3
+
+        for cat in comic_categories:
+            if cat in category_counter:
+                score += category_counter[cat] * 2
+
+        if score > 0:
+            scored.append({
+                "id": comic["id"],
+                "score": score,
+                "author": author
+            })
+
+    # 排序
+    scored.sort(key=lambda x: x["score"], reverse=True)
+
+    # 返回
+    result = []
+    author_count = {}
+
+    for item in scored:
+        author = item["author"]
+
+        if author:
+            count = author_count.get(author, 0)
+            if count >= 1: # 作者限制，最多1个同作者
                 continue
             author_count[author] = count + 1
 

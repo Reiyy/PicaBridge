@@ -399,6 +399,13 @@ def new_comment(comic_id, jwt_payload):
 def recommendation(comic_id, jwt_payload):
     return comiclist.get_recommendation_comics(comic_id)
 
+# 监听获取用户漫画推荐
+@PicaBridge.route('/collections', methods=['GET'])
+@jwt_required
+def collections(jwt_payload):
+    user_id = jwt_payload.get("user_id")
+    return comiclist.get_collections_comics(user_id)
+
 # 监听获取主评论列表
 @PicaBridge.route('/comics/<comic_id>/comments', methods=['GET'])
 @jwt_required
