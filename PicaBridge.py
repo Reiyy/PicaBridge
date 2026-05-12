@@ -256,13 +256,15 @@ def comic_detail_route(comic_id, jwt_payload):
 
 # 监听获取漫画章节请求
 @PicaBridge.route('/comics/<comic_id>/eps')
-def eps_route(comic_id):
+@jwt_required
+def eps_route(jwt_payload, comic_id):
     page = request.args.get('page', 1, type=int)
     return eps.get_eps(comic_id, page)
 
 # 监听获取漫画图片请求
 @PicaBridge.route('/comics/<comic_id>/order/<int:order>/pages', methods=['GET'])
-def comic_pages_route(comic_id, order):
+@jwt_required
+def comic_pages_route(jwt_payload, comic_id, order):
     page = request.args.get('page', default=1, type=int)
     response = comicorder.get_pages(comic_id, page, order)
     return jsonify(response)
@@ -324,7 +326,8 @@ def favourite_comics_route(jwt_payload):
 
 # 监听用户资料
 @PicaBridge.route('/users/<user_id>/profile', methods=['GET'])
-def get_user_profile_route(user_id):
+@jwt_required
+def get_user_profile_route(jwt_payload, user_id):
     return userinfo.get_user_profile(user_id)
 
 # 监听用户简介修改
@@ -365,7 +368,8 @@ def upload_user_avatar_route(jwt_payload):
 
 # 监听搜索
 @PicaBridge.route('/comics/advanced-search', methods=['POST'])
-def handle_advanced_search_route():
+@jwt_required
+def handle_advanced_search_route(jwt_payload):
     data = request.get_json()
     keyword = data.get('keyword', '')
     page = request.args.get('page', default=1, type=int)
