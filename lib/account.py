@@ -63,7 +63,7 @@ def Register(data):
     question3 = data.get('question3')
     answer3 = data.get('answer3')
 
-    logger.debug(f"收到注册请求: {data}")
+    logger.debug(f"收到注册请求: {email}")
 
     # 检查必填字段
     if not all([email, name, password, birthday, gender]):
