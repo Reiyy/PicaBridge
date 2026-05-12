@@ -1,6 +1,7 @@
 import pymysql
 
 from flask import jsonify
+from loguru import logger
 
 from lib import db
 
@@ -21,7 +22,7 @@ def switch(user_id, mode):
                 return jsonify({'error': 'User not found'}), 404
 
             # 更新模式
-            sql_update = "UPDATE users SET model=%s WHERE id=%s"
+            sql_update = "UPDATE users SET mode=%s WHERE id=%s"
             cursor.execute(sql_update, (mode, user_id))
         
         connection.commit()
@@ -34,7 +35,8 @@ def switch(user_id, mode):
     except pymysql.MySQLError as e:
         if connection:
             connection.rollback()
-        return jsonify({'error': f'Database error: {e}'}), 500
+        logger.error(f"数据库错误: {e}")
+        return jsonify({'error': '服务器内部错误'}), 500
     finally:
         if connection:
             connection.close()

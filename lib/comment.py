@@ -7,6 +7,7 @@ import time
 import datetime
 
 from flask import jsonify
+from loguru import logger
 
 import lib.db as db
 
@@ -252,9 +253,10 @@ def post_comment(comic_id, user_id, contentdata):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:
@@ -349,9 +351,10 @@ def post_child_comment(parent_comment_id, user_id, childcontentdata):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:
@@ -449,9 +452,10 @@ def load_child_comments(parent_comment_id, page, user_id):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:
