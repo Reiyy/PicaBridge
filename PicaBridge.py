@@ -52,9 +52,10 @@ PICABRIDGE_URL = config.get('PicaBridge_URL')
 URL_MAPPINGS = config.get("URL_Mappings", {})
 DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
 
+JWT_KEY = config.get('JWT_KEY')
+
 # JWT校验
 def verify_token(token):
-    JWT_KEY = load_config().get('JWT_KEY')
     try:
         payload = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
         return payload
