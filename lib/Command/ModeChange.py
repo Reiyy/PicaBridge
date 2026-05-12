@@ -1,9 +1,16 @@
 from lib import db
 
+ALLOWED_MODES = ['sfw', 'nsfw']
+
 def run(comic_id, user_id, command_args):
     # 判断 comic_id 是否为指定值
     if comic_id != "5822a6e3ad7ede654696e482":
         return {"status": False, "data": "该命令为全局命令，只能在留言板中运行！"}
+
+    # 校验模式值
+    mode = command_args.strip().lower()
+    if mode not in ALLOWED_MODES:
+        return {"status": False, "data": f"模式无效：{command_args}，仅支持 sfw 或 nsfw"}
 
     connection = db.get_db_connection()
     
