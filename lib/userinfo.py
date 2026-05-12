@@ -203,6 +203,15 @@ def punch_in(user_id):
     return jsonify({"code": 200, "message": "Already punched in today."}), 200
 
 # 上传头像
+MAX_AVATAR_SIZE = 2 * 1024 * 1024  # 2MB
+ALLOWED_IMAGE_SIGNATURES = [
+    b'\xff\xd8\xff',       # JPEG
+    b'\x89PNG\r\n\x1a\n', # PNG
+    b'GIF87a',             # GIF87a
+    b'GIF89a',             # GIF89a
+    b'RIFF',               # WebP (RIFF....WEBP)
+]
+
 def upload_avatar(user_id, picdata):
     # 从配置文件获取文件存储路径
     with open('config.json', 'r') as f:
@@ -210,8 +219,24 @@ def upload_avatar(user_id, picdata):
     avatarfilepath = config.get("avatarfilepath")
     
     # 解码 base64 数据
-    header, encoded = picdata.split(',', 1)
+    try:
+        header, encoded = picdata.split(',', 1)
+    except ValueError:
+        return {"code": 400, "message": "头像数据无效."}
     binary_data = base64.b64decode(encoded)
+
+    # 大小校验
+    if len(binary_data) > MAX_AVATAR_SIZE:
+        return {"code": 400, "message": "头像文件过大 (最大 2MB)."}
+
+    # 格式校验
+    is_valid_image = any(binary_data.startswith(sig) for sig in ALLOWED_IMAGE_SIGNATURES)
+    if not is_valid_image:
+        return {"code": 400, "message": "不支持的头像格式 (支持 JPEG/PNG/GIF/WebP)."}
+
+    # WebP校验：确认RIFF容器中包含WEBP标记
+    if binary_data[:4] == b'RIFF' and binary_data[8:12] != b'WEBP':
+        return {"code": 400, "message": "不支持的头像格式 (支持 JPEG/PNG/GIF/WebP)."}
 
     # 构建存储路径
     random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=3))
