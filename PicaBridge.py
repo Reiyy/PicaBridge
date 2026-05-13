@@ -8,6 +8,8 @@ from flask import redirect
 from flask import make_response
 from functools import wraps
 from loguru import logger
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from lib import initdb
 from lib import account
@@ -47,13 +49,28 @@ log.init_logging(log_level=target_level)
 # 启动Flask
 PicaBridge = Flask(__name__, static_folder=None)
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+PicaBridge.wsgi_app = ProxyFix(PicaBridge.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+# 速率限制
+limiter = Limiter(
+    app=PicaBridge,
+    key_func=get_remote_address,
+    default_limits=["200 per minute"],
+    storage_uri="memory://"
+)
+
+# 全局异常处理
+@PicaBridge.errorhandler(429)
+def handle_429(e):
+    return jsonify({"code": 429, "message": "太快了♡受不了惹~"}), 429
+
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
 URL_MAPPINGS = config.get("URL_Mappings", {})
 DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
-
 JWT_KEY = config.get('JWT_KEY')
-
+ 
 # JWT校验
 def verify_token(token):
     try:
@@ -175,21 +192,25 @@ def android_cat2_route():
 
 # 监听注册请求
 @PicaBridge.route('/auth/register', methods=['POST'])
+@limiter.limit("5 per hour")
 def register_route():
     return account.Register(request.json)
 
 # 监听登录请求
 @PicaBridge.route('/auth/sign-in', methods=['POST'])
+@limiter.limit("10 per minute")
 def sign_in_route():
     return account.SignIn(request.json)
 
 # 监听忘记密码请求
 @PicaBridge.route('/auth/forgot-password', methods=['POST'])
+@limiter.limit("3 per minute")
 def forgot_password_route():
     return account.forgot_password(request.json)
 
 # 监听重置密码请求
 @PicaBridge.route('/auth/reset-password', methods=['POST'])
+@limiter.limit("3 per minute")
 def reset_password_route():
     return account.reset_password(request.json)
 
@@ -369,6 +390,7 @@ def upload_user_avatar_route(jwt_payload):
 
 # 监听搜索
 @PicaBridge.route('/comics/advanced-search', methods=['POST'])
+@limiter.limit("42 per minute")
 @jwt_required
 def handle_advanced_search_route(jwt_payload):
     data = request.get_json()
@@ -385,6 +407,7 @@ def keywords_route(jwt_payload):
 
 # 监听发布主评论
 @PicaBridge.route('/comics/<comic_id>/comments', methods=['POST'])
+@limiter.limit("42 per minute")
 @jwt_required
 def new_comment(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -421,6 +444,7 @@ def get_comment_list(comic_id, jwt_payload):
 
 # 监听发布子评论
 @PicaBridge.route('/comments/<parent_comment_id>', methods=['POST'])
+@limiter.limit("42 per minute")
 @jwt_required
 def new_child_comment(parent_comment_id, jwt_payload):
     user_id = jwt_payload.get("user_id")

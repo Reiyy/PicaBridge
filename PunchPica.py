@@ -81,20 +81,21 @@ def main():
     print("初始化完成！")
     print("正在启动 哔咔桥PicaBridge ！")
     listen_address = config.get("Listen", "0.0.0.0:7777")  # 读取 Listen 配置，默认 0.0.0.0:7777
-    workers = config["SysConfig"].get("gunicorn_workers", "2")
+    # 为了使用API请求限流，以及不引入额外依赖来做多worker同步，worker数量必须为1，单gevent性能应以足够。
+    # workers = config["SysConfig"].get("gunicorn_workers", "1")
     is_debug = config.get("SysConfig", {}).get("Debug", False)
     gunicorn_level = "debug" if is_debug else "info"
     #subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "PicaBridge:PicaBridge"])
     os.environ["LOGURU_COLORIZE"] = "true"
     os.execvp("gunicorn", [
         "gunicorn",
-        "-w", str(workers),
+        "-w", "1", # 固定为单worker
         "-k", "gevent",
         "-b", listen_address,
         "--access-logfile", "-",
         "--error-logfile", "-",
         "--capture-output", 
-        "--access-logformat", '%(h)s "%(r)s" %(s)s %(b)s "%(a)s"',
+        "--access-logformat", '%({x-forwarded-for}i)s "%(r)s" %(s)s %(b)s "%(a)s"',
         "--log-level", gunicorn_level,
         "PicaBridge:PicaBridge"
     ])
