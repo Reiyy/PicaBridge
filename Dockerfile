@@ -1,11 +1,11 @@
 # 选择基础镜像
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # 设置工作目录
 WORKDIR /PicaBridge
 
 # 安装系统依赖
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     build-essential \
     libffi-dev \
