@@ -11,10 +11,10 @@
         "password": "picabridge",
         "name": "picabridge",
         "pool": {
-            "maxconnections": 9,
-            "mincached": 3,
+            "maxconnections": 10,
+            "mincached": 2,
             "blocking": true,
-            "ping": 1,
+            "ping": 7,
             "reset": true
         }
     },

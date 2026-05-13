@@ -26,10 +26,10 @@ class DBPool:
                     
                     # 合并默认配置和用户配置
                     pool_config = {
-                        'maxconnections': 5,
-                        'mincached': 1,
-                        'blocking': False,
-                        'ping': 0
+                        'maxconnections': 10,
+                        'mincached': 2,
+                        'blocking': True,
+                        'ping': 7
                     }
                     pool_config.update(db_config.get('pool', {}))
 
