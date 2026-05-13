@@ -128,32 +128,25 @@ def plus_comic_viewsCount(comic_id):
 
     try:
         with connection.cursor() as cursor:
-            # 首先更新浏览量计数
-            sql_update_views = "UPDATE comic_info SET viewsCount = viewsCount + 1 WHERE id = %s"
-            cursor.execute(sql_update_views, (comic_id,))
+            # 更新浏览量计数及添加浏览时间戳
+            cursor.execute(
+                "UPDATE comic_info SET viewsCount = viewsCount + 1, "
+                "viewed_at = JSON_ARRAY_APPEND(IFNULL(viewed_at, '[]'), '$', %s) "
+                "WHERE id = %s",
+                (current_timestamp, comic_id)
+            )
 
-            # 然后获取当前的 viewed_at
-            sql_select_viewed_at = "SELECT viewed_at FROM comic_info WHERE id = %s"
-            cursor.execute(sql_select_viewed_at, (comic_id,))
-            result = cursor.fetchone()
-
-            # 调试输出，打印查询结果
-            print("Query result:", result)
-
-            # 检查 result 是否为 None 或者 空元组
-            if result is not None and len(result) > 0:
-                # 使用键名访问 viewed_at
-                viewed_at = json.loads(result['viewed_at']) if result['viewed_at'] else []
-            else:
-                # 如果没有找到任何记录，则初始化 viewed_at
-                viewed_at = []
-
-            # 添加当前时间戳
-            viewed_at.append(current_timestamp)
-
-            # 更新 viewed_at 列
-            sql_update_viewed_at = "UPDATE comic_info SET viewed_at = %s WHERE id = %s"
-            cursor.execute(sql_update_viewed_at, (json.dumps(viewed_at), comic_id))
+            # 懒清理，只保留最近1000条时间戳
+            import random
+            if random.randint(1, 10) == 1:
+                cursor.execute(
+                    "UPDATE comic_info SET viewed_at = CASE "
+                    "WHEN JSON_LENGTH(viewed_at) > 1000 THEN "
+                    "  JSON_EXTRACT(viewed_at, CONCAT('$[', JSON_LENGTH(viewed_at) - 1000, ' to last]')) "
+                    "ELSE viewed_at END "
+                    "WHERE id = %s",
+                    (comic_id,)
+                )
 
             connection.commit()
             return 1 if cursor.rowcount > 0 else 0
