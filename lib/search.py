@@ -27,11 +27,24 @@ def redirect_thumbnail(arcid):
         return jsonify({"code": 500, "message": "Internal Server Error", "detail": str(e)}), 500
 
 # 搜索漫画
-def search_comic(keyword, page=1):
+def search_comic(keyword, sort, page=1):
     config = load_config()
     start = (page - 1) * 20
 
-    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+    # 排序方式
+    # 新到旧
+    if sort == "dd":
+        sortby = "date_added"
+        order = "desc"
+    # 旧到新
+    elif sort == "da":
+        sortby = "date_added"
+        order = "asc"
+    else:
+        sortby = "date_added"
+        order = "desc"
+
+    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
     lanraragi_data = lanraragi_response.json()
 
     comics_data = []

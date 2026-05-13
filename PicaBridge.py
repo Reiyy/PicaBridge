@@ -395,8 +395,9 @@ def upload_user_avatar_route(jwt_payload):
 def handle_advanced_search_route(jwt_payload):
     data = request.get_json()
     keyword = data.get('keyword', '')
+    sort = data.get('sort', '')
     page = request.args.get('page', default=1, type=int)
-    return search.search_comic(keyword, page)
+    return search.search_comic(keyword, sort, page)
 
 # 监听获取常用标签
 @PicaBridge.route('/keywords', methods=['GET'])
