@@ -4,6 +4,8 @@ import sys
 import subprocess
 import os
 
+from lib import VER
+
 # 读取配置文件
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -65,6 +67,7 @@ def is_database_initialized():
         connection.close()
 
 def main():
+    print("PicaBridge 版本: {ver}".format(ver=VER))
     print("开始初始化...")
     print("正在检测数据库是否已初始化...")
     if is_database_initialized():

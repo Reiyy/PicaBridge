@@ -32,7 +32,7 @@ from lib import ModeSwitch
 from lib import log
 
 # 版本号
-VER = "0.7.51"
+from lib import VER
 
 # 读取 JSON 配置文件
 def load_config():
@@ -496,6 +496,7 @@ def pica_apps_route(jwt_payload):
        logger.warning("获取小程序配置出错: {e}".format(e=e))
 
 def main():
+    print("PicaBridge 版本: {ver}".format(ver=VER))
     print("你正在运行调试模式！")
     print("如果这不是你想要的，请通过PunchPica.py运行！")
     # 启动 Flask
