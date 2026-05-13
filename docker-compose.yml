@@ -12,6 +12,7 @@ services:
       - "7777:7777"
     volumes:
       - ./data/config.json:/PicaBridge/config.json
+      - ./data/logs:/PicaBridge/logs
     environment:
       - TZ=Asia/Shanghai
     networks:
