@@ -8,6 +8,7 @@ def load_config():
         return json.load(f)
     
 LRR_API_KEY = load_config()["lrr_Api_Key"]
+REQUEST_TIMEOUT = (3, 10)
 
 # lanraragi验证头
 def get_auth_header():
@@ -25,7 +26,7 @@ def get_archive_metadata(comic_id):
     headers = get_auth_header()
     
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()  # 检查请求是否成功
         return response.json()  # 返回API数据
     except requests.RequestException as e:
@@ -40,7 +41,7 @@ def get_extract_archive(comic_id):
     url = f"{lrr_Api}/api/archives/{comic_id}/files"
     
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()  # 检查请求是否成功
         return response.json()  # 返回API数据
     except requests.RequestException as e:
@@ -70,7 +71,7 @@ def new_tankoubon(name):
     params = {'name': name}
     
     try:
-        response = requests.put(url, headers=headers, params=params)
+        response = requests.put(url, headers=headers, params=params, timeout=REQUEST_TIMEOUT)
         return response.json()  # 返回 API 的 JSON 响应
     except requests.RequestException as e:
         return {"error": str(e)}
@@ -83,7 +84,7 @@ def add_archive_tankoubon(id, archive):
     headers = get_auth_header()
     
     try:
-        response = requests.put(url, headers=headers)
+        response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
         return response.json()  # 返回 API 的 JSON 响应
     except requests.RequestException as e:
         return {"error": str(e)}

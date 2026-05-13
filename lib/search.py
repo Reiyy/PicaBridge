@@ -14,6 +14,7 @@ def load_config():
 config = load_config()
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
+REQUEST_TIMEOUT = (3, 10)
 
 # 重定向缩略图
 def redirect_thumbnail(arcid):
@@ -30,7 +31,7 @@ def search_comic(keyword, page=1):
     config = load_config()
     start = (page - 1) * 20
 
-    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter=*{keyword}")
+    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
     lanraragi_data = lanraragi_response.json()
 
     comics_data = []
