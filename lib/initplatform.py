@@ -9,6 +9,7 @@ from datetime import datetime
 from loguru import logger
 
 import lib.db as db
+import lib.ModeSwitch as ModeSwitch
 
 # 兼容gevent和flask环境
 try:
@@ -179,6 +180,12 @@ def init(platform, user_id):
         last_punch_in_date = datetime.fromtimestamp(last_punch_in_timestamp).date()
         is_punched = last_punch_in_date == today
 
+        categories_key = "SFW_categories" if ModeSwitch.GetMode(user_id) == "sfw" else "categories"
+        categories = [
+            {"_id": info["id"], "title": info["title"]}
+            for info in config.get(categories_key, {}).values()
+        ]
+
         response_data = {
             "code": 200,
             "message": "success",
@@ -188,12 +195,7 @@ def init(platform, user_id):
                 "imageServer": PICABRIDGE_URL + "/static/",
                 "apiLevel": 22,
                 "minApiLevel": 22,
-                "categories": [
-                    {
-                        "_id": "233333333333333333333333",
-                        "title": "2333"
-                    }
-                ],
+                "categories": categories,
                 "notification": None,
                 "isIdUpdated": True
             }

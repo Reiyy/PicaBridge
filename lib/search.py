@@ -6,6 +6,8 @@ from flask import jsonify
 from flask import redirect
 
 import lib.db as db
+import lib.ModeSwitch as ModeSwitch
+from loguru import logger
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -27,7 +29,7 @@ def redirect_thumbnail(arcid):
         return jsonify({"code": 500, "message": "Internal Server Error", "detail": str(e)}), 500
 
 # 搜索漫画
-def search_comic(keyword, sort, page=1):
+def search_comic(keyword, sort, categories, page=1, user_id=None):
     config = load_config()
     start = (page - 1) * 20
 
@@ -44,7 +46,14 @@ def search_comic(keyword, sort, page=1):
         sortby = "date_added"
         order = "desc"
 
-    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+    if categories:
+        categories_key = "SFW_categories" if ModeSwitch.GetMode(user_id) == "sfw" else "categories"
+        category_name = categories[0] #lrr搜索api目前只支持单分类
+        lrr_id = config.get(categories_key, {}).get(category_name, {}).get('lrr_id')
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search?category={lrr_id}&start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+    else:
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+        
     lanraragi_data = lanraragi_response.json()
 
     comics_data = []

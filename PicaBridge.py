@@ -397,11 +397,13 @@ def upload_user_avatar_route(jwt_payload):
 @limiter.limit("42 per minute")
 @jwt_required
 def handle_advanced_search_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     data = request.get_json()
     keyword = data.get('keyword', '')
     sort = data.get('sort', '')
+    categories = data.get('categories', [])
     page = request.args.get('page', default=1, type=int)
-    return search.search_comic(keyword, sort, page)
+    return search.search_comic(keyword, sort, categories, page, user_id)
 
 # 监听获取常用标签
 @PicaBridge.route('/keywords', methods=['GET'])
