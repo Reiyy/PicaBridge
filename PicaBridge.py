@@ -180,7 +180,7 @@ def android_cat_route():
 # 监听广告信息
 @PicaBridge.route('/get-ad-zones', methods=['GET'])
 def android_cat2_route():
-    image = config.get('AD_Help_Pica', {}).get('image', '')
+    image = config.get('PicaBridge_URL', '') + config.get('AD_Help_Pica', {}).get('image', '')
     response_data = {
         "ads": [
             {
