@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/opt/PicaBridge
-ExecStart=/usr/bin/python3 /opt/PicaBridge/app.py
+ExecStart=/usr/bin/python3 /opt/PicaBridge/PunchPica.py
 Restart=always
 User=root
 Group=root
