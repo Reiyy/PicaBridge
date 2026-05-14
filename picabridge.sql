@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `schema_version` (
   PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT IGNORE INTO `schema_version` (`version`, `description`) VALUES (1, 'Initial schema');
+INSERT IGNORE INTO `schema_version` (`version`, `description`) VALUES (1, '初始化安装');
 
 -- 用户表
 CREATE TABLE IF NOT EXISTS `users` (

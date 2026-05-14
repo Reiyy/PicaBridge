@@ -12,7 +12,7 @@ try:
     _use_gevent = True
 except ImportError:
     _use_gevent = False
-logger.info("使用 {'gevent' if _use_gevent else 'threading'} 进行异步任务调度")
+logger.info(f"使用 {'gevent' if _use_gevent else 'threading'} 进行异步任务调度")
 
 from lib import VER
 
