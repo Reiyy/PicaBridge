@@ -13,7 +13,6 @@ from loguru import logger
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from lib import initdb
 from lib import account
 from lib import announcements
 from lib import banners

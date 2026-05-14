@@ -32,13 +32,26 @@ PicACG App 2.2.1.3.3.4
 8. 配置并使用 MyPica App连接
 9. Enjoy, heart❤️! =w=
 
-或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/RunPicaBridge.md)  
+**推荐使用Docker运行**，更多详细步骤请 [查看文档](/tools/Documentation/RunPicaBridge.md)  
 根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
 正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)  
-默认管理员账号为：`Picabridge`，密码：`PicaBridge233password`  
+默认管理员账号为：`Picabridge` | 密码：`PicaBridge233password`  
 你可以使用命令修改他们，请查看 [命令文档](/tools/Documentation/command.md)
 
 关于**MyPica App**，请查看 [App文档](/tools/Documentation/App.md)
+
+## 升级
+从已安装的旧版本Picabridge升级到新版
+
+### 从源码安装升级
+1. 拉取新代码：```git pull```
+2. 安装新依赖：```pip install -r requirements.txt```
+3. 重启服务：```python PunchPica.py```
+
+### Docker 升级
+1. 停止容器：```docker compose down```
+2. 拉取新镜像：```docker compose pull```
+3. 启动容器：```docker compose up -d```
 
 ## 下载
 
@@ -72,6 +85,7 @@ PicACG App 2.2.1.3.3.4
 打哔咔签到  
 用户头像上传  
 漫画关联/推荐  
+小程序列表  
 
 附加功能：  
 动态启动图  
@@ -79,7 +93,6 @@ PicACG App 2.2.1.3.3.4
 命令(通过发布评论来指向命令)
 
 待实现：  
-小程序  
 动态常用标签  
 添加更多命令
 
