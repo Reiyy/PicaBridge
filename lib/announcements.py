@@ -18,7 +18,15 @@ from lib import VER
 
 # 版本号比较
 def _parse_version(v):
-    return [int(x) for x in v.split(".")]
+    parts = v.split(".")
+    result = [int(x) for x in parts[:-1]]
+    last = parts[-1]
+    if len(last) > 1:
+        result.append(int(last[:-1]))
+        result.append(int(last[-1]))
+    else:
+        result.append(int(last))
+    return result
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
