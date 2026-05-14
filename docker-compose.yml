@@ -1,5 +1,3 @@
----
-# Docker compose file for dev environments.
 services:
   picabridge:
     build:
@@ -13,6 +11,8 @@ services:
     volumes:
       - ./data/config.json:/PicaBridge/config.json
       - ./data/logs:/PicaBridge/logs
+      - ./data/avatar:/PicaBridge/web/assets/img/avatar
+      - ./data/diy:/PicaBridge/web/diy
     environment:
       - TZ=Asia/Shanghai
     networks:

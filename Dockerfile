@@ -21,6 +21,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制项目文件到容器
 COPY . /PicaBridge
 
+# 创建头像上传目录
+RUN mkdir -p /PicaBridge/web/assets/img/avatar
+# 创建自定义目录
+RUN mkdir -p /PicaBridge/web/diy
+
 # 复制 config.example.json 到 config.json
 RUN cp /PicaBridge/config.example.json /PicaBridge/config.json
 

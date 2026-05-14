@@ -1,11 +1,13 @@
 import json
 import jwt
+import os
 
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import redirect
 from flask import make_response
+from flask import send_from_directory
 from functools import wraps
 from loguru import logger
 from flask_limiter import Limiter
@@ -48,6 +50,9 @@ log.init_logging(log_level=target_level)
 
 # 启动Flask
 PicaBridge = Flask(__name__, static_folder=None)
+
+# web资源目录
+WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 PicaBridge.wsgi_app = ProxyFix(PicaBridge.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -494,6 +499,17 @@ def pica_apps_route(jwt_payload):
         return result
     except Exception as e:
        logger.warning("获取小程序配置出错: {e}".format(e=e))
+
+# web资源路由
+# 监听assets路径
+@PicaBridge.route('/assets/<path:filepath>', methods=['GET'])
+def web_assets(filepath):
+    return send_from_directory(os.path.join(WEB_DIR, 'assets'), filepath)
+
+# 监听自定义资源路径
+@PicaBridge.route('/diy/<path:filepath>', methods=['GET'])
+def web_diy(filepath):
+    return send_from_directory(os.path.join(WEB_DIR, 'diy'), filepath)
 
 def main():
     print("PicaBridge 版本: {ver}".format(ver=VER))

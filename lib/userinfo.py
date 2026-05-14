@@ -213,11 +213,13 @@ ALLOWED_IMAGE_SIGNATURES = [
 ]
 
 def upload_avatar(user_id, picdata):
-    # 从配置文件获取文件存储路径
-    with open('config.json', 'r') as f:
-        config = json.load(f)
-    avatarfilepath = config.get("avatarfilepath")
-    
+    # 头像存储路径
+    avatarfilepath = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        'web', 'assets', 'img', 'avatar'
+    )
+    os.makedirs(avatarfilepath, exist_ok=True)
+
     # 解码 base64 数据
     try:
         header, encoded = picdata.split(',', 1)

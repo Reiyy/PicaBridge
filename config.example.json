@@ -4,7 +4,6 @@
     "JWT_KEY": "填写用于JWT Token的密钥",
     "lrr_Api": "填写lanraragi地址：https://lrr.example.com:2333",
     "lrr_Api_Key": "填写lanraragi中设置的api密钥",
-    "avatarfilepath": "用户上传头像的保存路径，指向你的web服务目录，比如：/data/wwwroot/picabridge/assets/img/avatar",
     "db": {
         "host": "192.168.7.42",
         "user": "picabridge",
