@@ -38,7 +38,7 @@ PICABRIDGE_URL = config.get('PicaBridge_URL')
 # GitHub更新检查缓存
 _update_cache = {"announcement": None, "fetching": False, "last_check": 0}
 _lock = threading.Lock()
-CACHE_TTL = 600  # 缓存10分钟
+CACHE_TTL = 7200  # 缓存2小时
 
 def _spawn(func):
     if _use_gevent:
