@@ -18,6 +18,10 @@ _config_lock = threading.Lock()
 def load_config():
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         return json.load(f, object_pairs_hook=OrderedDict)
+    
+def load_initconfig():
+    with open('config.example.json', 'r', encoding='utf-8') as f:
+        return json.load(f, object_pairs_hook=OrderedDict)
 
 # 保存配置
 def save_config(config_data):
@@ -141,7 +145,7 @@ def init_config(data):
         return {"code": 400, "message": "校验失败", "data": {"errors": errors}}, 400
 
     try:
-        existing = load_config()
+        existing = load_initconfig()
     except Exception:
         existing = {}
 
