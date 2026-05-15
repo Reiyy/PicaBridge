@@ -25,21 +25,13 @@ def load_initconfig():
 
 # 保存配置
 def save_config(config_data):
-    config_path = os.path.abspath(CONFIG_PATH)
-    dir_name = os.path.dirname(config_path)
     with _config_lock:
-        fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix='.tmp')
         try:
-            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
                 json.dump(config_data, f, ensure_ascii=False, indent=4)
-            os.replace(tmp_path, config_path)
             logger.info("配置文件已保存！")
             return True
         except Exception as e:
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
             logger.error("保存配置文件失败: {e}".format(e=e))
             raise
 
