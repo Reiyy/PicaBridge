@@ -1,4 +1,15 @@
-# 选择基础镜像
+# 前端
+FROM node:20-slim AS frontend-builder
+
+WORKDIR /build
+
+COPY web/src/package.json web/src/package-lock.json* ./
+RUN npm install
+
+COPY web/src/ ./
+RUN npm run build
+
+# 哔咔桥
 FROM python:3.12-slim
 
 # 设置工作目录
@@ -20,6 +31,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制项目文件到容器
 COPY . /PicaBridge
+
+# 从构建阶段复制前端产物
+COPY --from=frontend-builder /ui /PicaBridge/web/ui
 
 # 创建头像上传目录
 RUN mkdir -p /PicaBridge/web/assets/img/avatar
