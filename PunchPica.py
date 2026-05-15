@@ -2,8 +2,11 @@ import json
 import sys
 import os
 
+from flask import Flask, jsonify, request, send_from_directory    
+
 from lib import VER
 from lib.upgrader import run_startup
+from lib import Api
 
 
 def load_config():
@@ -14,8 +17,56 @@ def load_config():
 config = load_config()
 
 
+# 精简Flask应用，仅用于配置向导                                                                                                     
+WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')                                                           
+
+def _create_setup_app():                                                                                                            
+    app = Flask(__name__, static_folder=None)                                                                                       
+                                                                                                                                    
+    @app.route('/pbapi/init', methods=['GET'])                                                                                      
+    def init_status():                                                                                                              
+        resp, code = Api.Config.init_status()                                                                                       
+        return jsonify(resp), code                                                                                                  
+                                                                                                                                    
+    @app.route('/pbapi/init', methods=['POST'])                                                                                     
+    def init_config():                                                                                                              
+        resp, code = Api.Config.init_config(request.get_json(silent=True))                                                          
+        return jsonify(resp), code                                                                                                  
+                                                                                                                                                                                                                             
+    @app.route('/ui/', defaults={'path': ''})                                                                                       
+    @app.route('/ui/<path:path>')                                                                                                   
+    def web_ui(path):                                                                                                               
+        target = os.path.join(WEB_DIR, 'ui', path)                                                                                  
+        if path and os.path.isfile(target):                                                                                         
+              return send_from_directory(os.path.join(WEB_DIR, 'ui'), path)                                                           
+        return send_from_directory(os.path.join(WEB_DIR, 'ui'), 'index.html')                                                       
+                                                                                                                                    
+    return app                                                                                                                      
+                                                                                                                                    
+                  
+
+
 def main():
     print("正在初始化...")
+    if not Api.Config.is_init():
+        print("配置文件还未设置，请打开配置向导进行配置！")
+        listen = "0.0.0.0:7777"
+        host, port = listen.rsplit(":", 1)
+        import socket
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+        except Exception:
+            local_ip = "127.0.0.1"
+        print(f"配置向导：http://127.0.0.1:{port}")
+        print(f"配置向导：http://{local_ip}:{port}")
+        print("完成后请重启服务！")
+        setup_app = _create_setup_app()
+        setup_app.run(host=host, port=int(port))
+        return
+    
     try:
         run_startup(config)
     except Exception as e:
