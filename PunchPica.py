@@ -60,8 +60,8 @@ def main():
             s.close()
         except Exception:
             local_ip = "127.0.0.1"
-        print(f"配置向导：http://127.0.0.1:{port}")
-        print(f"配置向导：http://{local_ip}:{port}")
+        print(f"配置向导：http://127.0.0.1:{port}/ui")
+        print(f"配置向导：http://{local_ip}:{port}/ui")
         print("完成后请重启服务！")
         setup_app = _create_setup_app()
         setup_app.run(host=host, port=int(port))
