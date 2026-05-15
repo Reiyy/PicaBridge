@@ -7,6 +7,7 @@ from flask import jsonify
 from flask import request
 from flask import redirect
 from flask import make_response
+from flask import send_file
 from flask import send_from_directory
 from functools import wraps
 from loguru import logger
@@ -31,6 +32,7 @@ from lib import PicaCommand
 from lib import LaunchImage
 from lib import ModeSwitch
 from lib import log
+from lib import Api
 
 # 版本号
 from lib import VER
@@ -511,6 +513,65 @@ def web_assets(filepath):
 @PicaBridge.route('/diy/<path:filepath>', methods=['GET'])
 def web_diy(filepath):
     return send_from_directory(os.path.join(WEB_DIR, 'diy'), filepath)
+
+# 后台
+@PicaBridge.route('/ui/', defaults={'path': ''})
+@PicaBridge.route('/ui/<path:path>')
+def web_ui(path):
+    target = os.path.join(WEB_DIR, 'ui', path)
+    if path and os.path.isfile(target):
+        return send_from_directory(os.path.join(WEB_DIR, 'ui'), path)
+    return send_from_directory(os.path.join(WEB_DIR, 'ui'), 'index.html')
+
+# 哔咔桥API
+# 初始化状态
+@PicaBridge.route('/pbapi/init', methods=['GET'])
+def pbapi_init_status():
+    resp, code = Api.Config.init_status()
+    return jsonify(resp), code
+
+# 初始化配置
+@PicaBridge.route('/pbapi/init', methods=['POST'])
+@limiter.limit("3 per hour")
+def pbapi_init():
+    resp, code = Api.Config.init_config(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 读取配置
+@PicaBridge.route('/pbapi/config', methods=['GET'])
+@jwt_required
+def pbapi_get_config(jwt_payload):
+    mask = request.args.get('mask', 'true').lower() == 'true'
+    resp, code = Api.Config.get_config(mask)
+    return jsonify(resp), code
+
+# 写入配置
+@PicaBridge.route('/pbapi/config', methods=['PUT'])
+@jwt_required
+@limiter.limit("10 per minute")
+def pbapi_set_config(jwt_payload):
+    resp, code = Api.Config.set_config(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 备份配置
+@PicaBridge.route('/pbapi/config/backup', methods=['POST'])
+@jwt_required
+@limiter.limit("3 per hour")
+def pbapi_backup(jwt_payload):
+    try:
+        timestamp = __import__('datetime').datetime.now().strftime("%Y%m%d%H%M%S")
+        return send_file('config.json', as_attachment=True, download_name='PicaBridge_bak_{}.json'.format(timestamp))
+    except Exception as e:
+        logger.error("创建配置备份失败: {e}".format(e=e))
+        return jsonify({"code": 500, "message": "创建配置备份失败"}), 500
+
+# 恢复配置
+@PicaBridge.route('/pbapi/config/restore', methods=['POST'])
+@jwt_required
+@limiter.limit("3 per hour")
+def pbapi_restore(jwt_payload):
+    resp, code = Api.Config.restore(request.get_json(silent=True))
+    return jsonify(resp), code
 
 def main():
     print("PicaBridge 版本: {ver}".format(ver=VER))

@@ -1,14 +1,15 @@
 {
+    "is_init": false,
     "Listen": "0.0.0.0:7777",
-    "PicaBridge_URL": "http://127.0.0.1:7777",
-    "JWT_KEY": "填写用于JWT Token的密钥",
-    "lrr_Api": "http://127.0.0.1:3000",
-    "lrr_Api_Key": "填写LANraragid的API Key",
+    "PicaBridge_URL": "",
+    "JWT_KEY": "",
+    "lrr_Api": "",
+    "lrr_Api_Key": "",
     "db": {
-        "host": "127.0.0.1",
-        "user": "picabridge",
-        "password": "picabridge",
-        "name": "picabridge",
+        "host": "",
+        "user": "",
+        "password": "",
+        "name": "",
         "pool": {
             "maxconnections": 10,
             "mincached": 2,

@@ -11,3 +11,5 @@ LICENSE
 docker-compose.yml
 .dockerignore
 config.json
+web/src/node_modules
+web/ui/
