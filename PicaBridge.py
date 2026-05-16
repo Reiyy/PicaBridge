@@ -588,6 +588,37 @@ def pbapi_restart(jwt_payload):
     resp, code = Api.Config.restart_service()
     return jsonify(resp), code
 
+# 获取用户列表
+@PicaBridge.route('/pbapi/users', methods=['GET'])
+@jwt_required
+def pbapi_get_users(jwt_payload):
+    page = request.args.get('page', default=1, type=int)
+    page_size = request.args.get('page_size', default=20, type=int)
+    search = request.args.get('search', default=None, type=str)
+    resp, code = Api.User.get_users(page, page_size, search)
+    return jsonify(resp), code
+
+# 获取用户详情
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['GET'])
+@jwt_required
+def pbapi_get_user(jwt_payload, user_id):
+    resp, code = Api.User.get_user(user_id)
+    return jsonify(resp), code
+
+# 更新用户信息
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['PUT'])
+@jwt_required
+def pbapi_update_user(jwt_payload, user_id):
+    resp, code = Api.User.update_user(user_id, request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 删除用户
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['DELETE'])
+@jwt_required
+def pbapi_delete_user(jwt_payload, user_id):
+    resp, code = Api.User.delete_user(user_id)
+    return jsonify(resp), code
+
 def main():
     print("PicaBridge 版本: {ver}".format(ver=VER))
     print("你正在运行调试模式！")

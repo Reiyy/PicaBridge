@@ -75,6 +75,7 @@ const menuItems = [
   { title: '关键词管理', icon: 'mdi-magnify', path: '/ui/keywords' },
   { title: '启动图管理', icon: 'mdi-image-multiple', path: '/ui/launch-image' },
   { title: '小程序管理', icon: 'mdi-apps', path: '/ui/apps' },
+  { title: '用户管理', icon: 'mdi-account-group', path: '/ui/users' },
   { title: '备份与恢复', icon: 'mdi-backup-restore', path: '/ui/backup' },
 ]
 

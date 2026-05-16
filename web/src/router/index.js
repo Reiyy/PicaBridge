@@ -70,6 +70,11 @@ const routes = [
         component: () => import('../views/AppsManage.vue'),
       },
       {
+        path: 'users',
+        name: 'Users',
+        component: () => import('../views/UserManage.vue'),
+      },
+      {
         path: 'backup',
         name: 'Backup',
         component: () => import('../views/BackupRestore.vue'),
