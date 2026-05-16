@@ -66,16 +66,6 @@
         </v-card>
 
         <v-btn type="submit" color="primary" :loading="saving">保存</v-btn>
-        <v-btn
-          v-if="hasChanges"
-          color="error"
-          :loading="restarting"
-          :disabled="saving"
-          @click="handleRestart"
-          class="ml-2"
-        >
-          立即重启
-        </v-btn>
       </v-form>
 
       <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
@@ -88,11 +78,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import request from '../api/request'
+import { useRestartStore } from '../stores/restart'
+
+const restartStore = useRestartStore()
 
 const loading = ref(true)
 const saving = ref(false)
-const restarting = ref(false)
-const hasChanges = ref(false)
 const secrets = ref({})
 const snackbar = ref({ show: false, text: '', color: 'success' })
 
@@ -181,36 +172,13 @@ async function handleSave() {
     const res = await request.put('/pbapi/config', payload)
     snackbar.value = { show: true, text: '保存成功', color: 'success' }
     if (res.data?.restart_required) {
-      hasChanges.value = true
+      restartStore.markRestartRequired()
     }
     fetchConfig()
   } catch (e) {
     snackbar.value = { show: true, text: e.message || '保存失败', color: 'error' }
   } finally {
     saving.value = false
-  }
-}
-
-async function handleRestart() {
-  restarting.value = true
-  try {
-    await request.post('/pbapi/restart')
-    snackbar.value = { show: true, text: '服务正在重启...', color: 'info' }
-    for (let i = 0; i < 10; i++) {
-      await new Promise(r => setTimeout(r, 1000))
-      try {
-        await request.get('/pbapi/config')
-        snackbar.value = { show: true, text: '服务已重启完成', color: 'success' }
-        hasChanges.value = false
-        fetchConfig()
-        return
-      } catch { /* 服务还在重启中 */ }
-    }
-    snackbar.value = { show: true, text: '重启超时，请手动检查服务状态', color: 'warning' }
-  } catch (e) {
-    snackbar.value = { show: true, text: e.message || '重启失败', color: 'error' }
-  } finally {
-    restarting.value = false
   }
 }
 

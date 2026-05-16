@@ -53,6 +53,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import request from '../api/request'
+import { useRestartStore } from '../stores/restart'
+
+const restartStore = useRestartStore()
 
 function generateId() {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyz'
@@ -147,8 +150,11 @@ async function handleSave() {
   saving.value = true
   try {
     const payload = { categories: categories.value, SFW_categories: sfwCategories.value }
-    await request.put('/pbapi/config', payload)
+    const res = await request.put('/pbapi/config', payload)
     snackbar.value = { show: true, text: '保存成功', color: 'success' }
+    if (res.data?.restart_required) {
+      restartStore.markRestartRequired()
+    }
     fetchConfig()
   } catch (e) {
     snackbar.value = { show: true, text: e.message || '保存失败', color: 'error' }

@@ -46,6 +46,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import request from '../api/request'
+import { useRestartStore } from '../stores/restart'
+
+const restartStore = useRestartStore()
 
 const loading = ref(true)
 const saving = ref(false)
@@ -105,8 +108,11 @@ async function fetchConfig() {
 async function handleSave() {
   saving.value = true
   try {
-    await request.put('/pbapi/config', { apps: apps.value })
+    const res = await request.put('/pbapi/config', { apps: apps.value })
     snackbar.value = { show: true, text: '保存成功', color: 'success' }
+    if (res.data?.restart_required) {
+      restartStore.markRestartRequired()
+    }
     fetchConfig()
   } catch (e) {
     snackbar.value = { show: true, text: e.message || '保存失败', color: 'error' }

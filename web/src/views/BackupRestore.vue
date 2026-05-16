@@ -20,17 +20,6 @@
         <v-btn color="warning" :loading="restoreLoading" :disabled="!restoreFile" @click="restoreBackup" prepend-icon="mdi-restore">
           恢复备份
         </v-btn>
-        <v-btn
-          v-if="hasChanges"
-          color="error"
-          :loading="restarting"
-          :disabled="restoreLoading"
-          @click="handleRestart"
-          class="ml-2"
-          prepend-icon="mdi-restart"
-        >
-          立即重启
-        </v-btn>
       </v-card-text>
     </v-card>
 
@@ -41,11 +30,12 @@
 <script setup>
 import { ref } from 'vue'
 import request from '../api/request'
+import { useRestartStore } from '../stores/restart'
+
+const restartStore = useRestartStore()
 
 const backupLoading = ref(false)
 const restoreLoading = ref(false)
-const restarting = ref(false)
-const hasChanges = ref(false)
 const restoreFile = ref(null)
 const snackbar = ref({ show: false, text: '', color: 'success' })
 
@@ -72,28 +62,6 @@ async function createBackup() {
   }
 }
 
-async function handleRestart() {
-  restarting.value = true
-  try {
-    await request.post('/pbapi/restart')
-    snackbar.value = { show: true, text: '服务正在重启...', color: 'info' }
-    for (let i = 0; i < 10; i++) {
-      await new Promise(r => setTimeout(r, 1000))
-      try {
-        await request.get('/pbapi/config')
-        snackbar.value = { show: true, text: '服务已重启完成', color: 'success' }
-        hasChanges.value = false
-        return
-      } catch { /* 服务还在重启中 */ }
-    }
-    snackbar.value = { show: true, text: '重启超时，请手动检查服务状态', color: 'warning' }
-  } catch (e) {
-    snackbar.value = { show: true, text: e.message || '重启失败', color: 'error' }
-  } finally {
-    restarting.value = false
-  }
-}
-
 async function restoreBackup() {
   const file = Array.isArray(restoreFile.value) ? restoreFile.value[0] : restoreFile.value
   if (!file) return
@@ -103,7 +71,7 @@ async function restoreBackup() {
     const config = JSON.parse(text)
     await request.post('/pbapi/config/restore', { config })
     snackbar.value = { show: true, text: '配置已恢复', color: 'success' }
-    hasChanges.value = true
+    restartStore.markRestartRequired()
   } catch (e) {
     snackbar.value = { show: true, text: e.message || '恢复失败', color: 'error' }
   } finally {
