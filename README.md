@@ -34,7 +34,7 @@ PicACG App 2.2.1.3.3.4
 关于**MyPica App**，请查看 [App文档](/tools/Documentation/App.md)
 
 **推荐使用Docker运行**，详细步骤和使用源代码运行请 [查看运行文档](/tools/Documentation/RunPicaBridge.md)  
-根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
+通过Web后台修改更多配置，手动修改请查看 [配置修改](/tools/Documentation/setconfig.md)  
 正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)  
 关于Web管理后台，请查看 [Web后台](/tools/Documentation/WebUI.md)  
 
