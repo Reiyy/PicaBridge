@@ -72,7 +72,12 @@ def main():
         print(f"配置向导：http://{local_ip}:{port}/ui")
 
         setup_app = _create_setup_app()
-        setup_app.run(host=host, port=int(port), use_reloader=False)
+        import atexit
+        from werkzeug.serving import make_server
+        server = make_server(host, int(port), setup_app, threaded=False)
+        # 重启时先关闭 socket，避免端口占用
+        atexit.register(server.server_close)
+        server.serve_forever()
         return
     
     try:
