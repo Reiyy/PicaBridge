@@ -1,11 +1,13 @@
 # LANraragi配置
 
-本配置说明中使用LANraragi的汉化版本 [Reiyy/LANraragi_CN](https://github.com/Reiyy/LANraragi_CN)
+本配置说明中使用LANraragi的汉化版本 [Reiyy/LANraragi_CN](https://github.com/Reiyy/LANraragi_CN)  
+（LRR官方已支持中文语言，建议直接用官方镜像）  
 
 进入LRR设置 - 全局设置 - 在阅读器中调整图像大小 ：启用  
 图像大小阈值 ：8000  
 调整质量 ：100  
-如果图像过大，哔咔APP会闪退。
+如果图像过大，哔咔APP会闪退。  
+（应该是由于哔咔App使用的Picasso图片加载逻辑的内存管理不完善，过大的图片容易爆内存直接闪退。我之前用12G内存手机就容易闪退，换了16G的就不怎么闪退了，可根据你的实际情况调整此处的阈值，如果你使用大内存设备，阈值可设的更高以尽量获得原图画质，或者完全禁用该调整功能）
 
 进入LRR设置 - 安全 - 启用密码 ：启用  
 并填写API密钥

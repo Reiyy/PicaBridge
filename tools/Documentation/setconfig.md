@@ -3,6 +3,13 @@
 本项目的所有配置都在config,json中完成
 本节将说明如何配置config.json，以及其中各项参数的含义
 
+## 初始化标志
+**不应修改**
+```json
+"is_init": false,
+```
+该参数用于标记当前哔咔桥安装是否已完成初始化。应由程序自动管理，不建议手动修改。
+
 ## 监听地址
 **必填项**
 ```json
@@ -35,11 +42,12 @@
 ```
 填写LANraragi的URL及API密钥
 
-## 头像上传路径
+## ~~头像上传路径~~
+**！！已弃用的配置！！**
 ```json
 "avatarfilepath": "/data/wwwroot/picabridge/assets/img/avatar",
 ```
-用户上传头像的保存路径，如果你不需要头像，可不填。
+~~ 用户上传头像的保存路径，如果你不需要头像，可不填。~~ 
 
 ## 数据库配置
 **必填项**
@@ -50,10 +58,10 @@
     "password": "picabridge",
     "name": "picabridge",
     "pool": {
-        "maxconnections": 9,
-        "mincached": 3,
+        "maxconnections": 10,
+        "mincached": 2,
         "blocking": true,
-        "ping": 1,
+        "ping": 7,
         "reset": true
     }
 }
@@ -64,11 +72,9 @@
 **必填项**
 ```json
 "SysConfig": {
-    "gunicorn_workers": 4,
     "Debug": false
 },
 ```
-填写gunicorn_workers数量，根据你的CPU核心数而定，一般建议 2 x CPU核心(如2核心，设置为4)
 Debug：控制Debug日志输出，默认为false
 
 ## URL映射
@@ -76,10 +82,14 @@ Debug：控制Debug日志输出，默认为false
 ```json
 "URL_Mappings": {
     "lrr_img": "https://lrr.example.com:2333",
-    "img": "https://cdn.example.com",
-    "assets": "https://picaapi.example.com:2333"
+    "assets": "https://picaapi.example.com:2333",
+    "img": "https://cdn.example.com"
 }
 ```
+**`lrr_img`和`assets`由Web配置自动管理，同步使用`lrr_Api`和`PicaBridge_URL`的配置，不能删除，不建议手动修改。**
+
+**如果你选择使用哔咔桥提供的diy端点来提供静态资源，此处配置可不理会。**
+
 由于哔咔APP在加载图片资源时，会在路径中固定加入`/static/`，需要让所有资源指向哔咔桥，然后由Flask通过302跳转到实际URL。  
 还需要通过URL映射规则来指定302跳转目的地。  
 哔咔桥默认通过`PicaBridge_URL`指定的URL前缀访问资源。  
@@ -97,34 +107,29 @@ Debug：控制Debug日志输出，默认为false
 Flask根据映射规则`"img": "https://cdn.example.com"`，  
 302跳转到实际URL：`https://cdn.example.com/img/2025/03/03/4ca579d5a93ca.jpg`  
 
-需要注意，第一条映射规则`"lrr_img": "https://lrr.example.com:2333"`  
-不能删除，请将URL设置为你的LANraragi地址，结尾不要加`/`。
-
 以下是我的配置例子：
 ```json
 "URL_Mappings": {
     "lrr_img": "https://bzlib.home.example.com:2333",
-    "img": "https://cdn.example.com",
-    "assets": "https://picaapi.example.com:2333"
+    "assets": "https://picaapi.example.com:2333",
+    "img": "https://cdn.example.com"
 },
 ```
 lrr_img是lanraragi资源用。  
-img是我的cdn地址，因为我在announcements中公告使用的图片资源来自我的cdn。  
 assets是哔咔桥配套nginx服务器上的资源，比如用户头像等。  
+img是我的cdn地址，因为我在announcements中公告使用的图片资源来自我的cdn。  
 这里面lrr_img和assets是必须的，img根据你自己的情况而定，你也可以把图片资源都放到nginx上，统一使用assets规则。
-
 
 ## 救哔咔告图片资源
 ```json
 "AD_Help_Pica": {
-    "image": "https://picaapi.example.com:2333/assets/img/ezgif-1-83147a2658.gif"
+    "image": "assets/img/ezgif-1-83147a2658.gif"
 },
 ```
-用于设置客户端中`点击救哔咔`的图片资源，需要修改相应js文件并放到Web服务器网站数据目录下才能使用。  
-需要替换js文件中的URL为你的哔咔桥URL。  
-如果你不需要设置这些，此项可不填。
+用于设置客户端中`点击救哔咔`的图片资源，在MyPica App中被指定为跳转到LRR网页。
 
-## APP版本更新信息
+## ~~APP版本更新信息~~  
+**！！已弃用的配置！！**
 ```json
 "initPlatform": {
     "imageServer": "https://picaapi.example.com:2333/static/",
@@ -143,10 +148,11 @@ assets是哔咔桥配套nginx服务器上的资源，比如用户头像等。
     }
 },
 ```
-用于设置更新信息，如果你使用MyPica App，  
-请把你使用的MyPica App版本号填入到"version"中。
-保持版本号一致则不会弹出更新窗口。  
-（从github发布动态获取版本信息的功能正在规划中）
+~~用于设置更新信息，如果你使用MyPica App，~~  
+~~请把你使用的MyPica App版本号填入到"version"中。~~
+~~保持版本号一致则不会弹出更新窗口。~~  
+~~从github发布动态获取版本信息的功能正在规划中）~~
+已完成从github发布自动获取的功能。
 
 ## 分类配置
 ```json
@@ -158,7 +164,6 @@ assets是哔咔桥配套nginx服务器上的资源，比如用户头像等。
         "title": "分类一",
         "description": "分类一简介",
         "thumb": "assets/img/categories/shurou.png"
-
     },
     "分类2": {
         "lrr_id": "SET_1728329300",
@@ -167,7 +172,6 @@ assets是哔咔桥配套nginx服务器上的资源，比如用户头像等。
         "title": "生肉",
         "description": "生肉，指代未翻译的作品",
         "thumb": "assets/img/categories/shurou.png"
-
     }
 },
 "SFW_categories": {
@@ -192,7 +196,7 @@ categories`指定`NSFW`模式下的分类，`SFW_categories`指定`SFW`模式下
 参数`rule`指定分类规则，如果你使用LANraragi的动态分类，需设置成一致的规则，目前只支持标签规则。  
 `[0,"语言:日语","语言:英语"]`，中第一个参数指定完全匹配或部分匹配，`0`为部分匹配，`1`为完全匹配。
 
-由于LANraragi API性能的问题，哔咔桥返回的漫画元数据是从自身的数据库中读取，需要使用`/initcmc`命令定期同步LANraragi元数据。  
+~~于LANraragi API性能的问题，哔咔桥返回的漫画元数据是从自身的数据库中读取，需要使用`/initcmc`命令定期同步LANraragi元数据。~~ (已完成自动同步功能)  
 由于LANraragi API的问题，当使用动态分类时，无法通过API获取相应漫画的分类，只能获取分类下的所有漫画。  
 因此在同步数据时，必须额外指定和动态分类一致的匹配规则来为漫画附加分类。
 
@@ -236,7 +240,8 @@ categories`指定`NSFW`模式下的分类，`SFW_categories`指定`SFW`模式下
     "SFW": ["无H"]
     }
 ```
-用于设置`绅士都在搜的关键字`，目前暂未实现动态返回。
+用于设置`绅士都在搜的关键字`。  
+在MyPica App中为常用标签。
 
 ## 动态启动图
 ```json
@@ -254,7 +259,7 @@ categories`指定`NSFW`模式下的分类，`SFW_categories`指定`SFW`模式下
     }
 },
 ```
-哔咔桥额外实现了动态启动图功能，需要配合Xposed模块使用，模块仍处于测试阶段，此配置可暂时忽略。
+哔咔桥额外实现了动态启动图功能，需配合MyPica App使用。
 
 **注意：App启动时会下载图片到本地缓存，下次启动App时生效。**
 
