@@ -76,6 +76,16 @@
                       :error-messages="getFieldError('db.name')"
                     />
                   </v-form>
+                  <v-alert
+                    v-if="dbTestError"
+                    type="error"
+                    density="compact"
+                    class="mt-3"
+                    closable
+                    @click:close="dbTestError = ''"
+                  >
+                    {{ dbTestError }}
+                  </v-alert>
                 </template>
 
                 <template #item.3>
@@ -94,6 +104,20 @@
                       @click="handleSubmit"
                     >
                       提交配置
+                    </v-btn>
+                  </div>
+                </template>
+                <template #actions="{ next, prev }">
+                  <div class="d-flex justify-end pa-4" style="width:100%">
+                    <v-btn variant="text" @click="prev()" :disabled="step === 1">返回</v-btn>
+                    <v-btn
+                      v-if="step < 3"
+                      color="primary"
+                      class="ml-2"
+                      :loading="testingDb"
+                      @click="handleNext(next)"
+                    >
+                      继续
                     </v-btn>
                   </div>
                 </template>
@@ -159,6 +183,8 @@ const loading = ref(false)
 const submitted = ref(false)
 const errorMsg = ref('')
 const fieldErrors = ref({})
+const testingDb = ref(false)
+const dbTestError = ref('')
 
 const config = ref({
   PicaBridge_URL: '',
@@ -171,6 +197,28 @@ const config = ref({
 
 function getFieldError(field) {
   return fieldErrors.value[field] || []
+}
+
+async function testDbConnection() {
+  testingDb.value = true
+  dbTestError.value = ''
+  try {
+    await request.post('/pbapi/init/test-db', config.value.db)
+    return true
+  } catch (e) {
+    dbTestError.value = e.message || '数据库连接测试失败'
+    return false
+  } finally {
+    testingDb.value = false
+  }
+}
+
+async function handleNext(nextFn) {
+  if (step.value === 2) {
+    const ok = await testDbConnection()
+    if (!ok) return
+  }
+  nextFn()
 }
 
 async function handleSubmit() {

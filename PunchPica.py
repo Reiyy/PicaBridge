@@ -37,8 +37,13 @@ def _create_setup_app():
                 time.sleep(1.5)
                 os.execvp(sys.executable, [sys.executable] + sys.argv)
             threading.Thread(target=restart, daemon=True).start()
-        return jsonify(resp), code                                                                                                  
-                                                                                                                                                                                                                             
+        return jsonify(resp), code
+
+    @app.route('/pbapi/init/test-db', methods=['POST'])
+    def test_db():
+        resp, code = Api.Config.test_db_connection(request.get_json(silent=True))
+        return jsonify(resp), code
+
     @app.route('/ui/', defaults={'path': ''})                                                                                       
     @app.route('/ui/<path:path>')                                                                                                   
     def web_ui(path):                                                                                                               

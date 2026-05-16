@@ -4,6 +4,7 @@ import sys
 import threading
 from collections import OrderedDict
 from loguru import logger
+import pymysql
 
 # 配置文件
 CONFIG_PATH = 'config.json'
@@ -174,6 +175,48 @@ def init_config(data):
     save_config({"is_init": True, **existing})
 
     return {"code": 200, "message": "success", "data": {"message": "初始化已完成", "restart_required": True}}, 200
+
+# 测试数据库连接
+def test_db_connection(data):
+    if is_init():
+        return {"code": 403, "message": "初始化已完成，该API已禁用"}, 403
+
+    if not data:
+        return {"code": 400, "message": "请求数据不存在"}, 400
+
+    required = ["host", "user", "password", "name"]
+    missing = [f for f in required if not data.get(f)]
+    if missing:
+        return {"code": 400, "message": "缺少必填字段: {fields}".format(fields=", ".join(missing))}, 400
+
+    try:
+        conn = pymysql.connect(
+            host=data["host"],
+            user=data["user"],
+            password=data["password"],
+            database=data["name"],
+            charset="utf8mb4",
+            connect_timeout=5,
+        )
+        conn.close()
+        return {"code": 200, "message": "success", "data": {"message": "数据库连接成功"}}, 200
+    except pymysql.err.OperationalError as e:
+        errno, errmsg = e.args
+        if errno == 1045:
+            msg = "数据库用户名或密码错误"
+        elif errno == 1049:
+            msg = "数据库 '{name}' 不存在".format(name=data["name"])
+        elif errno == 2003:
+            msg = "无法连接到数据库服务器，请检查主机地址和端口"
+        elif errno == 2005:
+            msg = "未知的数据库主机地址"
+        else:
+            msg = "数据库连接失败: {errmsg}".format(errmsg=errmsg)
+        return {"code": 400, "message": msg}, 400
+    except pymysql.err.InterfaceError as e:
+        return {"code": 400, "message": "无法连接到数据库服务器: {e}".format(e=str(e))}, 400
+    except Exception as e:
+        return {"code": 500, "message": "连接测试失败: {e}".format(e=str(e))}, 500
 
 # 获取配置
 def get_config(mask):

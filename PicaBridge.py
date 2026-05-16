@@ -537,6 +537,13 @@ def pbapi_init():
     resp, code = Api.Config.init_config(request.get_json(silent=True))
     return jsonify(resp), code
 
+# 测试数据库连接
+@PicaBridge.route('/pbapi/init/test-db', methods=['POST'])
+@limiter.limit("10 per minute")
+def pbapi_test_db():
+    resp, code = Api.Config.test_db_connection(request.get_json(silent=True))
+    return jsonify(resp), code
+
 # 读取配置
 @PicaBridge.route('/pbapi/config', methods=['GET'])
 @jwt_required
