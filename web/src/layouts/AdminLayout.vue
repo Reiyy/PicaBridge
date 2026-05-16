@@ -69,6 +69,7 @@ const drawer = ref(true)
 const snackbar = ref({ show: false, text: '', color: 'success' })
 
 const menuItems = [
+  { title: '主页', icon: 'mdi-home', path: '/ui/dashboard' },
   { title: '系统设置', icon: 'mdi-cog', path: '/ui/system' },
   { title: '分类管理', icon: 'mdi-tag-multiple', path: '/ui/categories' },
   { title: '公告管理', icon: 'mdi-bullhorn', path: '/ui/announcements' },

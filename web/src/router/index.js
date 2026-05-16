@@ -37,7 +37,12 @@ const routes = [
       {
         path: '',
         name: 'Home',
-        redirect: '/ui/system',
+        redirect: '/ui/dashboard',
+      },
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/DashboardView.vue'),
       },
       {
         path: 'system',

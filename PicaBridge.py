@@ -619,6 +619,13 @@ def pbapi_delete_user(jwt_payload, user_id):
     resp, code = Api.User.delete_user(user_id)
     return jsonify(resp), code
 
+# 获取仪表盘状态信息
+@PicaBridge.route('/pbapi/dashboard', methods=['GET'])
+@jwt_required
+def pbapi_get_dashboard_status(jwt_payload):
+    resp, code = Api.Status.get_dashboard_status(jwt_payload.get('user_id'))
+    return jsonify(resp), code
+
 def main():
     print("PicaBridge 版本: {ver}".format(ver=VER))
     print("你正在运行调试模式！")
