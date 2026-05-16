@@ -7,6 +7,7 @@ import time
 import datetime
 
 from flask import jsonify
+from loguru import logger
 
 import lib.db as db
 
@@ -159,6 +160,42 @@ def load_comments(comic_id, page, user_id):
                 "pages": pages
             }
 
+            # 构建置顶评论列表
+            top_comments_list = []
+            for top_comment in top_comments:
+                top_user_info = db.get_user_info(top_comment['user_id']) or {}
+                top_avatar_data = {
+                    "originalName": top_user_info.get("avatar").split("/")[-1] if top_user_info.get("avatar") else "",
+                    "path": "/".join(top_user_info.get("avatar").split("/")[3:]) if top_user_info.get("avatar") else "",
+                    "fileServer": PICABRIDGE_URL
+                }
+                top_characters = json.loads(top_user_info.get("characters", '[]')) if isinstance(top_user_info.get("characters"), str) else top_user_info.get("characters", [])
+                top_comments_list.append({
+                    "_id": top_comment['id'],
+                    "content": top_comment['content'],
+                    "_user": {
+                        "_id": top_user_info.get("id"),
+                        "name": top_user_info.get("name"),
+                        "gender": top_user_info.get("gender"),
+                        "slogan": top_user_info.get("description"),
+                        "title": top_user_info.get("title"),
+                        "verified": bool(top_user_info.get("verified")),
+                        "exp": top_user_info.get("exp"),
+                        "level": top_user_info.get("level"),
+                        "characters": top_characters,
+                        "role": top_user_info.get("role"),
+                        "avatar": top_avatar_data
+                    },
+                    "_comic": comic_id,
+                    "totalComments": top_comment['commentsCount'],
+                    "isTop": True,
+                    "hide": bool(top_comment['hide']),
+                    "created_at": datetime.datetime.utcfromtimestamp(top_comment['created_at']).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                    "likesCount": top_comment['likesCount'],
+                    "commentsCount": top_comment['commentsCount'],
+                    "isLiked": db.is_like_comment(user_id, top_comment['id'])
+                })
+
             # 返回
             return {
                 "code": 200,
@@ -171,34 +208,7 @@ def load_comments(comic_id, page, user_id):
                         "page": pagination_info['page'],
                         "pages": pagination_info['pages']
                     },
-                    "topComments": [
-                        {
-                            "_id": top_comment['id'],
-                            "content": top_comment['content'],
-                            "_user": {
-                                "_id": user_info.get("id"),
-                                "name": user_info.get("name"),
-                                "gender": user_info.get("gender"),
-                                "slogan": user_info.get("description"),
-                                "title": user_info.get("title"),
-                                "verified": bool(user_info.get("verified")),
-                                "exp": user_info.get("exp"),
-                                "level": user_info.get("level"),
-                                "characters": json.loads(user_info.get("characters", '[]')),
-                                "role": user_info.get("role"),
-                                "avatar": avatar_data
-                            },
-                            "_comic": comic_id,
-                            "totalComments": top_comment['commentsCount'],
-                            "isTop": True,
-                            "hide": bool(top_comment['hide']),
-                            "created_at": datetime.datetime.utcfromtimestamp(top_comment['created_at']).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                            "likesCount": top_comment['likesCount'],
-                            "commentsCount": top_comment['commentsCount'],  #子评论数量
-                            "isLiked": db.is_like_comment(user_id, top_comment['id'])
-                        }
-                        for top_comment in top_comments
-                    ]
+	                "topComments": top_comments_list
                 }
             }
     
@@ -252,9 +262,10 @@ def post_comment(comic_id, user_id, contentdata):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:
@@ -349,9 +360,10 @@ def post_child_comment(parent_comment_id, user_id, childcontentdata):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:
@@ -449,9 +461,10 @@ def load_child_comments(parent_comment_id, page, user_id):
 
     except pymysql.MySQLError as e:
         # 处理数据库异常
+        logger.error(f"数据库错误: {e}")
         return {
             "code": 500,
-            "message": str(e)
+            "message": "服务器内部错误"
         }
 
     finally:

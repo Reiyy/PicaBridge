@@ -3,7 +3,9 @@ import json
 import time
 import threading
 
+from collections import Counter
 from dbutils.pooled_db import PooledDB
+from loguru import logger
 
 # 读取配置文件
 def load_config():
@@ -25,10 +27,10 @@ class DBPool:
                     
                     # 合并默认配置和用户配置
                     pool_config = {
-                        'maxconnections': 5,
-                        'mincached': 1,
-                        'blocking': False,
-                        'ping': 0
+                        'maxconnections': 10,
+                        'mincached': 2,
+                        'blocking': True,
+                        'ping': 7
                     }
                     pool_config.update(db_config.get('pool', {}))
 
@@ -127,32 +129,25 @@ def plus_comic_viewsCount(comic_id):
 
     try:
         with connection.cursor() as cursor:
-            # 首先更新浏览量计数
-            sql_update_views = "UPDATE comic_info SET viewsCount = viewsCount + 1 WHERE id = %s"
-            cursor.execute(sql_update_views, (comic_id,))
+            # 更新浏览量计数及添加浏览时间戳
+            cursor.execute(
+                "UPDATE comic_info SET viewsCount = viewsCount + 1, "
+                "viewed_at = JSON_ARRAY_APPEND(IFNULL(viewed_at, '[]'), '$', %s) "
+                "WHERE id = %s",
+                (current_timestamp, comic_id)
+            )
 
-            # 然后获取当前的 viewed_at
-            sql_select_viewed_at = "SELECT viewed_at FROM comic_info WHERE id = %s"
-            cursor.execute(sql_select_viewed_at, (comic_id,))
-            result = cursor.fetchone()
-
-            # 调试输出，打印查询结果
-            print("Query result:", result)
-
-            # 检查 result 是否为 None 或者 空元组
-            if result is not None and len(result) > 0:
-                # 使用键名访问 viewed_at
-                viewed_at = json.loads(result['viewed_at']) if result['viewed_at'] else []
-            else:
-                # 如果没有找到任何记录，则初始化 viewed_at
-                viewed_at = []
-
-            # 添加当前时间戳
-            viewed_at.append(current_timestamp)
-
-            # 更新 viewed_at 列
-            sql_update_viewed_at = "UPDATE comic_info SET viewed_at = %s WHERE id = %s"
-            cursor.execute(sql_update_viewed_at, (json.dumps(viewed_at), comic_id))
+            # 懒清理，只保留最近1000条时间戳
+            import random
+            if random.randint(1, 10) == 1:
+                cursor.execute(
+                    "UPDATE comic_info SET viewed_at = CASE "
+                    "WHEN JSON_LENGTH(viewed_at) > 1000 THEN "
+                    "  JSON_EXTRACT(viewed_at, CONCAT('$[', JSON_LENGTH(viewed_at) - 1000, ' to last]')) "
+                    "ELSE viewed_at END "
+                    "WHERE id = %s",
+                    (comic_id,)
+                )
 
             connection.commit()
             return 1 if cursor.rowcount > 0 else 0
@@ -544,6 +539,50 @@ def initcomic(comic_id):
     finally:
         connection.close()
 
+# 自动同步漫画元数据到数据库
+def sync_comic_metadata(comic_id, comic_data):
+    from lib.comic_utils import extract_author, match_categories, clean_tags, extract_timestamp
+
+    tags_str = comic_data.get("tags", "")
+    pagecount = comic_data.get("pagecount", 0)
+    title = comic_data.get("title", "")
+    summary = comic_data.get("summary") or "PicaBridge - 哔咔桥"
+    author = extract_author(tags_str)
+    categories = match_categories(tags_str, pagecount)
+    cleaned = clean_tags(tags_str)
+    created_at = extract_timestamp(tags_str) or int(time.time())
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO comic_info
+                (id, creator, title, description, author, chineseTeam,
+                 categories, tags, pagesCount, epsCount, finished, updated_at, created_at,
+                 allowDownload, allowComment, viewsCount, likesCount, commentsCount, viewed_at)
+                VALUES (%s, '7v5za3f62102s6t81wue5uyo', %s, %s, %s, '',
+                        %s, %s, %s, 1, 1, %s, %s, 0, 1, 0, 0, 0, '[]')
+                ON DUPLICATE KEY UPDATE
+                    title = VALUES(title),
+                    description = VALUES(description),
+                    author = VALUES(author),
+                    categories = VALUES(categories),
+                    tags = VALUES(tags),
+                    pagesCount = VALUES(pagesCount),
+                    updated_at = VALUES(updated_at),
+                    created_at = VALUES(created_at)
+            """, (comic_id, title, summary, author,
+                  json.dumps(categories, ensure_ascii=False),
+                  json.dumps(cleaned, ensure_ascii=False),
+                  pagecount, created_at, created_at))
+            connection.commit()
+            return True
+    except pymysql.MySQLError as e:
+        logger.error(f"同步漫画元数据失败 {comic_id}: {str(e)}")
+        return False
+    finally:
+        connection.close()
+
 
 # 通过用户名获取用户id
 def get_userid(user_name):
@@ -674,6 +713,157 @@ def get_recommend_comics(comic_id, limit=10):
         if author:
             count = author_count.get(author, 0)
             if count >= 3:
+                continue
+            author_count[author] = count + 1
+
+        result.append(item["id"])
+
+        if len(result) >= limit:
+            break
+
+    cursor.close()
+    connection.close()
+
+    return result
+
+
+
+# 获取用户漫画推荐
+def get_user_recommend_comics(user_id, limit=4):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # 获取用户收藏和点赞列表
+    cursor.execute("""
+        SELECT favourite, `like`
+        FROM users
+        WHERE id = %s
+    """, (user_id,))
+    
+    user_record = cursor.fetchone()
+    
+    if not user_record:
+        cursor.close()
+        connection.close()
+        return []
+
+    interacted_ids = set() # 结合并去重
+
+    # 解析favourite数据
+    favourite_data = user_record.get("favourite")
+    if favourite_data:
+        if isinstance(favourite_data, str):
+            try:
+                favourite_data = json.loads(favourite_data)
+            except:
+                favourite_data = {}
+        if isinstance(favourite_data, dict):
+            interacted_ids.update(favourite_data.keys())
+
+    # 解析like数据
+    like_data = user_record.get("like")
+    if like_data:
+        if isinstance(like_data, str):
+            try:
+                like_data = json.loads(like_data)
+            except:
+                like_data = []
+        if isinstance(like_data, list):
+            interacted_ids.update(like_data)
+
+    # 如果用户没有任何收藏或点赞，返回空
+    if not interacted_ids:
+        cursor.close()
+        connection.close()
+        return []
+
+    # 2查询用户收藏和点赞的漫画的标签和分类
+    def to_list_safe(field):
+        if not field: return []
+        if isinstance(field, list): return field
+        if isinstance(field, str):
+            try:
+                data = json.loads(field)
+                return data if isinstance(data, list) else []
+            except:
+                return []
+        return []
+
+    format_strings = ','.join(['%s'] * len(interacted_ids))
+    cursor.execute(f"""
+        SELECT categories, tags
+        FROM comic_info
+        WHERE id IN ({format_strings})
+    """, tuple(interacted_ids))
+    
+    interacted_comics = cursor.fetchall()
+
+    # 统计标签和分类的出现频率
+    tag_counter = Counter()
+    category_counter = Counter()
+
+    for comic in interacted_comics:
+        categories = to_list_safe(comic.get("categories"))
+        tags = to_list_safe(comic.get("tags"))
+        
+        category_counter.update(categories)
+        tag_counter.update(tags)
+
+    # 如果历史记录里没有任何有效的标签和分类，直接结束
+    if not tag_counter and not category_counter:
+        cursor.close()
+        connection.close()
+        return []
+
+    # 获取候选漫画根据点击数排序，排除已经收藏和点赞过的漫画
+    cursor.execute(f"""
+        SELECT id, author, categories, tags, viewsCount
+        FROM comic_info
+        WHERE id NOT IN ({format_strings})
+        ORDER BY viewsCount DESC
+        LIMIT 2000
+    """, tuple(interacted_ids))
+
+    candidates = cursor.fetchall()
+
+    # 评分
+    scored = []
+
+    for comic in candidates:
+        score = 0
+        comic_categories = to_list_safe(comic.get("categories"))
+        comic_tags = to_list_safe(comic.get("tags"))
+        author = comic.get("author")
+
+        # 出现频率乘基础分数，出现次数越多评分越高
+        for tag in comic_tags:
+            if tag in tag_counter:
+                score += tag_counter[tag] * 3
+
+        for cat in comic_categories:
+            if cat in category_counter:
+                score += category_counter[cat] * 2
+
+        if score > 0:
+            scored.append({
+                "id": comic["id"],
+                "score": score,
+                "author": author
+            })
+
+    # 排序
+    scored.sort(key=lambda x: x["score"], reverse=True)
+
+    # 返回
+    result = []
+    author_count = {}
+
+    for item in scored:
+        author = item["author"]
+
+        if author:
+            count = author_count.get(author, 0)
+            if count >= 1: # 作者限制，最多1个同作者
                 continue
             author_count[author] = count + 1
 

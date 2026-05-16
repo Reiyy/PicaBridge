@@ -1,103 +1,119 @@
-import pymysql
 import json
 import sys
-import subprocess
 import os
 
-# 读取配置文件
+from flask import Flask, jsonify, request, send_from_directory    
+
+from lib import VER
+from lib.upgrader import run_startup
+from lib import Api
+
+
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
+
 config = load_config()
 
-# 获取数据库连接信息
-def get_db_connection():
-    db_config = config['db']
-    
-    connection = pymysql.connect(
-        host=db_config['host'],
-        user=db_config['user'],
-        password=db_config['password'],
-        database=db_config['name'],
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-    return connection
 
-# 初始化数据库
-def init_database():
-    sql_file = "picabridge.sql"
-    connection = get_db_connection()
-    
-    try:
-        with connection.cursor() as cursor:
-            with open(sql_file, "r", encoding="utf-8") as f:
-                sql_script = f.read()
-            
-            # 分割 SQL 语句并逐条执行
-            for statement in sql_script.split(";"):
-                if statement.strip():  # 避免执行空语句
-                    cursor.execute(statement)
-        
-        connection.commit()
-        print("数据库初始化完成！")
-    
-    except Exception as e:
-        connection.rollback()  # 发生错误时回滚
-        raise RuntimeError(f"数据库初始化失败: {e}")  # 抛出异常
-    
-    finally:
-        connection.close()
+# 精简Flask应用，仅用于配置向导                                                                                                     
+WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')                                                           
 
-# 检查数据库是否已初始化
-def is_database_initialized():
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            sql = "SELECT COUNT(*) AS count FROM comic_info WHERE id = %s"
-            cursor.execute(sql, ('5822a6e3ad7ede654696e482',))
-            result = cursor.fetchone()
-            return result["count"] > 0  # 存在该记录则返回 True，否则返回 False
-    except:
-        return False
-    finally:
-        connection.close()
+def _create_setup_app():
+    app = Flask(__name__, static_folder=None)
+
+    @app.route('/pbapi/init', methods=['GET'])
+    def init_status():
+        resp, code = Api.Config.init_status()
+        return jsonify(resp), code
+
+    @app.route('/pbapi/init', methods=['POST'])
+    def init_config():
+        resp, code = Api.Config.init_config(request.get_json(silent=True))
+        if code == 200:
+            import time, threading
+            def restart():
+                time.sleep(1.5)
+                os.execvp(sys.executable, [sys.executable] + sys.argv)
+            threading.Thread(target=restart, daemon=True).start()
+        return jsonify(resp), code
+
+    @app.route('/pbapi/init/test-db', methods=['POST'])
+    def test_db():
+        resp, code = Api.Config.test_db_connection(request.get_json(silent=True))
+        return jsonify(resp), code
+
+    @app.route('/ui/', defaults={'path': ''})                                                                                       
+    @app.route('/ui/<path:path>')                                                                                                   
+    def web_ui(path):                                                                                                               
+        target = os.path.join(WEB_DIR, 'ui', path)                                                                                  
+        if path and os.path.isfile(target):                                                                                         
+              return send_from_directory(os.path.join(WEB_DIR, 'ui'), path)                                                           
+        return send_from_directory(os.path.join(WEB_DIR, 'ui'), 'index.html')                                                       
+                                                                                                                                    
+    return app                                                                                                                      
 
 def main():
-    print("开始初始化...")
-    print("正在检测数据库是否已初始化...")
-    if is_database_initialized():
-        print("数据库已初始化！")
-    else:
-        print("数据库未初始化！")
-        print("开始初始化数据库...")
+    print("正在初始化...")
+    if not Api.Config.is_init():
+        print("配置文件还未设置，请打开配置向导进行配置！")
+        listen = "0.0.0.0:7777"
+        host, port = listen.rsplit(":", 1)
+        import socket
         try:
-            init_database()
-        except Exception as e:
-            print("发生错误:", e)
-            sys.exit(1)
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+        except Exception:
+            local_ip = "127.0.0.1"
+        print(f"配置向导：http://127.0.0.1:{port}/ui")
+        print(f"配置向导：http://{local_ip}:{port}/ui")
+
+        setup_app = _create_setup_app()
+        import atexit
+        from werkzeug.serving import make_server
+        server = make_server(host, int(port), setup_app, threaded=False)
+        # 重启时先关闭 socket，避免端口占用
+        atexit.register(server.server_close)
+        server.serve_forever()
+        return
     
+    try:
+        run_startup(config)
+    except Exception as e:
+        print(f"初始化/升级失败: {e}")
+        sys.exit(1)
     print("初始化完成！")
+    
+    print("###############################")
     print("正在启动 哔咔桥PicaBridge ！")
-    listen_address = config.get("Listen", "0.0.0.0:7777")  # 读取 Listen 配置，默认 0.0.0.0:7777
-    workers = config["SysConfig"].get("gunicorn_workers", "2")
+    print(f"PicaBridge 版本: {VER}")
+
+    listen_address = config.get("Listen", "0.0.0.0:7777")
     is_debug = config.get("SysConfig", {}).get("Debug", False)
     gunicorn_level = "debug" if is_debug else "info"
-    #subprocess.run(["gunicorn", "-w", "4", "-k", "gevent", "-b", listen_address, "PicaBridge:PicaBridge"])
+
+    pid_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp')
+    os.makedirs(pid_dir, exist_ok=True)
+    pid_file = os.path.join(pid_dir, 'picabridge.pid')
+
     os.environ["LOGURU_COLORIZE"] = "true"
     os.execvp("gunicorn", [
         "gunicorn",
-        "-w", str(workers),
+        "-w", "1",
         "-k", "gevent",
         "-b", listen_address,
+        "--pid", pid_file,
         "--access-logfile", "-",
         "--error-logfile", "-",
-        "--capture-output", 
-        "--access-logformat", '%(h)s "%(r)s" %(s)s %(b)s "%(a)s"',
+        "--capture-output",
+        "--access-logformat", '%({x-forwarded-for}i)s "%(r)s" %(s)s %(b)s "%(a)s"',
         "--log-level", gunicorn_level,
         "PicaBridge:PicaBridge"
     ])
+
 
 if __name__ == "__main__":
     main()

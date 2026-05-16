@@ -6,6 +6,8 @@ from flask import jsonify
 from flask import redirect
 
 import lib.db as db
+import lib.ModeSwitch as ModeSwitch
+from loguru import logger
 
 def load_config():
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -14,6 +16,7 @@ def load_config():
 config = load_config()
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
+REQUEST_TIMEOUT = (3, 10)
 
 # 重定向缩略图
 def redirect_thumbnail(arcid):
@@ -26,11 +29,34 @@ def redirect_thumbnail(arcid):
         return jsonify({"code": 500, "message": "Internal Server Error", "detail": str(e)}), 500
 
 # 搜索漫画
-def search_comic(keyword, page=1):
+def search_comic(keyword, sort, categories, page=1, user_id=None):
     config = load_config()
     start = (page - 1) * 20
 
-    lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter=*{keyword}")
+    # 排序方式
+    # 新到旧
+    if sort == "dd":
+        sortby = "date_added"
+        order = "desc"
+    # 旧到新
+    elif sort == "da":
+        sortby = "date_added"
+        order = "asc"
+    else:
+        sortby = "date_added"
+        order = "desc"
+
+    if categories:
+        categories_key = "SFW_categories" if ModeSwitch.GetMode(user_id) == "sfw" else "categories"
+        category_name = categories[0] #lrr搜索api目前只支持单分类
+        lrr_id = config.get(categories_key, {}).get(category_name, {}).get('lrr_id')
+        if lrr_id and lrr_id != "null":
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?category={lrr_id}&start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+        else:
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+    else:
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+        
     lanraragi_data = lanraragi_response.json()
 
     comics_data = []
@@ -38,12 +64,16 @@ def search_comic(keyword, page=1):
         comic_id = comic["arcid"]
 
         thumbnail_path = f"thumbnail/{comic_id}"
-        comic_data = db.get_comic_info(comic_id) or {}
+        comic_data = db.get_comic_info(comic_id)
+        # 自动同步，当漫画元数据不存在时从LRR数据获取并写入数据库
+        if not comic_data:
+            db.sync_comic_metadata(comic_id, comic)
+            comic_data = db.get_comic_info(comic_id) or {}
 
         comic_info = {
             "_id": comic_id,
-            "title": comic_data.get("title", comic.get("title", "未知标题")),
-            "author": comic_data.get("author", "未知作者"),
+            "title": comic_data.get("title") or comic.get("title", "未知标题"),
+            "author": comic_data.get("author", ""),
             "totalViews": comic_data.get("viewsCount", 0),
             "totalLikes": comic_data.get("likesCount"),
             "pagesCount": comic.get("pagecount"),

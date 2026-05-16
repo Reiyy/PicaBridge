@@ -5,3 +5,13 @@ __pycache__/
 
 # 忽略用户自定义配置文件
 config.json
+
+# 忽略日志目录
+logs
+
+# 忽略前端依赖和构建产物
+web/src/node_modules
+web/ui/
+
+# 忽略运行时临时文件
+tmp/

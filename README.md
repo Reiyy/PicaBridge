@@ -12,38 +12,61 @@
 
 ## 支持的版本
 
-PicACG App 2.2.1.3.3.4  
+**MyPica App** 2.7.1.0+
 
+PicACG App 2.2.1.3.3.4
 其他第三方Pica客户端应该也兼容(未测试)  
 
 ## 演示图
-![主页和分类页](/tools/Documentation/img/主页和分类页.jpg)
-![漫画页和评论页](/tools/Documentation/img/漫画页和评论页.jpg)
+![主页和分类页](/tools/Documentation/img/主页和分类页.jpg)  
+![漫画页和评论页](/tools/Documentation/img/漫画页和评论页.jpg)  
+![后台主页](/tools/Documentation/img/Web后台主页.png)  
 
 ## 运行
 
-1. 安装 LANraragi v0.9.7+
-2. 安装 Python 3.8+
-3. 安装 MariaDB 10.6+ or MySQL 8.0+
-4. 安装依赖 ```pip install -r requirements.txt ```
-5. 修改配置文件，请查看 [配置修改](/tools/Documentation/setconfig.md)  
-6. 运行启动脚本 ```python PunchPica.py ```
-7. 配置Web服务器，如 Nginx
-8. 配置并使用 MyPica App连接
+1. [从文档获取Docker compose配置示例](/tools/Documentation/RunPicaBridge.md)  
+2. 在你配置的持久化目录中创建`config.json`文件  
+3. 启动容器```docker compose up```
+4. 根据提示信息打开配置向导网页进行配置
+8. 使用 MyPica App 连接到哔咔桥
 9. Enjoy, heart❤️! =w=
-
-或使用Docker运行，更多详细步骤请 [查看文档](/tools/Documentation/RunPicaBridge.md)  
-根据配置文档修改config.json，[配置修改](/tools/Documentation/setconfig.md)  
-正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)  
-默认管理员账号为：`Picabridge`，密码：`PicaBridge233password`  
-你可以使用命令修改他们，请查看 [命令文档](/tools/Documentation/command.md)
 
 关于**MyPica App**，请查看 [App文档](/tools/Documentation/App.md)
 
+**推荐使用Docker运行**，详细步骤和使用源代码运行请 [查看运行文档](/tools/Documentation/RunPicaBridge.md)  
+通过Web后台修改更多配置，手动修改请查看 [配置修改](/tools/Documentation/setconfig.md)  
+正常使用还需要对LANraragi进行一些配置，请查看 [LRR配置](/tools/Documentation/lrrconfig.md)  
+关于Web管理后台，请查看 [Web后台](/tools/Documentation/WebUI.md)  
+
+默认管理员账号为：`Picabridge` | 密码：`PicaBridge233password`  
+(可登录后在MyPica App设置中的"账户-变更密码"处修改，也可在Web管理后台中的用户管理处修改)  
+
+~~你可以使用命令修改他们，请查看 [命令文档](/tools/Documentation/command.md)~~  
+命令功能已被Web管理后台取代，将不再维护。  
+
+## 升级
+从已安装的旧版本Picabridge升级到新版  
+(初始化程序会自动处理旧数据库和配置文件的兼容升级，)  
+**(但以防万一，升级前请备份数据库和配置文件！！！)**  
+
+### Docker 升级
+1. 停止容器：```docker compose down```
+2. 拉取新镜像：```docker compose pull```
+3. 启动容器：```docker compose up -d```
+
+### 源码安装升级
+0. 停止服务。
+1. 拉取新代码：```git pull```
+2. 安装新依赖：```pip install -r requirements.txt```
+3. 安装前端依赖：```npm install```
+4. 构建前端：```npm run build```
+5. 重启服务：```python PunchPica.py```
+
 ## 下载
 
-- 最新版本，前往 [Github 发布页](https://github.com/Reiyy/PicaBridge/releases)
-- **MyPica App**客户端，前往 [HookMyPica 发布页](https://github.com/Reiyy/HookMyPica/releases)
+- 最新版本，前往 [Github 发布页](https://github.com/Reiyy/PicaBridge/releases)  
+- **MyPica App**客户端，前往 [HookMyPica 发布页](https://github.com/Reiyy/HookMyPica/releases)  
+(MyPica App也会发布在本仓库Releases中，但更新检测以HookMyPica发布为准)
 
 ## 注意事项
 我并非专业人士，本项目仅为我业余开发。  
@@ -55,7 +78,7 @@ PicACG App 2.2.1.3.3.4
 本项目自设计之初，并没有为多人访问等高并发场景进行优化，仅适合个人使用。
 
 ## 功能
-已实现：  
+**已实现：**  
 账号注册/登录  
 修改密码  
 忘记密码找回  
@@ -72,16 +95,22 @@ PicACG App 2.2.1.3.3.4
 打哔咔签到  
 用户头像上传  
 漫画关联/推荐  
+小程序列表  
 
-附加功能：  
+**附加功能：**  
 动态启动图  
 可自定义的分类屏蔽项  
-命令(通过发布评论来指向命令)
+~~命令(通过发布评论来指向命令)~~ 不再维护  
+Web管理后台及安装配置向导  
 
-待实现：  
-小程序  
-动态常用标签  
-添加更多命令
+**待实现：**  
+~~动态常用标签~~ 我更喜欢手动配置  
+~~添加更多命令~~ 已被Web后台取代  
+为Web后台添加更多功能   
+
+以及：本地开发中的EH收藏全自动同步  
+从EH → LRR → PicaBridge  
+暂未决定是作为独立服务还是合并到哔咔桥
 
 ## 致谢
 

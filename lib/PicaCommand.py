@@ -42,7 +42,9 @@ def run(comic_id, user_id, contentdata):
     }
 
     # 获取实际的主命令名称
-    main_command = alias_map.get(main_command, main_command)
+    main_command = alias_map.get(main_command)
+    if main_command is None:
+        return {"status": False, "message": f"未知命令：{parts[0]}"}
 
     try:
         # 动态加载主命令模块

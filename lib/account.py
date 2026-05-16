@@ -63,7 +63,7 @@ def Register(data):
     question3 = data.get('question3')
     answer3 = data.get('answer3')
 
-    logger.debug(f"收到注册请求: {data}")
+    logger.debug(f"收到注册请求: {email}")
 
     # 检查必填字段
     if not all([email, name, password, birthday, gender]):
@@ -94,6 +94,10 @@ def Register(data):
     user_id = generate_random_id()
     # 生成密码哈希
     hashpassword = hash_password(password)
+    # 哈希密保答案
+    hash_answer1 = hash_password(answer1) if answer1 else None
+    hash_answer2 = hash_password(answer2) if answer2 else None
+    hash_answer3 = hash_password(answer3) if answer3 else None
 
     # 写入用户信息至数据库
     cursor.execute("""
@@ -104,7 +108,7 @@ def Register(data):
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                 %s, %s, %s, %s)
     """, (user_id, email, name, hashpassword, birthday, gender, 
-          question1, answer1, question2, answer2, question3, answer3,
+          question1, hash_answer1, question2, hash_answer2, question3, hash_answer3,
           datetime.now(), "萌新", "还没有写哦~", 0, 1, "", "", 
           False, json.dumps([]), json.dumps({}), json.dumps([])))
 
@@ -261,7 +265,7 @@ def reset_password(data):
         # 根据 questionNo 获取对应的正确答案
         correct_answer = user_data.get(f"answer{question_no}")
         
-        if correct_answer and answer.lower() == correct_answer.lower():
+        if correct_answer and verify_password(answer, correct_answer):
             # 答案匹配，生成临时密码
             temp_password = generate_temp_password() # 生成随机临时密码
             # 生成临时密码哈希

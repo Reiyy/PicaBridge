@@ -1,15 +1,19 @@
 import json
 import jwt
+import os
 
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import redirect
 from flask import make_response
+from flask import send_file
+from flask import send_from_directory
 from functools import wraps
 from loguru import logger
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
-from lib import initdb
 from lib import account
 from lib import announcements
 from lib import banners
@@ -28,9 +32,10 @@ from lib import PicaCommand
 from lib import LaunchImage
 from lib import ModeSwitch
 from lib import log
+from lib import Api
 
 # 版本号
-VER = "0.7.51"
+from lib import VER
 
 # 读取 JSON 配置文件
 def load_config():
@@ -47,22 +52,41 @@ log.init_logging(log_level=target_level)
 # 启动Flask
 PicaBridge = Flask(__name__, static_folder=None)
 
+# web资源目录
+WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')
+
+from werkzeug.middleware.proxy_fix import ProxyFix
+PicaBridge.wsgi_app = ProxyFix(PicaBridge.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+# 速率限制
+limiter = Limiter(
+    app=PicaBridge,
+    key_func=get_remote_address,
+    default_limits=["200 per minute"],
+    storage_uri="memory://"
+)
+
+# 全局异常处理
+@PicaBridge.errorhandler(429)
+def handle_429(e):
+    return jsonify({"code": 429, "message": "太快了♡受不了惹~"}), 429
+
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
 URL_MAPPINGS = config.get("URL_Mappings", {})
 DEFAULT_FILE_SERVER = next(iter(URL_MAPPINGS.values()), None)
-
+JWT_KEY = config.get('JWT_KEY')
+ 
 # JWT校验
 def verify_token(token):
-    JWT_KEY = load_config().get('JWT_KEY')
     try:
         payload = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
         return payload
     except jwt.ExpiredSignatureError as e:
-        logger.info("Token过期: {e}")
+        logger.info("Token过期: {e}".format(e=e))
         return None
     except jwt.InvalidTokenError as e:
-        logger.warning("Token无效: {e}")
+        logger.warning("Token无效: {e}".format(e=e))
         return None
 
 # JWT验证装饰器
@@ -157,7 +181,7 @@ def android_cat_route():
 # 监听广告信息
 @PicaBridge.route('/get-ad-zones', methods=['GET'])
 def android_cat2_route():
-    image = config.get('AD_Help_Pica', {}).get('image', '')
+    image = config.get('PicaBridge_URL', '') + config.get('AD_Help_Pica', {}).get('image', '')
     response_data = {
         "ads": [
             {
@@ -174,21 +198,25 @@ def android_cat2_route():
 
 # 监听注册请求
 @PicaBridge.route('/auth/register', methods=['POST'])
+@limiter.limit("5 per hour")
 def register_route():
     return account.Register(request.json)
 
 # 监听登录请求
 @PicaBridge.route('/auth/sign-in', methods=['POST'])
+@limiter.limit("10 per minute")
 def sign_in_route():
     return account.SignIn(request.json)
 
 # 监听忘记密码请求
 @PicaBridge.route('/auth/forgot-password', methods=['POST'])
+@limiter.limit("3 per minute")
 def forgot_password_route():
     return account.forgot_password(request.json)
 
 # 监听重置密码请求
 @PicaBridge.route('/auth/reset-password', methods=['POST'])
+@limiter.limit("3 per minute")
 def reset_password_route():
     return account.reset_password(request.json)
 
@@ -256,13 +284,15 @@ def comic_detail_route(comic_id, jwt_payload):
 
 # 监听获取漫画章节请求
 @PicaBridge.route('/comics/<comic_id>/eps')
-def eps_route(comic_id):
+@jwt_required
+def eps_route(jwt_payload, comic_id):
     page = request.args.get('page', 1, type=int)
     return eps.get_eps(comic_id, page)
 
 # 监听获取漫画图片请求
 @PicaBridge.route('/comics/<comic_id>/order/<int:order>/pages', methods=['GET'])
-def comic_pages_route(comic_id, order):
+@jwt_required
+def comic_pages_route(jwt_payload, comic_id, order):
     page = request.args.get('page', default=1, type=int)
     response = comicorder.get_pages(comic_id, page, order)
     return jsonify(response)
@@ -324,7 +354,8 @@ def favourite_comics_route(jwt_payload):
 
 # 监听用户资料
 @PicaBridge.route('/users/<user_id>/profile', methods=['GET'])
-def get_user_profile_route(user_id):
+@jwt_required
+def get_user_profile_route(jwt_payload, user_id):
     return userinfo.get_user_profile(user_id)
 
 # 监听用户简介修改
@@ -365,11 +396,16 @@ def upload_user_avatar_route(jwt_payload):
 
 # 监听搜索
 @PicaBridge.route('/comics/advanced-search', methods=['POST'])
-def handle_advanced_search_route():
+@limiter.limit("42 per minute")
+@jwt_required
+def handle_advanced_search_route(jwt_payload):
+    user_id = jwt_payload.get("user_id")
     data = request.get_json()
     keyword = data.get('keyword', '')
+    sort = data.get('sort', '')
+    categories = data.get('categories', [])
     page = request.args.get('page', default=1, type=int)
-    return search.search_comic(keyword, page)
+    return search.search_comic(keyword, sort, categories, page, user_id)
 
 # 监听获取常用标签
 @PicaBridge.route('/keywords', methods=['GET'])
@@ -380,6 +416,7 @@ def keywords_route(jwt_payload):
 
 # 监听发布主评论
 @PicaBridge.route('/comics/<comic_id>/comments', methods=['POST'])
+@limiter.limit("42 per minute")
 @jwt_required
 def new_comment(comic_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -399,6 +436,13 @@ def new_comment(comic_id, jwt_payload):
 def recommendation(comic_id, jwt_payload):
     return comiclist.get_recommendation_comics(comic_id)
 
+# 监听获取用户漫画推荐
+@PicaBridge.route('/collections', methods=['GET'])
+@jwt_required
+def collections(jwt_payload):
+    user_id = jwt_payload.get("user_id")
+    return comiclist.get_collections_comics(user_id)
+
 # 监听获取主评论列表
 @PicaBridge.route('/comics/<comic_id>/comments', methods=['GET'])
 @jwt_required
@@ -409,6 +453,7 @@ def get_comment_list(comic_id, jwt_payload):
 
 # 监听发布子评论
 @PicaBridge.route('/comments/<parent_comment_id>', methods=['POST'])
+@limiter.limit("42 per minute")
 @jwt_required
 def new_child_comment(parent_comment_id, jwt_payload):
     user_id = jwt_payload.get("user_id")
@@ -440,7 +485,149 @@ def modeswitch_route(jwt_payload):
     mode = request.args.get('mode')
     return ModeSwitch.switch(user_id, mode)
 
+# 监听小程序配置
+@PicaBridge.route('/pica-apps', methods=['GET'])
+@jwt_required
+def pica_apps_route(jwt_payload):
+    try:
+        # 获取小程序配置
+        apps = config.get("apps", [])
+        result = {
+            "code": 200,
+            "message": "success",
+            "data": {
+                "apps": apps
+            }
+        }
+        return result
+    except Exception as e:
+       logger.warning("获取小程序配置出错: {e}".format(e=e))
+
+# web资源路由
+# 监听assets路径
+@PicaBridge.route('/assets/<path:filepath>', methods=['GET'])
+def web_assets(filepath):
+    return send_from_directory(os.path.join(WEB_DIR, 'assets'), filepath)
+
+# 监听自定义资源路径
+@PicaBridge.route('/diy/<path:filepath>', methods=['GET'])
+def web_diy(filepath):
+    return send_from_directory(os.path.join(WEB_DIR, 'diy'), filepath)
+
+# 后台
+@PicaBridge.route('/ui/', defaults={'path': ''})
+@PicaBridge.route('/ui/<path:path>')
+def web_ui(path):
+    target = os.path.join(WEB_DIR, 'ui', path)
+    if path and os.path.isfile(target):
+        return send_from_directory(os.path.join(WEB_DIR, 'ui'), path)
+    return send_from_directory(os.path.join(WEB_DIR, 'ui'), 'index.html')
+
+# 哔咔桥API
+# 初始化状态
+@PicaBridge.route('/pbapi/init', methods=['GET'])
+def pbapi_init_status():
+    resp, code = Api.Config.init_status()
+    return jsonify(resp), code
+
+# 初始化配置
+@PicaBridge.route('/pbapi/init', methods=['POST'])
+@limiter.limit("3 per hour")
+def pbapi_init():
+    resp, code = Api.Config.init_config(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 测试数据库连接
+@PicaBridge.route('/pbapi/init/test-db', methods=['POST'])
+@limiter.limit("10 per minute")
+def pbapi_test_db():
+    resp, code = Api.Config.test_db_connection(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 读取配置
+@PicaBridge.route('/pbapi/config', methods=['GET'])
+@jwt_required
+def pbapi_get_config(jwt_payload):
+    mask = request.args.get('mask', 'true').lower() == 'true'
+    resp, code = Api.Config.get_config(mask)
+    return jsonify(resp), code
+
+# 写入配置
+@PicaBridge.route('/pbapi/config', methods=['PUT'])
+@jwt_required
+@limiter.limit("10 per minute")
+def pbapi_set_config(jwt_payload):
+    resp, code = Api.Config.set_config(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 备份配置
+@PicaBridge.route('/pbapi/config/backup', methods=['POST'])
+@jwt_required
+@limiter.limit("3 per hour")
+def pbapi_backup(jwt_payload):
+    try:
+        timestamp = __import__('datetime').datetime.now().strftime("%Y%m%d%H%M%S")
+        return send_file('config.json', as_attachment=True, download_name='PicaBridge_bak_{}.json'.format(timestamp))
+    except Exception as e:
+        logger.error("创建配置备份失败: {e}".format(e=e))
+        return jsonify({"code": 500, "message": "创建配置备份失败"}), 500
+
+# 恢复配置
+@PicaBridge.route('/pbapi/config/restore', methods=['POST'])
+@jwt_required
+@limiter.limit("3 per hour")
+def pbapi_restore(jwt_payload):
+    resp, code = Api.Config.restore(request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 重启服务
+@PicaBridge.route('/pbapi/restart', methods=['POST'])
+@jwt_required
+@limiter.limit("5 per minute")
+def pbapi_restart(jwt_payload):
+    resp, code = Api.Config.restart_service()
+    return jsonify(resp), code
+
+# 获取用户列表
+@PicaBridge.route('/pbapi/users', methods=['GET'])
+@jwt_required
+def pbapi_get_users(jwt_payload):
+    page = request.args.get('page', default=1, type=int)
+    page_size = request.args.get('page_size', default=20, type=int)
+    search = request.args.get('search', default=None, type=str)
+    resp, code = Api.User.get_users(page, page_size, search)
+    return jsonify(resp), code
+
+# 获取用户详情
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['GET'])
+@jwt_required
+def pbapi_get_user(jwt_payload, user_id):
+    resp, code = Api.User.get_user(user_id)
+    return jsonify(resp), code
+
+# 更新用户信息
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['PUT'])
+@jwt_required
+def pbapi_update_user(jwt_payload, user_id):
+    resp, code = Api.User.update_user(user_id, request.get_json(silent=True))
+    return jsonify(resp), code
+
+# 删除用户
+@PicaBridge.route('/pbapi/users/<user_id>', methods=['DELETE'])
+@jwt_required
+def pbapi_delete_user(jwt_payload, user_id):
+    resp, code = Api.User.delete_user(user_id)
+    return jsonify(resp), code
+
+# 获取仪表盘状态信息
+@PicaBridge.route('/pbapi/dashboard', methods=['GET'])
+@jwt_required
+def pbapi_get_dashboard_status(jwt_payload):
+    resp, code = Api.Status.get_dashboard_status(jwt_payload.get('user_id'))
+    return jsonify(resp), code
+
 def main():
+    print("PicaBridge 版本: {ver}".format(ver=VER))
     print("你正在运行调试模式！")
     print("如果这不是你想要的，请通过PunchPica.py运行！")
     # 启动 Flask

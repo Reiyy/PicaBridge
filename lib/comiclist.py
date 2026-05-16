@@ -17,6 +17,7 @@ def load_config():
 config = load_config()
 LRR_URL = config.get('lrr_Api')
 PICABRIDGE_URL = config.get('PicaBridge_URL')
+REQUEST_TIMEOUT = (3, 10)
 
 def redirect_thumbnail(arcid):
     try:
@@ -48,24 +49,30 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
     # 如果用户模式为SFW，只返回SFW漫画
     if ModeSwitch.GetMode(user_id) == "sfw":
         print(f"SFW模式")
-        lanraragi_response = requests.get(f"{LRR_URL}/api/search?filter=无H$&start={start}&sortby={sortby}&order={order}")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search?filter=无H$&start={start}&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
 
     # 如果没有传入类型参数 (只有page和s)，获取全部漫画
     elif not c and not t and not a:
         print(f"第一种")
         if sortby:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
         else:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}", timeout=REQUEST_TIMEOUT)
     
     # 如果有传入类型参数 c=文本，获取相应分类的漫画
     elif c and c in config["categories"]:
         print(f"第二种: {c}")
-        category_id = config["categories"][c]["lrr_id"]
-        if sortby:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}")
+        category_id = config["categories"][c].get("lrr_id")
+        if category_id and category_id != "null":
+            if sortby:
+                lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
+            else:
+                lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}", timeout=REQUEST_TIMEOUT)
         else:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&category={category_id}")
+            if sortby:
+                lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
+            else:
+                lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}", timeout=REQUEST_TIMEOUT)
 
     # 有传入类型参数 t=文本，返回相应标签漫画
     elif t is not None:
@@ -76,17 +83,17 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
         elif t.startswith("男:"):
             t = t.replace("男:", "男性:")
         if sortby:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
         else:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={t}$", timeout=REQUEST_TIMEOUT)
 
     # 有传入类型参数 a=文本，返回相应作者漫画
     elif a is not None:
         print(f"第四种: {a}")
         if sortby:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$&sortby={sortby}&order={order}")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$&sortby={sortby}&order={order}", timeout=REQUEST_TIMEOUT)
         else:
-            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$")
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&filter={a}$", timeout=REQUEST_TIMEOUT)
     else:
         print(f"未知传入参数")
 
@@ -100,26 +107,16 @@ def get_comics_data(user_id, page, s=None, c=None, t=None, a=None):
         comic_id = comic["arcid"]
 
         thumbnail_path = f"thumbnail/{comic_id}"
-        comic_data = db.get_comic_info(comic_id) or {}
-
-        # 提取作者信息
-        # 优先从数据库获取
-        author = comic_data.get("author")
-        # 否则从元数据提取
-        if not author:
-            tags = comic.get("tags", "")
-            for tag in tags.split(","):
-                if tag.startswith("artist:"):
-                    author = tag.split(":", 1)[1]
-                    break
-                elif tag.startswith("艺术家:"):
-                    author = tag.split(":", 1)[1]
+        comic_data = db.get_comic_info(comic_id)
+        # 自动同步，当漫画元数据不存在时从LRR数据获取并写入数据库
+        if not comic_data:
+            db.sync_comic_metadata(comic_id, comic)
+            comic_data = db.get_comic_info(comic_id) or {}
 
         comic_info = {
             "_id": comic_id,
-            #"title": comic_data.get("title", comic.get("title")),
             "title": comic_data.get("title") or comic.get("title"),
-            "author": author or "",
+            "author": comic_data.get("author", ""),
             "totalViews": comic_data.get("viewsCount", 0),
             "totalLikes": comic_data.get("likesCount"),
             "pagesCount": comic.get("pagecount"),
@@ -248,9 +245,9 @@ def get_random_comics(user_id):
     # 如果用户模式为SFW，只返回SFW漫画
     if ModeSwitch.GetMode(user_id) == "sfw":
         print(f"SFW模式")
-        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?filter=无H$&count=20")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?filter=无H$&count=20", timeout=REQUEST_TIMEOUT)
     else:
-        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?count=20")
+        lanraragi_response = requests.get(f"{LRR_URL}/api/search/random?count=20", timeout=REQUEST_TIMEOUT)
 
     if isinstance(lanraragi_response, dict):
         lanraragi_data = lanraragi_response
@@ -262,26 +259,16 @@ def get_random_comics(user_id):
         comic_id = comic["arcid"]
 
         thumbnail_path = f"thumbnail/{comic_id}"
-        comic_data = db.get_comic_info(comic_id) or {}
-
-        # 提取作者信息
-        # 优先从数据库获取
-        author = comic_data.get("author")
-        # 否则从元数据提取
-        if not author:
-            tags = comic.get("tags", "")
-            for tag in tags.split(","):
-                if tag.startswith("artist:"):
-                    author = tag.split(":", 1)[1]
-                    break
-                elif tag.startswith("艺术家:"):
-                    author = tag.split(":", 1)[1]
+        comic_data = db.get_comic_info(comic_id)
+        # 自动同步，当漫画元数据不存在时从LRR数据获取并写入数据库
+        if not comic_data:
+            db.sync_comic_metadata(comic_id, comic)
+            comic_data = db.get_comic_info(comic_id) or {}
 
         comic_info = {
             "_id": comic_id,
-            #"title": comic_data.get("title", comic.get("title")),
             "title": comic_data.get("title") or comic.get("title"),
-            "author": author or "",
+            "author": comic_data.get("author", ""),
             "totalViews": comic_data.get("viewsCount", 0),
             "totalLikes": comic_data.get("likesCount"),
             "pagesCount": comic.get("pagecount"),
@@ -316,6 +303,7 @@ def get_random_comics(user_id):
 
 import json
 
+# 获取漫画关联推荐
 def get_recommendation_comics(comic_id):
     # 获取推荐ID列表
     recommend_ids = db.get_recommend_comics(comic_id, 10)
@@ -363,6 +351,68 @@ def get_recommendation_comics(comic_id):
         "message": "success",
         "data": {
             "comics": comics_data
+        }
+    }
+
+    return jsonify(response_data), 200
+
+# 获取用户漫画推荐
+def get_collections_comics(user_id):
+    # 获取推荐ID列表
+    recommend_ids = db.get_user_recommend_comics(user_id, 4)
+
+    comics_data = []
+
+    for rid in recommend_ids:
+        comic_info = db.get_comic_info(rid)
+        if not comic_info:
+            continue
+
+        thumbnail_path = f"thumbnail/{rid}"
+
+        # 解析 categories
+        categories = comic_info.get("categories")
+        if isinstance(categories, str):
+            try:
+                categories = json.loads(categories)
+            except:
+                categories = ["未知分类"]
+        elif not categories:
+            categories = ["未知分类"]
+
+        tags = json.loads(comic_info.get("tags", '[]')) if isinstance(comic_info.get("tags"), str) else comic_info.get("tags", ["无标签"])
+
+        comic_data = {
+            "_id": rid,
+            "title": comic_info.get("title", "未知标题"),
+            "author": comic_info.get("author", "未知作者"),
+            "pagesCount": comic_info.get("pagesCount"),
+            "epsCount": comic_info.get("epsCount", 1),
+            "finished": bool(comic_info.get("finished", True)),
+            "categories": categories,
+            "tags": tags,
+            "thumb": {
+                "originalName": f"{rid}.jpg",
+                "path": thumbnail_path,
+                "fileServer": PICABRIDGE_URL
+            },
+            "totalViews": comic_info.get("viewsCount", 0),
+            "totalLikes": comic_info.get("likesCount", 0),
+        }
+
+        comics_data.append(comic_data)
+
+    # 返回
+    response_data = {
+        "code": 200,
+        "message": "success",
+        "data": {
+        "collections": [
+                {
+                    "title": "本子妹推荐",
+                    "comics": comics_data
+                }
+            ]
         }
     }
 
