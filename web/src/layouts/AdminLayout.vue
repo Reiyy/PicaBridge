@@ -2,10 +2,13 @@
   <v-layout>
     <v-navigation-drawer v-model="drawer" app>
       <v-list-item
-        prepend-icon="mdi-bridge"
         title="PicaBridge"
         subtitle="管理后台"
-      />
+      >
+        <template #prepend>
+          <img :src="`${baseUrl}img/picabridge.png`" alt="PicaBridge" style="width: 32px; height: 32px; border-radius: 7px; margin-right: 12px;">
+        </template>
+      </v-list-item>
       <v-divider />
       <v-list density="compact" nav>
         <v-list-item
@@ -36,6 +39,8 @@
 
 <script setup>
 import { ref } from 'vue'
+
+const baseUrl = import.meta.env.BASE_URL
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 

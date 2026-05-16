@@ -4,7 +4,7 @@
       <v-col cols="12" sm="8" md="4">
         <v-card class="elevation-8">
           <v-card-title class="text-center py-4">
-            <v-icon size="48" color="primary">mdi-bridge</v-icon>
+            <img :src="`${baseUrl}img/picabridge.png`" alt="PicaBridge" style="width: 48px; height: 48px; border-radius: 10px;">
             <div class="text-h5 mt-2">PicaBridge 管理后台</div>
           </v-card-title>
           <v-card-text>
@@ -47,6 +47,8 @@
 
 <script setup>
 import { ref } from 'vue'
+
+const baseUrl = import.meta.env.BASE_URL
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
