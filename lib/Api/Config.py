@@ -82,6 +82,7 @@ def is_init():
         # 兼容旧版：配置中已包含所有必需字段时视为已初始化
         required = ["PicaBridge_URL", "JWT_KEY", "lrr_Api", "lrr_Api_Key", "db"]
         if all(config.get(f) for f in required):
+            config.pop("is_init", None)
             save_config({"is_init": True, **config})
             return True
         return False
@@ -172,6 +173,7 @@ def init_config(data):
     existing["URL_Mappings"] = existing.get("URL_Mappings") or {}
     existing["URL_Mappings"]["lrr_img"] = existing["lrr_Api"]
     existing["URL_Mappings"]["assets"] = existing["PicaBridge_URL"]
+    existing.pop("is_init", None)
     save_config({"is_init": True, **existing})
 
     return {"code": 200, "message": "success", "data": {"message": "初始化已完成", "restart_required": True}}, 200
