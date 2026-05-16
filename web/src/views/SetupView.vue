@@ -106,8 +106,8 @@
                 <v-icon size="72" color="success">mdi-check-circle</v-icon>
                 <div class="text-h5 mt-4">初始化完成</div>
 
-                <v-alert type="warning" class="mt-6 text-left" density="compact" prominent>
-                  配置已写入，<strong>请重启 PicaBridge 服务</strong>使配置生效。
+                <v-alert type="info" class="mt-6 text-left" density="compact" prominent>
+                  配置已写入，<strong>哔咔桥将于5秒后自动重启</strong>之后可前往管理后台进行更多配置。
                 </v-alert>
 
                 <v-card variant="tonal" class="mt-4 text-left">
@@ -181,6 +181,7 @@ async function handleSubmit() {
     await request.post('/pbapi/init', config.value)
     resetInitStatus()
     submitted.value = true
+    setTimeout(() => router.push('/ui/login'), 5000)
   } catch (e) {
     if (e.data?.errors) {
       e.data.errors.forEach((err) => {

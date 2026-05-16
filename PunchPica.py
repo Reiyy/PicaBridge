@@ -20,17 +20,23 @@ config = load_config()
 # 精简Flask应用，仅用于配置向导                                                                                                     
 WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')                                                           
 
-def _create_setup_app():                                                                                                            
-    app = Flask(__name__, static_folder=None)                                                                                       
-                                                                                                                                    
-    @app.route('/pbapi/init', methods=['GET'])                                                                                      
-    def init_status():                                                                                                              
-        resp, code = Api.Config.init_status()                                                                                       
-        return jsonify(resp), code                                                                                                  
-                                                                                                                                    
-    @app.route('/pbapi/init', methods=['POST'])                                                                                     
-    def init_config():                                                                                                              
-        resp, code = Api.Config.init_config(request.get_json(silent=True))                                                          
+def _create_setup_app():
+    app = Flask(__name__, static_folder=None)
+
+    @app.route('/pbapi/init', methods=['GET'])
+    def init_status():
+        resp, code = Api.Config.init_status()
+        return jsonify(resp), code
+
+    @app.route('/pbapi/init', methods=['POST'])
+    def init_config():
+        resp, code = Api.Config.init_config(request.get_json(silent=True))
+        if code == 200:
+            import time, threading
+            def restart():
+                time.sleep(1.5)
+                os.execvp(sys.executable, [sys.executable] + sys.argv)
+            threading.Thread(target=restart, daemon=True).start()
         return jsonify(resp), code                                                                                                  
                                                                                                                                                                                                                              
     @app.route('/ui/', defaults={'path': ''})                                                                                       
@@ -42,9 +48,6 @@ def _create_setup_app():
         return send_from_directory(os.path.join(WEB_DIR, 'ui'), 'index.html')                                                       
                                                                                                                                     
     return app                                                                                                                      
-                                                                                                                                    
-                  
-
 
 def main():
     print("正在初始化...")
@@ -62,9 +65,9 @@ def main():
             local_ip = "127.0.0.1"
         print(f"配置向导：http://127.0.0.1:{port}/ui")
         print(f"配置向导：http://{local_ip}:{port}/ui")
-        print("完成后请重启服务！")
+
         setup_app = _create_setup_app()
-        setup_app.run(host=host, port=int(port))
+        setup_app.run(host=host, port=int(port), use_reloader=False)
         return
     
     try:
@@ -82,12 +85,17 @@ def main():
     is_debug = config.get("SysConfig", {}).get("Debug", False)
     gunicorn_level = "debug" if is_debug else "info"
 
+    pid_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp')
+    os.makedirs(pid_dir, exist_ok=True)
+    pid_file = os.path.join(pid_dir, 'picabridge.pid')
+
     os.environ["LOGURU_COLORIZE"] = "true"
     os.execvp("gunicorn", [
         "gunicorn",
         "-w", "1",
         "-k", "gevent",
         "-b", listen_address,
+        "--pid", pid_file,
         "--access-logfile", "-",
         "--error-logfile", "-",
         "--capture-output",

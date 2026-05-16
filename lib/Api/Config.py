@@ -1,12 +1,15 @@
 import json
 import os
-import tempfile
+import sys
 import threading
 from collections import OrderedDict
 from loguru import logger
 
 # 配置文件
 CONFIG_PATH = 'config.json'
+
+# PID 文件
+PID_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'tmp', 'picabridge.pid')
 
 # 脱敏字段
 SENSITIVE_FIELDS = {"JWT_KEY", "lrr_Api_Key", "db.password"}
@@ -34,6 +37,25 @@ def save_config(config_data):
         except Exception as e:
             logger.error("保存配置文件失败: {e}".format(e=e))
             raise
+
+# 重启服务
+def restart_service():
+    if sys.platform == 'win32':
+        return {"code": 503, "message": "Windows环境下不支持该重启方式"}, 503
+    try:
+        import signal
+        if not os.path.exists(PID_FILE):
+            return {"code": 503, "message": "PID文件不存在，无法执行重启"}, 503
+        with open(PID_FILE, 'r') as f:
+            pid = int(f.read().strip())
+        os.kill(pid, signal.SIGHUP)
+        logger.info("已发送重启信号到进程 {pid}".format(pid=pid))
+        return {"code": 200, "message": "success", "data": {"restarting": True}}, 200
+    except ProcessLookupError:
+        return {"code": 503, "message": "gunicorn 进程不存在"}, 503
+    except Exception as e:
+        logger.error("发送重启信号失败: {e}".format(e=e))
+        return {"code": 500, "message": "重启失败"}, 500
 
 # 脱敏处理
 def _mask_sensitive_fields(config, fields, prefix=""):

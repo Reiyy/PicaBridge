@@ -573,6 +573,14 @@ def pbapi_restore(jwt_payload):
     resp, code = Api.Config.restore(request.get_json(silent=True))
     return jsonify(resp), code
 
+# 重启服务
+@PicaBridge.route('/pbapi/restart', methods=['POST'])
+@jwt_required
+@limiter.limit("5 per minute")
+def pbapi_restart(jwt_payload):
+    resp, code = Api.Config.restart_service()
+    return jsonify(resp), code
+
 def main():
     print("PicaBridge 版本: {ver}".format(ver=VER))
     print("你正在运行调试模式！")
