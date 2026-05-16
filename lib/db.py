@@ -5,6 +5,7 @@ import threading
 
 from collections import Counter
 from dbutils.pooled_db import PooledDB
+from loguru import logger
 
 # 读取配置文件
 def load_config():
@@ -535,6 +536,50 @@ def initcomic(comic_id):
         print(f"数据库操作失败: {str(e)}")
         return False
 
+    finally:
+        connection.close()
+
+# 自动同步漫画元数据到数据库
+def sync_comic_metadata(comic_id, comic_data):
+    from lib.comic_utils import extract_author, match_categories, clean_tags, extract_timestamp
+
+    tags_str = comic_data.get("tags", "")
+    pagecount = comic_data.get("pagecount", 0)
+    title = comic_data.get("title", "")
+    summary = comic_data.get("summary") or "PicaBridge - 哔咔桥"
+    author = extract_author(tags_str)
+    categories = match_categories(tags_str, pagecount)
+    cleaned = clean_tags(tags_str)
+    created_at = extract_timestamp(tags_str) or int(time.time())
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO comic_info
+                (id, creator, title, description, author, chineseTeam,
+                 categories, tags, pagesCount, epsCount, finished, updated_at, created_at,
+                 allowDownload, allowComment, viewsCount, likesCount, commentsCount, viewed_at)
+                VALUES (%s, '7v5za3f62102s6t81wue5uyo', %s, %s, %s, '',
+                        %s, %s, %s, 1, 1, %s, %s, 0, 1, 0, 0, 0, '[]')
+                ON DUPLICATE KEY UPDATE
+                    title = VALUES(title),
+                    description = VALUES(description),
+                    author = VALUES(author),
+                    categories = VALUES(categories),
+                    tags = VALUES(tags),
+                    pagesCount = VALUES(pagesCount),
+                    updated_at = VALUES(updated_at),
+                    created_at = VALUES(created_at)
+            """, (comic_id, title, summary, author,
+                  json.dumps(categories, ensure_ascii=False),
+                  json.dumps(cleaned, ensure_ascii=False),
+                  pagecount, created_at, created_at))
+            connection.commit()
+            return True
+    except pymysql.MySQLError as e:
+        logger.error(f"同步漫画元数据失败 {comic_id}: {str(e)}")
+        return False
     finally:
         connection.close()
 

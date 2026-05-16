@@ -50,7 +50,10 @@ def search_comic(keyword, sort, categories, page=1, user_id=None):
         categories_key = "SFW_categories" if ModeSwitch.GetMode(user_id) == "sfw" else "categories"
         category_name = categories[0] #lrr搜索api目前只支持单分类
         lrr_id = config.get(categories_key, {}).get(category_name, {}).get('lrr_id')
-        lanraragi_response = requests.get(f"{LRR_URL}/api/search?category={lrr_id}&start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+        if lrr_id and lrr_id != "null":
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?category={lrr_id}&start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
+        else:
+            lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
     else:
         lanraragi_response = requests.get(f"{LRR_URL}/api/search?start={start}&sortby={sortby}&order={order}&filter=*{keyword}", timeout=REQUEST_TIMEOUT)
         
@@ -61,12 +64,16 @@ def search_comic(keyword, sort, categories, page=1, user_id=None):
         comic_id = comic["arcid"]
 
         thumbnail_path = f"thumbnail/{comic_id}"
-        comic_data = db.get_comic_info(comic_id) or {}
+        comic_data = db.get_comic_info(comic_id)
+        # 自动同步，当漫画元数据不存在时从LRR数据获取并写入数据库
+        if not comic_data:
+            db.sync_comic_metadata(comic_id, comic)
+            comic_data = db.get_comic_info(comic_id) or {}
 
         comic_info = {
             "_id": comic_id,
-            "title": comic_data.get("title", comic.get("title", "未知标题")),
-            "author": comic_data.get("author", "未知作者"),
+            "title": comic_data.get("title") or comic.get("title", "未知标题"),
+            "author": comic_data.get("author", ""),
             "totalViews": comic_data.get("viewsCount", 0),
             "totalLikes": comic_data.get("likesCount"),
             "pagesCount": comic.get("pagecount"),

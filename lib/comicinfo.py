@@ -18,7 +18,25 @@ PICABRIDGE_URL = config.get('PicaBridge_URL')
 # 获取漫画信息
 def get_comic_info(comic_id, user_id):
     db.plus_comic_viewsCount(comic_id)
-    comic_data = db.get_comic_info(comic_id) or {}
+    config = load_config()
+    comic_data = db.get_comic_info(comic_id)
+
+    # 自动同步，当漫画元数据不存在时从LRR获取完整数据写入数据库
+    metadata = None
+    if not comic_data:
+        metadata = get_archive_metadata(comic_id)
+        if not metadata:
+            return None
+        db.sync_comic_metadata(comic_id, metadata)
+        comic_data = db.get_comic_info(comic_id)
+    elif not comic_data.get("author") or comic_data.get("tags") in (None, '[]', ''):
+        metadata = get_archive_metadata(comic_id)
+        if metadata:
+            db.sync_comic_metadata(comic_id, metadata)
+            comic_data = db.get_comic_info(comic_id)
+
+    if not comic_data:
+        return None
 
     # 获取漫画上传者信息
     creator_id = comic_data.get('creator', '7v5za3f62102s6t81wue5uyo')
@@ -46,19 +64,13 @@ def get_comic_info(comic_id, user_id):
     isFavourite = db.is_favourite_comic(user_id, comic_id)  # 调用函数获取是否收藏
     characters = json.loads(user_info.get("characters", '[]')) if isinstance(user_info.get("characters"), str) else user_info.get("characters", [])
 
-    # 提取作者信息
-    # 优先从数据库获取
-    metadata = get_archive_metadata(comic_id)
-    author = comic_data.get("author")
-    # 否则从元数据提取
-    if not author:
-        metadatatags = metadata.get("tags", "")
-        for tag in metadatatags.split(","):
-            if tag.startswith("artist:"):
-                author = tag.split(":", 1)[1]
-                break
-            elif tag.startswith("艺术家:"):
-                author = tag.split(":", 1)[1]
+    # 作者信息，优先从数据库获取，否则从元数据提取
+    author = comic_data.get("author", "")
+    if not author and not metadata:
+        metadata = get_archive_metadata(comic_id)
+    if not author and metadata:
+        from lib.comic_utils import extract_author
+        author = extract_author(metadata.get("tags", ""))
 
     # 组装返回数据
     response_data = OrderedDict([
@@ -79,8 +91,8 @@ def get_comic_info(comic_id, user_id):
                     ("title", user_info.get("title")),
                     ("avatar", avatar_data),
                 ])),
-                ("title", comic_data.get("title") or metadata.get("title")),
-                ("description", comic_data.get("description") or metadata.get("summary")),
+                ("title", comic_data.get("title") or (metadata.get("title") if metadata else "")),
+                ("description", comic_data.get("description") or (metadata.get("summary") if metadata else "")),
                 ("thumb", OrderedDict([
                     ("fileServer", PICABRIDGE_URL),
                     ("path", thumbnail_path),
@@ -90,7 +102,7 @@ def get_comic_info(comic_id, user_id):
                 ("chineseTeam", comic_data.get("chineseTeam", "")),
                 ("categories", categories),
                 ("tags", tags),
-                ("pagesCount", metadata.get("pagecount")),
+                ("pagesCount", comic_data.get("pagesCount") or (metadata.get("pagecount") if metadata else 0)),
                 ("epsCount", comic_data.get("epsCount", 1)),
                 ("finished", bool(comic_data.get("finished", True))),
                 ("updated_at", format_timestamp(comic_data.get("updated_at", 0))),
@@ -144,7 +156,11 @@ def comic_like(user_id, comic_id):
     result = db.like_comic(is_like, user_id, comic_id)
 
     if result:
-        if not is_like:  # 如果未点赞，则点赞
+        if not is_like:  # 如果未点赞，则点赞，同时触发元数据同步
+            config = load_config()
+            metadata = get_archive_metadata(comic_id)
+            if metadata:
+                db.sync_comic_metadata(comic_id, metadata)
             return jsonify({
                 "code": 200,
                 "message": "success",
