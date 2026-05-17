@@ -1,5 +1,7 @@
 # PicaBridge
-[<img src="https://img.shields.io/github/v/release/reiyy/picabridge?include_prereleases">](https://github.com/Reiyy/PicaBridge/releases)
+[<img src="https://img.shields.io/github/license/reiyy/picabridge?color=brightgreen">](https://raw.githubusercontent.com/Reiyy/PicaBridge/main/LICENSE)
+[<img src="https://img.shields.io/github/v/release/reiyy/picabridge?color=brightgreen&include_prereleases">](https://github.com/Reiyy/PicaBridge/releases)
+[<img src="https://github.com/Reiyy/PicaBridge/actions/workflows/push-continous-delivery.yml/badge.svg">](https://github.com/Reiyy/PicaBridge/actions)
 [<img src="https://img.shields.io/docker/pulls/yareiy/picabridge.svg">](https://hub.docker.com/r/yareiy/picabridge/)
 [<img src="https://img.shields.io/github/downloads/reiyy/picabridge/total.svg">](https://github.com/Reiyy/PicaBridge/releases)
 
