@@ -17,7 +17,9 @@
           <div class="level-badge-wrapper">
             <div class="level-badge-inner">
               <div class="level-badge-bg"></div>
-              <div class="level-badge-pattern"></div>
+              <div class="level-badge-pattern">
+                <img alt="" class="level-badge-img" src="/img/gold-bg.png" />
+              </div>
               <div class="level-badge-content">
                 <div class="level-name-row">
                   <v-icon :icon="currentLevel.icon" size="24" color="#664515" class="mr-1" />
@@ -262,6 +264,15 @@ onMounted(fetchStatus)
   );
 }
 
+.level-badge-img {
+  position: absolute;
+  max-width: none;
+  height: 130.86%;
+  width: 164.29%;
+  left: -34.3%;
+  top: -2.16%;
+}
+
 /* 装饰纹理 */
 .level-badge-pattern {
   pointer-events: none;
@@ -269,10 +280,7 @@ onMounted(fetchStatus)
   inset: 0;
   overflow: hidden;
   border-radius: 15px;
-  opacity: 0.3;
-  background:
-    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% 50%, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0.8;
 }
 
 /* 卡片内容 */
