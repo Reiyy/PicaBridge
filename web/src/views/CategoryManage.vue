@@ -32,7 +32,13 @@
           <v-text-field v-model="dialog.data.title" label="分类名" :rules="[v => !!v || '必填']" />
           <v-text-field v-model="dialog.data.lrr_id" label="LANraragi 分类 ID" placeholder="SET_xxx" />
           <v-select v-model="dialog.data.rule[0]" :items="[{title:'模糊',value:0},{title:'精确',value:1}]" label="匹配方式" item-title="title" item-value="value" />
-          <v-text-field v-model="dialog.data.rule[1]" label="匹配规则" placeholder="语言:汉语" />
+          <div class="mb-2">
+            <div v-for="(r, i) in dialog.data.rule.slice(1)" :key="i" class="d-flex align-center mb-1">
+              <v-text-field v-model="dialog.data.rule[i + 1]" :label="`匹配标签 ${i + 1}`" placeholder="语言:汉语" density="compact" hide-details class="flex-grow-1" />
+              <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="removeRule(i)" :disabled="dialog.data.rule.length <= 2" />
+            </div>
+            <v-btn size="small" variant="text" prepend-icon="mdi-plus" @click="addRule">添加规则</v-btn>
+          </div>
           <v-textarea v-model="dialog.data.description" label="描述" rows="2" />
           <v-text-field v-model="dialog.data.thumb" label="分类图片路径" />
         </v-card-text>
@@ -90,10 +96,20 @@ const currentList = computed(() =>
     key,
     title: val.title,
     lrr_id: val.lrr_id,
-    ruleText: val.rule ? `${val.rule[0] === 0 ? '模糊' : '精确'}: ${val.rule[1]}` : '',
+    ruleText: val.rule ? `${val.rule[0] === 0 ? '模糊' : '精确'}: ${val.rule.slice(1).filter(r => r).join(', ')}` : '',
     ...val,
   }))
 )
+
+function addRule() {
+  dialog.value.data.rule.push('')
+}
+
+function removeRule(index) {
+  if (dialog.value.data.rule.length > 2) {
+    dialog.value.data.rule.splice(index + 1, 1)
+  }
+}
 
 function openDialog(item) {
   if (item) {
