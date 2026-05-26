@@ -211,7 +211,7 @@ onMounted(fetchStatus)
   gap: 12px;
   width: 100%;
   border-radius: 8px;
-  background: #ffffff;
+  background: rgb(var(--v-theme-surface-container-lowest));
   padding: 16px;
   margin-bottom: 16px;
 }
@@ -331,7 +331,7 @@ onMounted(fetchStatus)
   min-width: 0;
   flex: 1;
   border-radius: 8px;
-  background: #f6f6f8;
+  background: rgb(var(--v-theme-surface-container));
   padding: 16px;
 }
 
@@ -339,7 +339,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
-  color: #1f2329;
+  color: rgb(var(--v-theme-on-surface));
   margin: 0;
 }
 
@@ -370,14 +370,14 @@ onMounted(fetchStatus)
   height: 10px;
   overflow: hidden;
   border-radius: 10px;
-  background: #e5e6ea;
+  background: rgb(var(--v-theme-outline-variant));
   width: 100%;
 }
 
 .level-progress-fill {
   height: 100%;
   border-radius: 10px;
-  background: #3370ff;
+  background: rgb(var(--v-theme-primary));
   transition: width 0.3s ease-out;
 }
 
@@ -390,7 +390,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  color: #646a73;
+  color: rgb(var(--v-theme-on-surface-variant));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -400,7 +400,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
-  color: #1f2329;
+  color: rgb(var(--v-theme-on-surface));
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -408,7 +408,7 @@ onMounted(fetchStatus)
 .level-progress-hint {
   font-size: 12px;
   line-height: 20px;
-  color: #646a73;
+  color: rgb(var(--v-theme-on-surface-variant));
   margin-top: 4px;
 }
 

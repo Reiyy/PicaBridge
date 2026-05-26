@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer" app>
+    <v-navigation-drawer v-model="drawer" app color="surface-container-low">
       <v-list-item
         title="PicaBridge"
         subtitle="管理后台"
@@ -22,7 +22,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app density="comfortable">
+    <v-app-bar app density="comfortable" color="surface-container">
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title>PicaBridge 管理后台</v-app-bar-title>
       <v-spacer />
@@ -78,6 +78,7 @@ const menuItems = [
   { title: '小程序管理', icon: 'mdi-apps', path: '/ui/apps' },
   { title: '用户管理', icon: 'mdi-account-group', path: '/ui/users' },
   { title: '备份与恢复', icon: 'mdi-backup-restore', path: '/ui/backup' },
+  { title: '主题设置', icon: 'mdi-palette', path: '/ui/theme' },
 ]
 
 async function onRestart() {

@@ -84,6 +84,11 @@ const routes = [
         name: 'Backup',
         component: () => import('../views/BackupRestore.vue'),
       },
+      {
+        path: 'theme',
+        name: 'Theme',
+        component: () => import('../views/ThemeSettingsView.vue'),
+      },
     ],
   },
 ]
