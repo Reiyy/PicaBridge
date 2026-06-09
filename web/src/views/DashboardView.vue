@@ -161,7 +161,7 @@ const progressPercent = computed(() => {
 async function fetchStatus() {
   loading.value = true
   try {
-    const res = await request.get('/pbapi/status')
+    const res = await request.get('/pbapi/dashboard/status')
     comicCount.value = res.data.comic_count
     userName.value = res.data.user_name
   } catch (e) {

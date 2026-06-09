@@ -620,7 +620,7 @@ def pbapi_delete_user(jwt_payload, user_id):
     return jsonify(resp), code
 
 # 获取仪表盘状态信息
-@PicaBridge.route('/pbapi/dashboard', methods=['GET'])
+@PicaBridge.route('/pbapi/dashboard/status', methods=['GET'])
 @jwt_required
 def pbapi_get_dashboard_status(jwt_payload):
     resp, code = Api.Status.get_dashboard_status(jwt_payload.get('user_id'))
