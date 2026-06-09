@@ -1,0 +1,135 @@
+﻿// ---- 颜色系统 ----
+
+// 主色调
+$app-primary: #496cc3;
+$app-primary-light: #4285f4;
+$app-primary-dark: #3b5aa0;
+$app-primary-subtle: #e8f0fe; // 选中状态背景 (rgb(232, 240, 254))
+
+// 文字颜色
+$app-text-primary: #202124; // 主要文字 (rgb(32, 33, 36))
+$app-text-secondary: #5f6368; // 次要文字 (rgb(95, 99, 104))
+$app-text-variant: #475569; // 变体文字 (--cm-sys-color-on-surface-variant)
+$app-text-tertiary: #80868b; // 辅助文字
+$app-text-link: #0c67df; // 链接文字
+$app-text-dark: #1b2e5d; // 深色文字 (rgb(27, 46, 93))
+$app-text-action: #3c4043; // 操作按钮文字 (rgb(60, 64, 67))
+
+// 背景色
+$app-bg-main: #f0f5fe; // 主背景 (rgb(240, 245, 254))
+$app-bg-surface: #ffffff; // 卡片背景
+$app-bg-surface-variant: #f8f9fa; // 次级表面
+$app-bg-sidebar: #edeff3; // 侧边栏背景 - 浅灰蓝色 (rgb(237, 239, 243))
+$app-bg-hover: #f1f3f4; // 悬停状态
+$app-bg-active: #e8f0fe; // 激活状态
+$app-bg-header: #ffffff; // 头部背景
+$app-bg-search: #dde3ea; // 搜索栏背景 (rgb(221, 227, 234))
+$app-bg-user-actions: #e9eef6; // 用户卡片操作区背景
+
+// 边框颜色
+$app-border: #dadce0; // 主边框 (rgb(218, 220, 224))
+$app-border-light: #e8eaed; // 浅色边框
+$app-border-dark: #8496c1; // 深色边框 (rgb(132, 150, 193)) - 项目选择器
+$app-border-action: #818993; // 操作按钮边框 (rgb(129, 137, 147))
+$app-border-hairline: #b7c3e0; // 发丝线边框 (--cm-sys-color-hairline)
+
+// 状态颜色
+$app-success: #1e8e3e;
+$app-success-bg: #e6f4ea;
+$app-warning: #f9ab00;
+$app-warning-bg: #fef7e0;
+$app-error: #d93025;
+$app-error-bg: #fce8e6;
+$app-info: #0c67df;
+$app-info-bg: #e8f0fe;
+
+// ---- 字体 ----
+$app-font-primary: "Google Sans", "Roboto", "Helvetica Neue", sans-serif;
+$app-font-body: "Roboto", "Helvetica Neue", sans-serif;
+$app-font-mono: "Google Sans Mono", "Roboto Mono", monospace;
+
+// 字体大小
+$app-text-h1: 36px; // h1 (Google Sans, weight 400)
+$app-text-h2: 24px; // h2
+$app-text-h3: 20px; // h3
+$app-text-body: 14px; // 正文
+$app-text-small: 12px; // 小字
+$app-text-caption: 11px; // 说明文字
+
+// 行高
+$app-line-height-h1: 44px;
+$app-line-height-body: 20px;
+$app-line-height-small: 16px;
+
+// 字重
+$app-font-regular: 400;
+$app-font-medium: 500;
+$app-font-bold: 700;
+
+// ---- 间距系统 ----
+
+$app-spacing-xs: 4px;
+$app-spacing-sm: 8px;
+$app-spacing-md: 16px;
+$app-spacing-lg: 24px;
+$app-spacing-xl: 32px;
+$app-spacing-2xl: 48px;
+
+$app-card-padding: 24px; // 卡片内边距
+$app-button-padding-x: 12px; // 按钮水平内边距
+$app-header-padding-x: 8px; // 头部水平内边距
+
+// ---- 圆角系统 ----
+
+$app-radius-sm: 4px; // 按钮/卡片
+$app-radius-md: 8px;
+$app-radius-lg: 12px;
+$app-radius-xl: 16px;
+$app-radius-pill: 9999px; // 胶囊形 (项目选择器)
+
+// ---- 阴影系统 ----
+
+$app-shadow-1:
+  0 1px 2px 0 rgba(60, 64, 67, 0.3),
+  0 1px 3px 1px rgba(60, 64, 67, 0.15);
+$app-shadow-2:
+  0 1px 2px 0 rgba(60, 64, 67, 0.3),
+  0 2px 6px 2px rgba(60, 64, 67, 0.15);
+$app-shadow-3:
+  0 4px 8px 3px rgba(60, 64, 67, 0.15),
+  0 1px 3px rgba(60, 64, 67, 0.3);
+$app-shadow-4:
+  0 6px 10px 4px rgba(60, 64, 67, 0.15),
+  0 2px 3px rgba(60, 64, 67, 0.3);
+
+// ---- 边框 ----
+
+$app-border-default: 1.5px solid $app-border; // 卡片边框
+// $app-border-light 已在上方作为颜色变量定义（#e8eaed），边框简写请直接内联：1px solid $app-border-light
+
+// ---- 过渡动画 ----
+
+$app-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$app-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+$app-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+// ---- 断点 ----
+
+$app-breakpoint-sm: 600px;
+$app-breakpoint-md: 960px;
+$app-breakpoint-lg: 1280px;
+$app-breakpoint-xl: 1920px;
+
+// ---- 导航栏 ----
+
+$app-nav-height: 49px; // 顶部导航高度
+$app-sidebar-width: 256px; // 侧边栏宽度
+$app-sidebar-collapsed: 64px; // 侧边栏折叠宽度
+$app-sidebar-shadow: 2px 0 16px rgba(0, 0, 0, 0.15); // 侧边栏阴影
+$app-sidebar-radius: 0 16px 16px 0; // 侧边栏右侧圆角
+
+// ---- 搜索栏 ----
+
+$app-search-height: 36px;
+$app-search-radius: 12px; // 搜索栏圆角
+$app-search-bg: #dde3ea; // 搜索栏背景 (rgb(221, 227, 234))

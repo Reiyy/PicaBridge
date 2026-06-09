@@ -10,7 +10,7 @@ config.json
 logs
 
 # 忽略前端依赖和构建产物
-web/src/node_modules
+web/node_modules
 web/ui/
 
 # 忽略运行时临时文件

@@ -1,0 +1,353 @@
+﻿// ---- 全局基础样式 ----
+
+html,
+body {
+  background-color: $app-bg-main !important;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: $app-font-body;
+  font-size: $app-text-body;
+  line-height: $app-line-height-body;
+  color: $app-text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+// Vuetify v-app 背景
+.v-application {
+  background-color: $app-bg-main !important;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.v-application__wrap {
+  background-color: transparent !important;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ---- Vuetify 图标字体修复 ----
+
+.v-icon {
+  font-family: "Material Design Icons" !important;
+}
+
+.mdi::before {
+  font-family: "Material Design Icons" !important;
+}
+
+// ---- Vuetify 组件覆盖 ----
+
+// 按钮样式
+.v-btn {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-family: $app-font-primary !important;
+  font-weight: $app-font-medium !important;
+  transition: all $app-transition-fast !important;
+  border-radius: $app-radius-sm !important;
+
+  // 按钮内的图标保持正确字体
+  .v-icon {
+    font-family: "Material Design Icons" !important;
+  }
+
+  // 主要按钮
+  &--variant-flat {
+    &.bg-primary {
+      box-shadow: 0 1px 2px rgba(12, 103, 223, 0.3);
+
+      &:hover {
+        box-shadow: 0 1px 3px rgba(12, 103, 223, 0.4);
+      }
+    }
+  }
+
+  // 轮廓按钮
+  &--variant-outlined {
+    border-color: $app-border !important;
+    color: $app-text-primary !important;
+
+    &:hover {
+      background-color: $app-bg-hover;
+      border-color: $app-border !important;
+    }
+  }
+
+  // 文字按钮
+  &--variant-text {
+    &:hover {
+      background-color: rgba(12, 103, 223, 0.04);
+    }
+  }
+
+  // 图标按钮
+  &--icon {
+    border-radius: 50% !important;
+    color: $app-text-secondary;
+
+    &:hover {
+      background-color: $app-bg-hover;
+    }
+  }
+}
+
+// 卡片样式
+.v-card {
+  border-color: $app-border !important;
+  border-width: 1.5px !important;
+  border-radius: $app-radius-lg !important;
+  &--variant-elevated {
+    box-shadow: none !important;
+    border: $app-border-default !important;
+  }
+
+  &--variant-outlined {
+    border: $app-border-default !important;
+    border-radius: $app-radius-lg !important;
+  }
+
+  .v-card-title {
+    font-family: $app-font-primary;
+    font-weight: $app-font-medium;
+    color: $app-text-primary;
+  }
+
+  .v-card-subtitle {
+    color: $app-text-secondary;
+  }
+
+  .v-card-text {
+    color: $app-text-primary;
+    padding: $app-card-padding !important;
+  }
+
+  .v-card-actions {
+    padding: 12px 16px !important;
+  }
+}
+
+// 输入框样式
+.v-field {
+  font-family: $app-font-body !important;
+
+  &--variant-outlined {
+    .v-field__outline {
+      color: $app-border !important;
+    }
+
+    &:hover .v-field__outline {
+      color: $app-text-secondary !important;
+    }
+
+    &.v-field--focused .v-field__outline {
+      color: $app-primary !important;
+    }
+  }
+
+  &__input {
+    color: $app-text-primary;
+    font-size: $app-text-body;
+  }
+
+  &__field {
+    font-family: $app-font-body;
+  }
+}
+
+// 标签
+.v-label {
+  color: $app-text-secondary !important;
+  font-size: $app-text-body;
+}
+
+// 导航抽屉 - 浅灰蓝色背景
+.v-navigation-drawer {
+  background-color: $app-bg-sidebar !important;
+  border-right: 1px solid $app-border-light !important;
+
+  .v-list-item {
+    min-height: 40px;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    &--active {
+      background-color: $app-bg-active !important;
+      color: $app-primary !important;
+
+      .v-list-item-title {
+        color: $app-primary !important;
+        font-weight: $app-font-medium;
+      }
+    }
+
+    &:hover:not(.v-list-item--active) {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .v-list-item-title {
+      font-size: $app-text-body;
+      color: $app-text-primary;
+    }
+
+    .v-list-item-subtitle {
+      font-size: $app-text-small;
+      color: $app-text-secondary;
+    }
+  }
+}
+
+// 表格样式
+.v-table {
+  .v-table__wrapper {
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+  }
+
+  th {
+    font-family: $app-font-primary;
+    font-weight: $app-font-medium;
+    color: $app-text-secondary !important;
+    font-size: $app-text-small;
+    border-bottom: 1px solid $app-border !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+  }
+
+  td {
+    border-bottom: 1px solid $app-border-light !important;
+    font-size: $app-text-body;
+    color: $app-text-primary;
+  }
+
+  tr:hover td {
+    background-color: $app-bg-hover !important;
+  }
+}
+
+// 工具栏
+.v-toolbar {
+  background-color: $app-bg-header !important;
+  border-bottom: 1px solid $app-border-light !important;
+  box-shadow: none !important;
+
+  .v-toolbar-title {
+    font-family: $app-font-primary;
+    font-weight: $app-font-medium;
+  }
+}
+
+// 芯片
+.v-chip {
+  font-family: $app-font-body;
+  font-size: $app-text-small;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+
+  &--variant-outlined {
+    border-color: $app-border !important;
+    color: $app-text-secondary !important;
+  }
+
+  &--variant-tonal {
+    background-color: $app-bg-surface-variant !important;
+    color: $app-text-secondary !important;
+  }
+}
+
+// 面包屑
+.v-breadcrumbs {
+  font-family: $app-font-body;
+  font-size: $app-text-small;
+  padding: 12px 0;
+
+  .v-breadcrumbs-item {
+    color: $app-text-secondary;
+    font-size: $app-text-small;
+
+    &:last-child {
+      color: $app-text-primary;
+      font-weight: $app-font-medium;
+    }
+  }
+
+  .v-breadcrumbs-divider {
+    color: $app-text-tertiary;
+  }
+}
+
+// 进度条
+.v-progress-linear {
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: $app-bg-surface-variant;
+
+  &--active .v-progress-linear__determinate {
+    background-color: $app-primary;
+  }
+}
+
+// 选框/复选框
+.v-selection-control {
+  &__input {
+    color: $app-primary;
+  }
+}
+
+// 菜单
+.v-menu {
+  .v-list {
+    background-color: $app-bg-surface;
+    border: $app-border-default;
+    box-shadow: $app-shadow-2;
+  }
+}
+
+// 对话框
+.v-dialog {
+  .v-card {
+    border: none;
+    box-shadow: $app-shadow-4;
+  }
+}
+
+// 分割线
+.v-divider {
+  border-color: $app-border-light !important;
+}
+
+// 选项卡
+.v-tabs {
+  .v-tab {
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-weight: $app-font-medium;
+    color: $app-text-secondary;
+
+    &--selected {
+      color: $app-primary;
+    }
+  }
+}
+
+// 提示/通知
+.v-snackbar {
+  &__content {
+    font-family: $app-font-body;
+  }
+}
+
+// 徽章
+.v-badge {
+  &__badge {
+    font-family: $app-font-body;
+    font-size: 10px;
+  }
+}

@@ -4,8 +4,8 @@
     <v-skeleton-loader v-if="loading" type="card" />
     <template v-else>
       <!-- 欢迎信息 -->
-      <v-card class="mb-4" color="primary" variant="tonal">
-        <v-card-text class="text-h6">
+      <v-card class="mb-4 greeting-card">
+        <v-card-text class="text-h6 greeting-text">
           嗨~ {{ userName }}。{{ greetingText }}
         </v-card-text>
       </v-card>
@@ -22,14 +22,25 @@
               </div>
               <div class="level-badge-content">
                 <div class="level-name-row">
-                  <v-icon :icon="currentLevel.icon" size="24" color="#664515" class="mr-1" />
+                  <v-icon
+                    :icon="currentLevel.icon"
+                    size="24"
+                    color="#664515"
+                    class="mr-1"
+                  />
                   <p class="level-name">{{ currentLevel.title }}</p>
                 </div>
                 <div class="level-info-row">
                   <p class="level-info">共 {{ comicCount }} 本漫画</p>
                 </div>
                 <div class="level-info-row">
-                  <p class="level-info">{{ nextLevel ? '下一级：' + nextLevel.title : '已达到最高等级' }}</p>
+                  <p class="level-info">
+                    {{
+                      nextLevel
+                        ? "下一级：" + nextLevel.title
+                        : "已达到最高等级"
+                    }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -41,22 +52,36 @@
             <div class="level-progress-container">
               <div class="level-progress-inner">
                 <div class="level-progress-wrap">
-                  <div class="level-progress-bar" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100">
-                    <div class="level-progress-fill" :style="{ width: Math.min(progressPercent, 100) + '%' }"></div>
+                  <div
+                    class="level-progress-bar"
+                    role="progressbar"
+                    :aria-valuenow="progressPercent"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <div
+                      class="level-progress-fill"
+                      :style="{ width: Math.min(progressPercent, 100) + '%' }"
+                    ></div>
                   </div>
                 </div>
                 <span class="level-progress-right-label">
-                  <span class="level-progress-figure">{{ comicCount }} / {{ nextLevel ? nextLevel.threshold : currentLevel.threshold }}</span>
-                  <span class="level-progress-percent">已达成 {{ progressPercent.toFixed(1) }}%</span>
+                  <span class="level-progress-figure"
+                    >{{ comicCount }} /
+                    {{
+                      nextLevel ? nextLevel.threshold : currentLevel.threshold
+                    }}</span
+                  >
+                  <span class="level-progress-percent"
+                    >已达成 {{ progressPercent.toFixed(1) }}%</span
+                  >
                 </span>
               </div>
             </div>
             <div v-if="nextLevel" class="level-progress-hint">
               距离下一级还需 {{ nextLevel.threshold - comicCount }} 本漫画
             </div>
-            <div v-else class="level-progress-hint">
-              已达到最高等级
-            </div>
+            <div v-else class="level-progress-hint">已达到最高等级</div>
           </div>
         </div>
       </div>
@@ -96,114 +121,150 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import request from '../api/request'
-import { useRestartStore } from '../stores/restart'
+import { ref, computed, onMounted } from "vue";
+import request from "../api/request";
+import { useRestartStore } from "../stores/restart";
 
-const restartStore = useRestartStore()
+const restartStore = useRestartStore();
 
 // 问候语
 const greetings = [
-  { start: 0, end: 6, text: '夜深了，嗨起来吧！' },
-  { start: 6, end: 11, text: '早上好，睡个回笼觉吧~' },
-  { start: 11, end: 13, text: '中午好，该吃饭了~' },
-  { start: 13, end: 18, text: '下午好，睡午觉吧~' },
-  { start: 18, end: 24, text: '晚上好，该起床了~' },
-]
+  { start: 0, end: 6, text: "夜深了，嗨起来吧！" },
+  { start: 6, end: 11, text: "早上好，睡个回笼觉吧~" },
+  { start: 11, end: 13, text: "中午好，该吃饭了~" },
+  { start: 13, end: 18, text: "下午好，睡午觉吧~" },
+  { start: 18, end: 24, text: "晚上好，该起床了~" },
+];
 
 // 等级
 const collectorLevels = [
-  { threshold: 0, title: '纯洁无暇', icon: 'mdi-book-open-variant' },
-  { threshold: 100, title: '初窥门道', icon: 'mdi-bookshelf' },
-  { threshold: 1000, title: '渐入佳境', icon: 'mdi-library' },
-  { threshold: 5000, title: '炉火纯青', icon: 'mdi-crown' },
-  { threshold: 10000, title: '出神入化', icon: 'mdi-crown-circle' },
-  { threshold: 20000, title: '阅本无数', icon: 'mdi-star-circle' },
-]
+  { threshold: 0, title: "纯洁无暇", icon: "mdi-book-open-variant" },
+  { threshold: 100, title: "初窥门道", icon: "mdi-bookshelf" },
+  { threshold: 1000, title: "渐入佳境", icon: "mdi-library" },
+  { threshold: 5000, title: "炉火纯青", icon: "mdi-crown" },
+  { threshold: 10000, title: "出神入化", icon: "mdi-crown-circle" },
+  { threshold: 20000, title: "阅本无数", icon: "mdi-star-circle" },
+];
 
-const loading = ref(true)
-const syncing = ref(false)
-const comicCount = ref(0)
-const userName = ref('')
-const snackbar = ref({ show: false, text: '', color: 'success' })
+const loading = ref(true);
+const syncing = ref(false);
+const comicCount = ref(0);
+const userName = ref("");
+const snackbar = ref({ show: false, text: "", color: "success" });
 
 const greetingText = computed(() => {
-  const hour = new Date().getHours()
-  const matched = greetings.find(g => hour >= g.start && hour < g.end)
-  return matched ? matched.text : '嗨~'
-})
+  const hour = new Date().getHours();
+  const matched = greetings.find((g) => hour >= g.start && hour < g.end);
+  return matched ? matched.text : "嗨~";
+});
 
 const currentLevel = computed(() => {
-  let level = collectorLevels[0]
+  let level = collectorLevels[0];
   for (const l of collectorLevels) {
-    if (comicCount.value >= l.threshold) level = l
+    if (comicCount.value >= l.threshold) level = l;
   }
-  return level
-})
+  return level;
+});
 
 const nextLevel = computed(() => {
   for (const l of collectorLevels) {
-    if (l.threshold > comicCount.value) return l
+    if (l.threshold > comicCount.value) return l;
   }
-  return null
-})
+  return null;
+});
 
 const progressPercent = computed(() => {
   if (!nextLevel.value) {
-    const maxThreshold = currentLevel.value.threshold
-    return maxThreshold > 0 ? (comicCount.value / maxThreshold) * 100 : 0
+    const maxThreshold = currentLevel.value.threshold;
+    return maxThreshold > 0 ? (comicCount.value / maxThreshold) * 100 : 0;
   }
-  const prev = currentLevel.value.threshold
-  const next = nextLevel.value.threshold
-  return ((comicCount.value - prev) / (next - prev)) * 100
-})
+  const prev = currentLevel.value.threshold;
+  const next = nextLevel.value.threshold;
+  return ((comicCount.value - prev) / (next - prev)) * 100;
+});
 
 async function fetchStatus() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await request.get('/pbapi/dashboard/status')
-    comicCount.value = res.data.comic_count
-    userName.value = res.data.user_name
+    const res = await request.get("/pbapi/dashboard/status");
+    comicCount.value = res.data.comic_count;
+    userName.value = res.data.user_name;
   } catch (e) {
-    snackbar.value = { show: true, text: '获取状态信息失败', color: 'error' }
+    snackbar.value = { show: true, text: "获取状态信息失败", color: "error" };
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleSync() {
-  syncing.value = true
+  syncing.value = true;
   try {
-    const res = await request.post('/comics/5822a6e3ad7ede654696e482/comments', {
-      content: '/initcmc full all -notreport'
-    })
+    const res = await request.post(
+      "/comics/5822a6e3ad7ede654696e482/comments",
+      {
+        content: "/initcmc full all -notreport",
+      },
+      { timeout: 300000 }
+    );
     if (res.code === 200) {
-      snackbar.value = { show: true, text: res.data?.data || '执行成功', color: 'blue' }
+      snackbar.value = {
+        show: true,
+        text: res.data?.data || "执行成功",
+        color: "blue",
+      };
     } else {
-      snackbar.value = { show: true, text: res.data?.data || res.message || '执行失败', color: 'error' }
+      snackbar.value = {
+        show: true,
+        text: res.data?.data || res.message || "执行失败",
+        color: "error",
+      };
     }
   } catch (e) {
-    snackbar.value = { show: true, text: e.message || '同步请求失败', color: 'error' }
+    snackbar.value = {
+      show: true,
+      text: e.message || "同步请求失败",
+      color: "error",
+    };
   } finally {
-    syncing.value = false
+    syncing.value = false;
   }
 }
 
 async function handleRestart() {
-  const result = await restartStore.handleRestart()
-  if (result.status === 'completed') {
-    snackbar.value = { show: true, text: '服务已重启完成', color: 'success' }
-  } else if (result.status === 'timeout') {
-    snackbar.value = { show: true, text: '重启超时，请手动检查服务状态', color: 'warning' }
+  const result = await restartStore.handleRestart();
+  if (result.status === "completed") {
+    snackbar.value = { show: true, text: "服务已重启完成", color: "success" };
+  } else if (result.status === "timeout") {
+    snackbar.value = {
+      show: true,
+      text: "重启超时，请手动检查服务状态",
+      color: "warning",
+    };
   } else {
-    snackbar.value = { show: true, text: result.message || '重启失败', color: 'error' }
+    snackbar.value = {
+      show: true,
+      text: result.message || "重启失败",
+      color: "error",
+    };
   }
 }
 
-onMounted(fetchStatus)
+onMounted(fetchStatus);
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+/* ========== 问候语卡片 ========== */
+.greeting-card {
+  background-color: $app-bg-main !important;
+  border: none;
+}
+
+.greeting-text {
+  color: $app-primary !important;
+  padding: 12px 16px !important;
+  font-size: 1rem !important;
+}
+
 /* ========== 等级统计卡片容器 ========== */
 .level-stats-card {
   display: flex;
@@ -211,7 +272,7 @@ onMounted(fetchStatus)
   gap: 12px;
   width: 100%;
   border-radius: 8px;
-  background: rgb(var(--v-theme-surface-container-lowest));
+  background: #ffffff;
   padding: 16px;
   margin-bottom: 16px;
 }
@@ -331,7 +392,7 @@ onMounted(fetchStatus)
   min-width: 0;
   flex: 1;
   border-radius: 8px;
-  background: rgb(var(--v-theme-surface-container));
+  background: #f6f6f8;
   padding: 16px;
 }
 
@@ -339,7 +400,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
-  color: rgb(var(--v-theme-on-surface));
+  color: #1f2329;
   margin: 0;
 }
 
@@ -370,14 +431,14 @@ onMounted(fetchStatus)
   height: 10px;
   overflow: hidden;
   border-radius: 10px;
-  background: rgb(var(--v-theme-outline-variant));
+  background: #e5e6ea;
   width: 100%;
 }
 
 .level-progress-fill {
   height: 100%;
   border-radius: 10px;
-  background: rgb(var(--v-theme-primary));
+  background: #3370ff;
   transition: width 0.3s ease-out;
 }
 
@@ -390,7 +451,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: #646a73;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -400,7 +461,7 @@ onMounted(fetchStatus)
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
-  color: rgb(var(--v-theme-on-surface));
+  color: #1f2329;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -408,12 +469,12 @@ onMounted(fetchStatus)
 .level-progress-hint {
   font-size: 12px;
   line-height: 20px;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: #646a73;
   margin-top: 4px;
 }
 
 /* ========== 响应式横向排列 ========== */
-@media (min-width: 900px) {
+@media (min-width: $app-breakpoint-md) {
   .level-stats-main {
     flex-direction: row;
     align-items: stretch;

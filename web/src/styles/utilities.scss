@@ -1,0 +1,391 @@
+﻿// ---- 文字工具类 ----
+
+.app-text {
+  &-primary {
+    font-family: $app-font-primary;
+  }
+
+  &-body {
+    font-family: $app-font-body;
+  }
+
+  &-mono {
+    font-family: $app-font-mono;
+  }
+
+  &-h1 {
+    font-size: $app-text-h1;
+    font-weight: $app-font-regular;
+    line-height: $app-line-height-h1;
+    color: $app-text-primary;
+    font-family: $app-font-primary;
+  }
+
+  &-h2 {
+    font-size: $app-text-h2;
+    font-weight: $app-font-regular;
+    color: $app-text-primary;
+    font-family: $app-font-primary;
+  }
+
+  &-h3 {
+    font-size: $app-text-h3;
+    font-weight: $app-font-regular;
+    color: $app-text-primary;
+    font-family: $app-font-primary;
+  }
+
+  &-body-1 {
+    font-size: $app-text-body;
+    font-weight: $app-font-regular;
+    line-height: $app-line-height-body;
+    color: $app-text-primary;
+  }
+
+  &-body-2 {
+    font-size: $app-text-small;
+    font-weight: $app-font-regular;
+    line-height: $app-line-height-small;
+    color: $app-text-secondary;
+  }
+
+  &-caption {
+    font-size: $app-text-caption;
+    color: $app-text-tertiary;
+  }
+
+  &-link {
+    color: $app-text-link;
+    text-decoration: none;
+    font-weight: $app-font-medium;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ---- 颜色工具类 ----
+
+.app-color {
+  &-primary {
+    color: $app-primary;
+  }
+
+  &-secondary {
+    color: $app-text-secondary;
+  }
+
+  &-success {
+    color: $app-success;
+  }
+
+  &-warning {
+    color: $app-warning;
+  }
+
+  &-error {
+    color: $app-error;
+  }
+}
+
+// ---- 背景工具类 ----
+
+.app-bg {
+  &-surface {
+    background-color: $app-bg-surface;
+  }
+
+  &-surface-variant {
+    background-color: $app-bg-surface-variant;
+  }
+
+  &-sidebar {
+    background-color: $app-bg-sidebar;
+  }
+
+  &-main {
+    background-color: $app-bg-main;
+  }
+
+  &-hover {
+    background-color: $app-bg-hover;
+  }
+
+  &-active {
+    background-color: $app-bg-active;
+  }
+
+  &-success {
+    background-color: $app-success-bg;
+  }
+
+  &-warning {
+    background-color: $app-warning-bg;
+  }
+
+  &-error {
+    background-color: $app-error-bg;
+  }
+
+  &-info {
+    background-color: $app-info-bg;
+  }
+}
+
+// ---- 边框工具类 ----
+
+.app-border {
+  border: $app-border-default;
+
+  &-top {
+    border-top: $app-border-default;
+  }
+
+  &-bottom {
+    border-bottom: $app-border-default;
+  }
+
+  &-left {
+    border-left: $app-border-default;
+  }
+
+  &-right {
+    border-right: $app-border-default;
+  }
+
+  &-light {
+    border: $app-border-light;
+  }
+
+  &-action {
+    border: 0.8px solid $app-border-action;
+  }
+
+  &-none {
+    border: none;
+  }
+}
+
+// ---- 圆角工具类 ----
+
+.app-radius {
+  &-sm {
+    border-radius: $app-radius-sm;
+  }
+
+  &-md {
+    border-radius: $app-radius-md;
+  }
+
+  &-lg {
+    border-radius: $app-radius-lg;
+  }
+
+  &-xl {
+    border-radius: $app-radius-xl;
+  }
+
+  &-pill {
+    border-radius: $app-radius-pill;
+  }
+}
+
+// ---- 阴影工具类 ----
+
+.app-shadow {
+  &-1 {
+    box-shadow: $app-shadow-1;
+  }
+
+  &-2 {
+    box-shadow: $app-shadow-2;
+  }
+
+  &-3 {
+    box-shadow: $app-shadow-3;
+  }
+
+  &-4 {
+    box-shadow: $app-shadow-4;
+  }
+
+  &-none {
+    box-shadow: none;
+  }
+}
+
+// ---- 间距工具类 ----
+
+.app-pa {
+  @each $size,
+    $value
+      in (
+        "xs": $app-spacing-xs,
+        "sm": $app-spacing-sm,
+        "md": $app-spacing-md,
+        "lg": $app-spacing-lg,
+        "xl": $app-spacing-xl
+      )
+  {
+    &-#{$size} {
+      padding: $value;
+    }
+  }
+}
+
+.app-ma {
+  @each $size,
+    $value
+      in (
+        "xs": $app-spacing-xs,
+        "sm": $app-spacing-sm,
+        "md": $app-spacing-md,
+        "lg": $app-spacing-lg,
+        "xl": $app-spacing-xl
+      )
+  {
+    &-#{$size} {
+      margin: $value;
+    }
+  }
+}
+
+// ---- 布局工具类 ----
+
+.app-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 $app-spacing-lg;
+}
+
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ---- 卡片样式 ----
+
+.app-card {
+  background-color: $app-bg-surface;
+  border: $app-border-default;
+  border-radius: $app-radius-sm;
+  padding: $app-card-padding;
+  transition: box-shadow $app-transition-fast;
+
+  &:hover {
+    box-shadow: $app-shadow-1;
+  }
+
+  &--flat {
+    box-shadow: none;
+    border: $app-border-default;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  &--elevated {
+    box-shadow: $app-shadow-2;
+    border: none;
+  }
+}
+
+// ---- 状态标签 ----
+
+.app-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 12px;
+  border-radius: $app-radius-pill;
+  font-size: $app-text-small;
+  font-weight: $app-font-medium;
+  font-family: $app-font-body;
+
+  &--running,
+  &--active,
+  &--success {
+    background-color: $app-success-bg;
+    color: $app-success;
+  }
+
+  &--stopped,
+  &--error,
+  &--failed {
+    background-color: $app-error-bg;
+    color: $app-error;
+  }
+
+  &--pending,
+  &--warning {
+    background-color: $app-warning-bg;
+    color: $app-warning;
+  }
+
+  &--info,
+  &--provisioning {
+    background-color: $app-info-bg;
+    color: $app-info;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+}
+
+// ---- 链接样式 ----
+
+.app-link {
+  color: $app-text-link;
+  text-decoration: none;
+  font-weight: $app-font-medium;
+  font-size: $app-text-body;
+  transition: color $app-transition-fast;
+
+  &:hover {
+    color: $app-primary-dark;
+    text-decoration: underline;
+  }
+
+  &--secondary {
+    color: $app-text-secondary;
+    font-weight: $app-font-regular;
+
+    &:hover {
+      color: $app-primary;
+    }
+  }
+}
+
+// ---- 隐藏/显示工具类 ----
+
+.app-hidden {
+  display: none !important;
+}
+
+.app-visible {
+  display: block !important;
+}
+
+@media (max-width: $app-breakpoint-sm) {
+  .app-hidden-sm {
+    display: none !important;
+  }
+}
+
+@media (max-width: $app-breakpoint-md) {
+  .app-hidden-md {
+    display: none !important;
+  }
+}
+
+@media (min-width: $app-breakpoint-md) {
+  .app-visible-md {
+    display: block !important;
+  }
+}

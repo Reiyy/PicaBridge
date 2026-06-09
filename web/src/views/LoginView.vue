@@ -69,7 +69,7 @@ async function handleLogin() {
     await auth.login(email.value, password.value)
     router.push('/ui/')
   } catch (e) {
-    errorMsg.value = e.message || '登录失败'
+    errorMsg.value = e.message || e.msg || '登录失败'
   } finally {
     loading.value = false
   }

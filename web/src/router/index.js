@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import request from '../api/request'
+import { useAuthStore } from '../stores/auth'
 
 let initStatus = null
 
@@ -31,7 +32,7 @@ const routes = [
   },
   {
     path: '/ui/',
-    component: () => import('../layouts/AdminLayout.vue'),
+    component: () => import('../views/HomeView.vue'),
     meta: { requiresAuth: true },
     children: [
       {
@@ -84,11 +85,6 @@ const routes = [
         name: 'Backup',
         component: () => import('../views/BackupRestore.vue'),
       },
-      {
-        path: 'theme',
-        name: 'Theme',
-        component: () => import('../views/ThemeSettingsView.vue'),
-      },
     ],
   },
 ]
@@ -114,6 +110,15 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !token) {
     return next('/ui/login')
   }
+
+  // 页面刷新时，若 token 存在但用户信息未加载，自动获取
+  if (token) {
+    const auth = useAuthStore()
+    if (!auth.user) {
+      await auth.fetchUser()
+    }
+  }
+
   next()
 })
 
