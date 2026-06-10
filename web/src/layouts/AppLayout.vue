@@ -998,4 +998,21 @@ function handleLogout() {
   opacity: 1;
   max-height: 500px;
 }
+
+// 移动端媒体查询
+@media (max-width: 768px) {
+  .app-sidebar {
+    // 收起状态 - 完全收起
+    &--collapsed {
+      width: 0;
+      overflow: hidden;
+    }
+  }
+
+  // 移动端内容区调整
+  .app-container {
+    margin: 4px 8px 0 8px;
+    border-radius: 12px 12px 0 0;
+  }
+}
 </style>
