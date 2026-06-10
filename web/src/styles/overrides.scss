@@ -176,15 +176,13 @@ body {
     min-height: 40px;
     padding-left: 16px;
     padding-right: 16px;
+    border-left: 4px solid transparent;
+    border-radius: 0 12px 12px 0;
+    transition: background-color 0.15s, border-left-color 0.15s;
 
     &--active {
       background-color: $app-bg-active !important;
-      color: $app-primary !important;
-
-      .v-list-item-title {
-        color: $app-primary !important;
-        font-weight: $app-font-medium;
-      }
+      border-left-color: $app-border-active-indicator !important;
     }
 
     &:hover:not(.v-list-item--active) {

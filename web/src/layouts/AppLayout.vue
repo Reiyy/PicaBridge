@@ -761,7 +761,7 @@ function handleLogout() {
     .app-sidebar__group-header {
       justify-content: center;
       padding: 0;
-      margin: 1px 4px;
+      margin: 1px 4px 1px 0;
     }
 
     .app-sidebar__item-icon {
@@ -797,15 +797,16 @@ function handleLogout() {
     display: flex;
     align-items: center;
     height: 36px;
-    padding: 0 12px;
-    margin: 0 4px;
-    border-radius: 4px;
+    padding: 0 12px 0 12px;
+    margin: 0 4px 0 0;
+    border-left: 4px solid transparent;
+    border-radius: 0 12px 12px 0;
     text-decoration: none;
     color: $app-text-dark;
     font-size: 14px;
     font-weight: 500;
     font-family: $app-font-primary;
-    transition: background-color 0.15s;
+    transition: background-color 0.15s, border-left-color 0.15s;
     white-space: nowrap;
     overflow: hidden;
     position: relative;
@@ -816,12 +817,7 @@ function handleLogout() {
 
     &--active {
       background-color: $app-bg-active;
-      border-radius: 0 12px 12px 0;
-      color: $app-text-dark;
-
-      .app-sidebar__item-icon {
-        color: $app-text-dark;
-      }
+      border-left-color: $app-border-active-indicator;
     }
   }
 
@@ -846,7 +842,7 @@ function handleLogout() {
     align-items: center;
     height: 36px;
     padding: 0 12px;
-    margin: 0 4px;
+    margin: 0 4px 0 0;
     border-radius: 4px;
     border: none;
     background: none;
@@ -855,7 +851,7 @@ function handleLogout() {
     font-size: 14px;
     font-weight: 500;
     font-family: $app-font-primary;
-    width: calc(100% - 8px);
+    width: calc(100% - 4px);
     transition: background-color 0.15s;
     text-align: left;
 
@@ -884,14 +880,15 @@ function handleLogout() {
     align-items: center;
     height: 36px;
     padding: 0 12px 0 44px;
-    margin: 0 4px;
-    border-radius: 4px;
+    margin: 0 4px 0 0;
+    border-left: 4px solid transparent;
+    border-radius: 0 12px 12px 0;
     text-decoration: none;
     color: $app-text-dark;
     font-size: 14px;
     font-weight: 400;
     font-family: $app-font-body;
-    transition: background-color 0.15s;
+    transition: background-color 0.15s, border-left-color 0.15s;
     white-space: nowrap;
     overflow: hidden;
     position: relative;
@@ -902,9 +899,7 @@ function handleLogout() {
 
     &--active {
       background-color: $app-bg-active;
-      border-radius: 0 12px 12px 0;
-      color: $app-text-dark;
-      font-weight: 500;
+      border-left-color: $app-border-active-indicator;
     }
   }
 

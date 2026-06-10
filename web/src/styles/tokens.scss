@@ -21,7 +21,8 @@ $app-bg-surface: #ffffff; // 卡片背景
 $app-bg-surface-variant: #f8f9fa; // 次级表面
 $app-bg-sidebar: #edeff3; // 侧边栏背景 - 浅灰蓝色 (rgb(237, 239, 243))
 $app-bg-hover: #f1f3f4; // 悬停状态
-$app-bg-active: #e8f0fe; // 激活状态
+$app-bg-active: #dbedfc; // 激活状态 (--cm-sys-color-backdrop-active)
+$app-border-active-indicator: #545f72; // 选中项左边框指示器 (--cm-sys-color-on-backdrop-variant)
 $app-bg-header: #ffffff; // 头部背景
 $app-bg-search: #dde3ea; // 搜索栏背景 (rgb(221, 227, 234))
 $app-bg-user-actions: #e9eef6; // 用户卡片操作区背景
