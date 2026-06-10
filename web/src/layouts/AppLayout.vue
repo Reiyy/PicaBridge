@@ -322,6 +322,7 @@ function handleLogout() {
   font-family: $app-font-body;
   background-color: $app-bg-main !important;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
