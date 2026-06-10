@@ -744,7 +744,7 @@ function handleLogout() {
 
 // 侧边栏 - 坐在浅蓝色背景上，无白色底
 .app-sidebar {
-  width: 200px;
+  width: 168px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
